@@ -5,10 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class JavaServerApplication {
-
+//porta 8080
     public static void main(String[] args) {
         SpringApplication.run(JavaServerApplication.class, args);
-        System.out.println("!!!!!!!!!!!!Server started!!!!!!!!!!!!!!!!!");
     }
 
 }

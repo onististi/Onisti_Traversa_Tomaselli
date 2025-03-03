@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/solution/servers/DataServer/DataServer.iml" filepath="$PROJECT_DIR$/solution/servers/DataServer/DataServer.iml" />
       <module fileurl="file://$PROJECT_DIR$/solution/servers/MainServer/Main Server.iml" filepath="$PROJECT_DIR$/solution/servers/MainServer/Main Server.iml" />
       <module fileurl="file://$PROJECT_DIR$/solution/notebooks/notebooks.iml" filepath="$PROJECT_DIR$/solution/notebooks/notebooks.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/tweb.iml" filepath="$PROJECT_DIR$/.idea/tweb.iml" />
