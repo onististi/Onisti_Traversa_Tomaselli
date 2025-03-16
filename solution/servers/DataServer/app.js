@@ -39,3 +39,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+//server da rendere solo per le api e non anche per visualizzazioni

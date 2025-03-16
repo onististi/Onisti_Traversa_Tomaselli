@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="DataServer" type="NodeJSConfigurationType" path-to-js-file="bin/wwwData" working-dir="$PROJECT_DIR$/solution/servers/DataServer">
+  <configuration default="false" name="DataServer" type="NodeJSConfigurationType" path-to-js-file="$PROJECT_DIR$/solution/servers/DataServer/bin/wwwData.js" working-dir="$PROJECT_DIR$/solution/servers/DataServer">
     <envs>
       <env name="DEBUG" value="dataserver:*" />
     </envs>

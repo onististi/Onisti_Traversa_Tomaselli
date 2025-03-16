@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="MainServer" type="NodeJSConfigurationType" path-to-js-file="bin/www" working-dir="$PROJECT_DIR$/solution/servers/MainServer">
+  <configuration default="false" name="MainServer" type="NodeJSConfigurationType" path-to-js-file="$PROJECT_DIR$/solution/servers/MainServer/bin/www.js" working-dir="$PROJECT_DIR$/solution/servers/MainServer">
     <envs>
       <env name="DEBUG" value="main-server:*" />
     </envs>
