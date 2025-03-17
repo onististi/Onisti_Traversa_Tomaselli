@@ -19,8 +19,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+//middleware per bloccare richieste che non sono API
+app.use((req, res, next) => {
+  //se la richiesta non è una API (comincia con /api), rispondi con errore
+  if (!req.originalUrl.startsWith('/api')) {
+    return res.status(403).json({message: 'solo API consentite'});
+  }
+  next(createError(403));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

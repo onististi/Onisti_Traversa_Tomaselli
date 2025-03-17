@@ -6,7 +6,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth'); //usata per login e signup
+const movieRouter = require('./routes/movies'); //usata sia per pagina singola movie che ricerca generale e visione su homepage
+const actorRouter = require('./routes/actors'); // //
+const chatRouter = require('./routes/chat');
 
 var app = express();
 
@@ -21,7 +24,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/auth',authRouter);
+app.use('/movies',movieRouter);
+app.use('/actors',actorRouter);
+app.use('/chat',chatRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
