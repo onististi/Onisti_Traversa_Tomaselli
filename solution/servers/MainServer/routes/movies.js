@@ -1,18 +1,31 @@
 var express = require('express');
+const axios = require('axios/dist/node/axios.cjs');
 var router = express.Router();
 
 router.get('/', function(req, res, next) { //router per pagina ricerca film generale
     res.render('movie', {title: "movies"});
 });
 
-router.get(':id', function(req, res, next) { //router per pagina singolo film,
+//route per pagina del singolo film
+router.get('/:id', async function(req, res, next) {
     // volendo si potra cambiare mettendo ? e inglobando tutto in un unico router (quello sopra) dove se id dopo? è definito (alla youtube) fa il render di un altra pagina(movie e non movies)
     const movieId = req.params.id;
-    res.render('movie', {title: "movie"+movieId});
+    let response;
+    try {
+        console.log(`Main Server: richiesta dati per film ID ${movieId}`);
+
+
+        //response = await axios.get("http://localhost:3001/api/movies/"+{movieId});  funzionante ma per dataserver (leggi nella route e service in dataserver)
+        response = await  axios.get("http://localhost:8080/api/movies/2");
+
+    } catch (error) {res.status(500).json({ message: "Errore nel recupero del film" })}
+
+   res.render('movie', {title: "movie"+movieId+ " "+JSON.stringify(response.data)});
 });
 
 
-/*le richieste per il caricamento del film saranno gestite quelle possibili(credo la maggiorparte) tramite queste routes che chiederanno al dataserver la richiesta(poi lui la query al db) corretta per la pagina richiesta
+/*le richieste per il caricamento del film saranno gestite quelle possibili(credo la maggiorparte) tramite queste routes
+che chiederanno al dataserver la richiesta(poi lui la query al db) corretta per la pagina richiesta
 il javascript della pagina(quelli presenti in public ) si occuperanno del rendering
 tipo dataserver/api/richiesta che tramite le routes redirizera ad un controler (credo per ora)
 

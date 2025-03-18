@@ -4,8 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var movieRouter = require('./routes/movies');
 
 var app = express();
 
@@ -19,13 +19,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/', indexRouter);
+app.use('/api/movies',movieRouter);
+
 //middleware per bloccare richieste che non sono API
 app.use((req, res, next) => {
-  //se la richiesta non è una API (comincia con /api), rispondi con errore
-  if (!req.originalUrl.startsWith('/api')) {
-    return res.status(403).json({message: 'solo API consentite'});
-  }
-  next(createError(403));
+  if (!req.originalUrl.startsWith('/api'))
+    next(createError(403, "Solo API consentite"));
 });
 
 // catch 404 and forward to error handler
