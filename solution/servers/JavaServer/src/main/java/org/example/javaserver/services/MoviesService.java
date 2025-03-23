@@ -1,6 +1,7 @@
 package org.example.javaserver.services;
 import jakarta.transaction.Transactional;
 import org.example.javaserver.models.Movie;
+import org.example.javaserver.models.Poster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityManager;
@@ -20,19 +21,20 @@ public class MoviesService {
 
     @Transactional
     public Optional<Movie> findMovieById(Integer id) {
-        System.out.println("ricevuta richiesta per id"+id);
-        // Movie movie = entityManager.find(Movie.class, id);
-        String jpql = "SELECT m FROM Movie m WHERE m.id = :id";
-        TypedQuery<Movie> query = entityManager.createQuery(jpql, Movie.class);
-        query.setParameter("id",1000022 );
-        List<Movie> movies = query.getResultList();
+        System.out.println("ricevuta richiesta per film id " + id);
 
-        return Optional.ofNullable(movies.get(0));
-    }
+        Movie movie = entityManager.find(Movie.class, id);
 
-    @Transactional
-    public boolean existsById(Integer id) {
-       Movie movie = entityManager.find(Movie.class, id);
-        return movie != null;
+        String posterQuery = "SELECT p.id.link FROM Poster p WHERE p.id.idMovie = :movieId";
+        List<String> posterLinks = entityManager.createQuery(posterQuery, String.class)
+                .setParameter("movieId", id)
+                .getResultList();
+
+        if (!posterLinks.isEmpty() && movie != null)
+            movie.setPosterLink(posterLinks.get(0));
+        else if(movie != null)
+            movie.setPosterLink(null);
+
+        return Optional.ofNullable(movie); //returna null se non presente
     }
 }

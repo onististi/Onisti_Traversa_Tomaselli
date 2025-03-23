@@ -28,60 +28,39 @@ public class Movie {
     @Column(name = "rating", precision = 4, scale = 2)
     private BigDecimal rating;
 
-    public Integer getId() {
-        return id;
-    }
+    //campo non presente nella tabella "movies"
+    @Transient
+    private String posterLink;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public Integer getId() {return id;}
 
-    public String getName() {
-        return name;
-    }
+    public void setId(Integer id) {this.id = id;}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getName() {return name;}
 
-    public Integer getYear() {
-        return year;
-    }
+    public void setName(String name) {this.name = name;}
 
-    public void setYear(Integer year) {
-        this.year = year;
-    }
+    public Integer getYear() {return year;}
 
-    public String getTagline() {
-        return tagline;
-    }
+    public void setYear(Integer year) {this.year = year;}
 
-    public void setTagline(String tagline) {
-        this.tagline = tagline;
-    }
+    public String getTagline() {return tagline;}
 
-    public String getDescription() {
-        return description;
-    }
+    public void setTagline(String tagline) {this.tagline = tagline;}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getDescription() {return description;}
 
-    public Integer getMinute() {
-        return minute;
-    }
+    public void setDescription(String description) {this.description = description;}
 
-    public void setMinute(Integer minute) {
-        this.minute = minute;
-    }
+    public Integer getMinute() {return minute;}
 
-    public BigDecimal getRating() {
-        return rating;
-    }
+    public void setMinute(Integer minute) {this.minute = minute;}
 
+    public BigDecimal getRating() {return rating;}
 
-    public void setRating(BigDecimal rating) {
-        this.rating = rating;
-    }
+    public void setRating(BigDecimal rating) {this.rating = rating;}
+
+    public void setPosterLink(String posterLink) {this.posterLink = posterLink;}
+
+    public String getPosterLink() {return posterLink;}
 }

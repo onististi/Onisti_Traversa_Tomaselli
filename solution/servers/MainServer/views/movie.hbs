@@ -1,13 +1,114 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>INDEX</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- axios da slide-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/movie.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+
+    <script>
+         var movieData = {{{ json movie}}};
+        var actorsData = {{{ json actors.data}}};
+        var crewData;
+    </script>
 </head>
 <body>
-<h1>{{title}}</h1>
 
 
+<h1 class="movie-title" id="movieName">{{movie.name}}</h1>
+<div class="movie-container">
+    <div class="movie-header">
+        <div class="left-content">
+            <div class="tagline" id="movieTagline">{{movie.tagline}}</div>
+            <div class="description-section">
+                <div class="header-row">
+                    <h2>DESCRIPTION</h2>
+                    <span class="duration" id="movieDuration">DURATION: {{movie.minute}} MIN</span>
+                </div>
+                <div class="description-container">
+                    <div class="description-text">
+                        <p id="movieDescription">{{movie.description}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="overlay" style="background-image: url('{{movie.posterLink}}');"></div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="right-content">
+            <div class="actors-section">
+                <h2>ACTORS</h2>
+                <div class="actors-slider" id="actorsSlider">
+                    <!-- Slideshow fillato da js se ci sono, se no unknown -->
+                </div>
+                <div class="slider-nav actors-nav">
+                    <div class="prev-arrow">❮</div>
+                    <div class="next-arrow">❯</div>
+                </div>
+            </div>
+
+            <div class="crew-section">
+                <h2>CREW</h2>
+                <div class="crew-slider" id="crewSlider">
+                    <!-- Slideshow fillato da js se ci sono, se no unknown -->
+                </div>
+                <div class="slider-nav crew-nav">
+                    <div class="prev-arrow">❮</div>
+                    <div class="next-arrow">❯</div>
+                </div>
+            </div>
+
+            <div class="movie-info">
+                <h2>MOVIE INFO</h2>
+                <table class="info-table">
+                    <tr>
+                        <td>Genre</td>
+                        <td id="movieGenre">{{#each movie.genres}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
+                    </tr>
+                    <tr>
+                        <td>Year</td>
+                        <td id="movieYear">{{movie.year}}</td>
+                    </tr>
+                    <tr>
+                        <td>Rating</td>
+                        <td id="movieRating">{{movie.rating}}</td>
+                    </tr>
+                    <tr>
+                        <td>Studios</td>
+                        <td id="movieStudios">{{#each movie.studios}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
+                    </tr>
+                    <tr>
+                        <td>Themes</td>
+                        <td id="movieThemes">{{#each movie.themes}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
+                    </tr>
+                    <tr>
+                        <td>Language</td>
+                        <td id="movieLanguages">{{movie.language}}</td>
+                    </tr>
+                    <tr>
+                        <td>Dubbed in</td>
+                        <td id="movieDubbed">{{movie.dubbing}}</td>
+                    </tr>
+                    <tr>
+                        <td>Released in</td>
+                        <td id="movieReleased">{{movie.releaseInfo}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="thread-button-container">
+                <a href = "../chat/film/{{movie.id}}" id="threadButton" class="thread-button">Film's Thread</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script src="/javascripts/movie.js"></script>
 </body>
 </html>
