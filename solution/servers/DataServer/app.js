@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var usersRouter = require('./routes/users');
 var movieRouter = require('./routes/movies');
+var authRouter = require('./routes/auth'); // Aggiunto questo import
 
 var app = express();
 
@@ -19,13 +20,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/api/movies',movieRouter);
+//app.use('/', indexRouter);
+app.use('/api/movies', movieRouter);
+app.use('/api/auth', authRouter); // Aggiunta questa riga per montare le route di autenticazione
 
 //middleware per bloccare richieste che non sono API
 app.use((req, res, next) => {
   if (!req.originalUrl.startsWith('/api'))
     next(createError(403, "Solo API consentite"));
+  else
+    next(); // Aggiunto else next() per permettere alle API di continuare
 });
 
 // catch 404 and forward to error handler

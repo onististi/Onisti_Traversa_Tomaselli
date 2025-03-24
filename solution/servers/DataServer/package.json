@@ -8,12 +8,13 @@
     "start": "node bin/wwwData.js"
   },
   "dependencies": {
-    "axios": "^1.8.3",
+    "axios": "^1.8.4",
+    "bcrypt": "^5.1.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
-    "express": "~4.16.1",
+    "express": "^4.21.2",
     "handlebars": "^4.7.8",
-    "hbs": "~4.0.4",
+    "hbs": "^4.2.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1"
   }
