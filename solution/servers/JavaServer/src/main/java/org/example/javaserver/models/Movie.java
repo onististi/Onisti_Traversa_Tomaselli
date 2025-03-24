@@ -1,6 +1,8 @@
 package org.example.javaserver.models;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "movies")
@@ -28,9 +30,27 @@ public class Movie {
     @Column(name = "rating", precision = 4, scale = 2)
     private BigDecimal rating;
 
-    //campo non presente nella tabella "movies"
+    //i transient non sono presenti nella tabella movies direttamente
     @Transient
     private String posterLink;
+
+    @Transient
+    private List<String> genres;
+
+    @Transient
+    private List<String> studios;
+
+    @Transient
+    private List<String> themes;
+
+    @Transient
+    private String language;
+
+    @Transient
+    private String dubbing;
+
+    @Transient
+    private String releaseInfo;
 
     public Integer getId() {return id;}
 
@@ -63,4 +83,28 @@ public class Movie {
     public void setPosterLink(String posterLink) {this.posterLink = posterLink;}
 
     public String getPosterLink() {return posterLink;}
+
+    public List<String> getGenres() {return genres;}
+
+    public void setGenres(List<String> genres) {this.genres = genres;}
+
+    public List<String> getStudios() {return studios;}
+
+    public void setStudios(List<String> studios) {this.studios = studios;}
+
+    public List<String> getThemes() {return themes;}
+
+    public void setThemes(List<String> themes) {this.themes = themes;}
+
+    public String getLanguage() {return language;}
+
+    public void setLanguage(String language) {this.language = language;}
+
+    public String getDubbing() {return dubbing;}
+
+    public void setDubbing(String dubbing) {this.dubbing = dubbing;}
+
+    public String getReleaseInfo() {return releaseInfo;}
+
+    public void setReleaseInfo(String releaseInfo) {this.releaseInfo = releaseInfo;}
 }

@@ -19,7 +19,6 @@ router.get('/:id', async function(req, res, next) {
             return res.render('movieNotFound', {title: 'Film non trovato', message: 'Film non trovato! Torna alla home page.',});
 
         responseActors = await  axios.get("http://localhost:8080/api/actors/movie/1000022");
-        console.log(responseActors.data)
         responseCrew = null;
 
         res.render('movie', {

@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+   //tutto questo è per gli slideshows di attori e crew
     fetchActorsAndCrew()
 
     function fetchActorsAndCrew() {

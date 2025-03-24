@@ -29,7 +29,7 @@ public class ActorsService {
 
     @Transactional
     public Optional<List<Actor>> findActorsByMovie(Integer movie_id) {
-        System.out.println("ricevuta richiesta per attore id"+movie_id);
+        //System.out.println("ricevuta richiesta per attore id"+movie_id);
         String jpql = "SELECT a FROM Actor a WHERE a.id_movie = :film_id";
 
         TypedQuery<Actor> query = entityManager.createQuery(jpql, Actor.class);
