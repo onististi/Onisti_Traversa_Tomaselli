@@ -24,8 +24,10 @@ app.use(express.json());
 app.use(session({
   secret: 'your-secret-key',
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' }
+  saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production',
+  maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 
 app.use(logger('dev'));

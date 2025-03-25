@@ -13,43 +13,34 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Verifica se l'username o email sono già in uso
-        const existingUserByUsername = await User.findByUsername(username);
-        const existingUserByEmail = await User.findByEmail(email);
-
-        if (existingUserByUsername) {
+        // Verifica se l'username o l'email sono già in uso
+        const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+        if (existingUser) {
             return res.status(400).json({
                 success: false,
-                message: 'Username già esistente'
-            });
-        }
-
-        if (existingUserByEmail) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email già registrata'
+                message: 'Username o email già esistenti'
             });
         }
 
         // Crea nuovo utente
-        const newUser = await User.create(username, email, password);
+        const newUser = new User({ username, email, password });
+        await newUser.save();
 
         return res.status(201).json({
             success: true,
-            id: newUser.id,
+            id: newUser._id,
             username: newUser.username,
             email: newUser.email
         });
 
     } catch (error) {
-        console.error('Registration error:', error);
-        return res.status(400).json({
+        console.error('Errore durante la registrazione:', error);
+        return res.status(500).json({
             success: false,
-            message: error.message || 'Errore durante la registrazione'
+            message: 'Errore durante la registrazione'
         });
     }
 };
-
 
 // Login utente
 exports.login = async (req, res) => {
@@ -64,9 +55,8 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Autenticazione
-        const user = await User.authenticate(username, password);
-
+        // Ricerca utente per username
+        const user = await User.findOne({ username });
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -74,15 +64,28 @@ exports.login = async (req, res) => {
             });
         }
 
+        // Verifica la password
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: 'Username o password non validi'
+            });
+        }
+
+        // Aggiorna last_login
+        user.last_login = new Date();
+        await user.save();
+
         return res.status(200).json({
             success: true,
-            id: user.id,
+            id: user._id,
             username: user.username,
             email: user.email
         });
 
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('Errore durante il login:', error);
         return res.status(500).json({
             success: false,
             message: 'Errore durante il login'

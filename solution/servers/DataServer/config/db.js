@@ -1,22 +1,17 @@
-const { Pool } = require('pg');
+const mongoose = require('mongoose');
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'SQLDB',
-    password: 'root',
-    port: 5432,
-});
+const uri = 'mongodb://localhost:27017/MongoDB';
 
-// Test di connessione
-pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
+const connectDB = async () => {
+    try {
+        await mongoose.connect(uri);
+        console.log('Connessione al database MongoDB riuscita');
+    } catch (err) {
         console.error('Errore di connessione al database:', err);
-    } else {
-        console.log('Connessione al database riuscita:', res.rows[0]);
+        process.exit(1); // Termina il processo se non riesce a connettersi
     }
-});
-
-module.exports = {
-    query: (text, params) => pool.query(text, params),
 };
+
+connectDB(); // Chiama subito la funzione per connettere il database
+
+module.exports = mongoose;
