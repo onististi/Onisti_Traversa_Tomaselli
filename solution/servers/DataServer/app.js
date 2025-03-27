@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var movieRouter = require('./routes/movies');
 
@@ -19,8 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-//app.use('/', indexRouter);
+app.use('/', indexRouter);
 app.use('/api/movies',movieRouter);
+
 
 //middleware per bloccare richieste che non sono API
 app.use((req, res, next) => {

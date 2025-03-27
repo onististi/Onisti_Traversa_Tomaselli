@@ -2,74 +2,92 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #d3d2d2;
+    background-color: #f4f4f4;
 }
 
 header {
-    background-color: rgb(179, 35, 35);
+    background-color: #7e2b2b;
     color: white;
-    padding: 25px 50px;
+    padding: 50px 50px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     font-size: 25px;
     height: 80px;
 }
 
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
+.page-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: white; /* Cambia colore se necessario */
+    text-align: center;
+    margin-bottom: 100px;
 }
 
-nav .search-container {
+.home-icon {
+    font-size: 20px;
+    text-decoration: none;
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
+    top: 92px;
+    position: absolute;
+    left: 50px;
 }
 
-nav .menu-links {
+.search-container {
+    padding: 15px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
+    justify-content: flex-start;
+    top: 40px;
+    position: absolute;
+    left: 60px;
 }
 
-nav .home-icon {
-    font-size: 18px;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    padding: 13px;
-
-}
-
-nav .search-bar {
-    display: flex;
-    align-items: center;
-}
-
-nav input {
+.search-container input {
     padding: 15px;
     border-radius: 5px 0 0 5px;
     border: none;
     font-size: 18px;
     width: 300px;
     color: black;
+    position: absolute;
+    top: 52px;
+    left: 50px;
+    display: flex;
 }
 
-nav button {
+.search-container button {
     background: white;
     border: none;
     color: black;
     font-size: 18px;
     padding: 15px;
     border-radius: 0 5px 5px 0;
+    position: absolute;
+    top: 52px;
+    left: 380px;
+    display: flex;
+    gap: 0px;
 }
 
-nav a {
+.nav-links {
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 0 5px 5px 0;
+    position: absolute;
+    top: 77px;
+    right: 50px;
+    display: flex;
+    gap: 10px;
+}
+
+.nav-links a {
     color: black;
     text-decoration: none;
     font-size: 18px;
@@ -77,6 +95,13 @@ nav a {
     border: none;
     border-radius: 5px;
     padding: 15px;
+}
+
+.login-btn {
+    border: 1px solid white;
+    padding: 10px;
+    align-items: center;
+
 }
 
 main {
@@ -84,68 +109,50 @@ main {
 }
 
 section {
+    margin-bottom: 40px;
+}
+
+section h2 {
+    text-align: center;
     margin-bottom: 20px;
 }
 
-.movie-wrapper {
+.slider-nav {
     display: flex;
-    align-items: center;
-    position: relative;
-    justify-content: center;
+    justify-content: space-between;
+    margin-top: 10px;
 }
 
-.movie-list {
-    display: flex;
-    gap: 50px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    padding: 10px 0;
-    width: 90%;
-    white-space: nowrap;
-    scrollbar-width: none;
+.prev-arrow, .next-arrow {
+    cursor: pointer;
+    font-size: 24px;
 }
 
 .movie-card {
     background: white;
-    padding: 20px;
+    padding: 10px;
     border-radius: 8px;
     min-width: 150px;
     text-align: center;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: justify;
 }
 
-.movie-card p {
-    align-self: flex-start;
-    text-align: left;
-    text-align: justify;
-    word-wrap: break-word;  /* Spezza le parole lunghe */
-    overflow-wrap: break-word;  /* Alternativa per alcuni browser */
-    white-space: normal;  /* Consente l'andare a capo */
-    max-width: 200px;  /* Larghezza massima del paragrafo */
+.movie-card img {
+    max-width: 250px;
+    height: 350px;
+    object-fit: cover;
 }
 
-.scroll-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
+.movie-info {
+    margin-top: 10px;
 }
 
-.scroll-left {
-    left: 0;
+.movie-info h3 {
+    margin: 5px 0;
 }
 
-.scroll-right {
-    right: 0;
+.movie-subtitle {
+    display: block;
+    color: #888;
+    margin-top: 5px;
 }

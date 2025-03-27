@@ -1,80 +1,74 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INDEX</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- axios da slide-->
-    <script src="/javascripts/index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-    <link rel="stylesheet" href="./stylesheets/HomepageStyle.css">
+    <title>Cineverse</title>
+    <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+
+    <script>
+        var oscarsWinnerData = {{{ json oscarsWinner}}};
+        var latestMoviesData = {{{ json latestMovies}}};
+        var topRatedMoviesData = {{{ json topRatedMovies}}};
+    </script>
 </head>
 <body>
 <header>
     <nav>
+        <h1 class="page-title">CINEVERSE</h1>
+        <a href="/" class="home-icon">🏠</a>
         <div class="search-container">
-            <a href="#" class="home-icon">&#x1F3E0;</a>
-            <div class="search-bar">
-                <input type="text" id="search-bar" placeholder="Search">
-                <button id="clear-search">X</button>
-            </div>
+            <input type="text" placeholder="Search">
+            <button>X</button>
         </div>
-        <div>
-            <a href="#">MOVIES</a>
-            <a href="#">ACTORS</a>
-            <a href="#">CHAT</a>
-            <a href="#">LOGIN / SIGN UP</a>
+        <div class="nav-links">
+            <a href="/movies">MOVIES</a>
+            <a href="/actors">ACTORS</a>
+            <a href="/chat">CHAT</a>
+            <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
         </div>
     </nav>
 </header>
 
 <main>
-    {{#if error}}
-        <div class="error-message">
-            <p>{{error}}</p>
+    <section class="oscars-winner">
+        <h2>OSCAR'S WINNER</h2>
+        <div class="slider" id="oscarsWinnerSlider">
+            <!-- Oscar Winner movies will be populated by JavaScript -->
         </div>
-    {{else}}
-        <div id="movies-container">
-            {{#each categories}}
-                <section>
-                    <h2>{{title}}</h2>
-                    <div class="movie-wrapper">
-                        <button class="scroll-button scroll-left">&#10094;</button>
-                        <div class="movie-list">
-                            {{#each movies}}
-                                <div class="movie-card">
-                                    <img src="{{image}}" alt="Movie Poster" style="width: 150px; height: 200px;">
-                                    <h3>{{title}}</h3>
-                                    <p>{{description}}</p>
-                                    <span>{{extraInfo}}</span>
-                                </div>
-                            {{/each}}
-                        </div>
-                        <button class="scroll-button scroll-right">&#10095;</button>
-                    </div>
-                </section>
-            {{/each}}
+        <div class="slider-nav oscars-nav">
+            <div class="prev-arrow">❮</div>
+            <div class="next-arrow">❯</div>
         </div>
-    {{/if}}
+    </section>
+
+    <section class="latest-movies">
+        <h2>LATEST MOVIES</h2>
+        <div class="slider" id="latestMoviesSlider">
+            <!-- Latest movies will be populated by JavaScript -->
+        </div>
+        <div class="slider-nav latest-nav">
+            <div class="prev-arrow">❮</div>
+            <div class="next-arrow">❯</div>
+        </div>
+    </section>
+
+    <section class="top-rated-movies">
+        <h2>TOP RATED MOVIES</h2>
+        <div class="slider" id="topRatedMoviesSlider">
+            <!-- Top rated movies will be populated by JavaScript -->
+        </div>
+        <div class="slider-nav top-rated-nav">
+            <div class="prev-arrow">❮</div>
+            <div class="next-arrow">❯</div>
+        </div>
+    </section>
 </main>
 
-<script>
-    document.querySelectorAll(".movie-wrapper").forEach(wrapper => {
-        const leftBtn = wrapper.querySelector(".scroll-left");
-        const rightBtn = wrapper.querySelector(".scroll-right");
-        const movieList = wrapper.querySelector(".movie-list");
-
-        leftBtn.addEventListener("click", () => {
-            movieList.scrollBy({ left: -200, behavior: "smooth" });
-        });
-        rightBtn.addEventListener("click", () => {
-            movieList.scrollBy({ left: 200, behavior: "smooth" });
-        });
-    });
-
-    document.getElementById("clear-search").addEventListener("click", function() {
-        document.getElementById("search-bar").value = "";
-    });
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script src="/javascripts/home.js"></script>
 </body>
 </html>

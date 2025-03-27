@@ -5,7 +5,7 @@ const socketIo = require('socket.io'); //non ne sono sicuro (bisogna vedere come
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth'); //usata per login e signup
 const movieRouter = require('./routes/movies'); //usata sia per pagina singola movie che ricerca generale e visione su homepage
 const actorRouter = require('./routes/actors'); // //
@@ -16,6 +16,10 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+const hbs = require('hbs');
+hbs.registerHelper('json', function(context) {
+  return JSON.stringify(context || []);
+});
 
 app.use(logger('dev'));
 app.use(express.json());
