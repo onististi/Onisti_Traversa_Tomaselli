@@ -28,6 +28,30 @@ class CrewId implements Serializable {
     @Column(name = "role", length = 255)
     private String role;
 
+    public Integer getIdMovie() {
+        return idMovie;
+    }
+
+    public void setIdMovie(Integer idMovie) {
+        this.idMovie = idMovie;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public CrewId() {}
 
     @Override

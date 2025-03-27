@@ -10,9 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 
     <script>
-         var movieData = {{{ json movie}}};
-        var actorsData = {{{ json actors.data}}};
-        var crewData;
+        var actorsData = {{{ json actors.data}}}; //passaggio dei dati al js per la popolazione
+        var crewData = {{{json crew.data}}};
     </script>
 </head>
 <body>
@@ -82,7 +81,7 @@
                         <td id="movieStudios">{{#each movie.studios}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
                     </tr>
                     <tr>
-                        <td>Themes</td>
+                        <td>Themes</td> <!--  per non fare uscire ultima virgola unless last  -->
                         <td id="movieThemes">{{#each movie.themes}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
                     </tr>
                     <tr>

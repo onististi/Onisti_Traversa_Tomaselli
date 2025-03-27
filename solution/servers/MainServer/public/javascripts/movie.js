@@ -1,5 +1,32 @@
 document.addEventListener('DOMContentLoaded', function() {
    //tutto questo è per gli slideshows di attori e crew
+
+    function transformCrewData(rawCrewData) {
+        if (!rawCrewData || rawCrewData.length === 0) {
+            return [];
+        }
+
+        return rawCrewData.map(crewMember => {
+            // Caso in cui crewMember non esiste
+            if (!crewMember) {
+                return null;
+            }
+
+            //il modello di crew avendo chiave composta returna un json nidificato {id:{idMovie, name, role}}
+            if (crewMember.id && typeof crewMember.id === 'object') {
+                const name = crewMember.id.name;
+                const role = crewMember.id.role;
+
+                return {
+                    idMovie: crewMember.id.idMovie,
+                    name: name,
+                    role: role,
+                    photo: crewMember.photo || null
+                };
+            }
+        })
+    }
+
     fetchActorsAndCrew()
 
     function fetchActorsAndCrew() {
@@ -10,13 +37,19 @@ document.addEventListener('DOMContentLoaded', function() {
             hasActorsData = actorsData && actorsData.length > 0;
             hasCrewData = crewData && crewData.length > 0;
 
+            let transformedCrewData = [];
+            if (crewData) {
+                transformedCrewData = transformCrewData(crewData);
+                hasCrewData = transformedCrewData.length > 0;
+            }
+
             if (hasActorsData)
                 populateActors(actorsData);
             else
                 displayUnknownActors();
 
             if (hasCrewData)
-                populateCrew(crewData);
+                populateCrew(transformedCrewData);
             else
                 displayUnknownCrew();
 
@@ -57,8 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
             actorCard.innerHTML = `
             <div class="actor-image" style="background-image: url('${photoUrl}');"></div>
             <p class="actor-name">${actor.name}</p>
-            <p class="actor-role">${actor.role}</p>
-        `;
+            <p class="actor-role">${actor.role}</p>`;
             actorsSlider.appendChild(actorCard);
         });
     }
