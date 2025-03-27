@@ -1,0 +1,153 @@
+.actor-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.actor-header {
+    display: flex;
+    margin-bottom: 40px;
+}
+
+.actor-profile {
+    display: flex;
+    align-items: flex-start;
+}
+
+.actor-image {
+    width: 200px;
+    height: 200px;
+    background-position: center;
+    margin-right: 30px;
+    background-color: #ddd;
+}
+
+.actor-name {
+    font-size: 35px;
+    margin-bottom: 15px;
+}
+
+.actor-ratings {
+    margin-top: 10px;
+    margin: 5px 0;
+    font-size: larger;
+}
+
+.actor-filmography h2 {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.filmography-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.movie-card {
+    border: 1px solid #eee;
+    transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.movie-card a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.movie-poster {
+    height: 250px;
+    background-size: contain;
+    object-fit: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #eee;
+}
+
+.movie-info {
+    padding: 15px;
+}
+
+.movie-title {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.movie-role, .movie-rated, .movie-role {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.load-more-container {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.load-more {
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: larger;
+}
+
+.load-more:hover {
+    background-color: #555;
+}
+
+.thread-button-container {
+    margin-top: 30px ;
+    margin-left: 0px;
+    font-size: small;
+}
+
+.thread-button {
+    padding: 10px 25px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.thread-button:hover {
+    background-color: #555;
+}
+
+@media (max-width: 992px) {
+    .filmography-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .filmography-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .actor-profile {
+        flex-direction: column;
+    }
+
+    .actor-image {
+        margin-bottom: 20px;
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .filmography-grid {
+        grid-template-columns: 1fr;
+    }
+}

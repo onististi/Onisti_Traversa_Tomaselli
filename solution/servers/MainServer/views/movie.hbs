@@ -17,10 +17,10 @@
 <body>
 
 
-<h1 class="movie-title" id="movieName">{{movie.name}}</h1>
 <div class="movie-container">
     <div class="movie-header">
         <div class="left-content">
+            <h1 class="movie-title" id="movieName">{{movie.name}}</h1>
             <div class="tagline" id="movieTagline">{{movie.tagline}}</div>
             <div class="description-section">
                 <div class="header-row">
@@ -32,9 +32,13 @@
                         <p id="movieDescription">{{movie.description}}</p>
                     </div>
                 </div>
+
+                <div class="thread-button-container">
+                    <a href = "../chat/movie/{{movie.id}}" id="threadButton" class="thread-button">Film's Thread</a>
+                </div>
             </div>
         </div>
-        <div class="overlay" style="background-image: url('{{movie.posterLink}}');"></div>
+        <div class="overlay" id = "poster" style="background-image: url('{{movie.posterLink}}');"></div>
     </div>
 
     <div class="content-wrapper">
@@ -74,7 +78,7 @@
                     </tr>
                     <tr>
                         <td>Rating</td>
-                        <td id="movieRating">{{movie.rating}}</td>
+                        <td id="movieRating">{{movie.rating}} /5</td>
                     </tr>
                     <tr>
                         <td>Studios</td>
@@ -98,15 +102,11 @@
                     </tr>
                 </table>
             </div>
-
-            <div class="thread-button-container">
-                <a href = "../chat/movie/{{movie.id}}" id="threadButton" class="thread-button">Film's Thread</a>
-            </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!--usato per il carosello -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script src="/javascripts/movie.js"></script>
 </body>

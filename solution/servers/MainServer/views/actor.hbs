@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/actor.css">
+</head>
+<body>
+<div class="actor-container">
+    <div class="actor-header">
+        <div class="actor-profile">
+            <div class="actor-image" style="background-image: url('{{actor.photoLink}}');"></div>
+            <div class="actor-info">
+                <h1 class="actor-name" id="actorName">{{actor.name}}</h1>
+                <div class="actor-ratings">
+                    <p><strong>Highest Rated:</strong> <span id="highestRated">{{actor.highestRated}}/5</span></p>
+                    <p><strong>Lowest Rated:</strong> <span id="lowestRated">{{actor.lowestRated}}/5</span></p>
+
+                    <div class="thread-button-container">
+                        <a href = "../chat/actor/{{actor.name}}" id="threadButton" class="thread-button">Actor's Thread</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="actor-filmography">
+            <h2>FILMOGRAPHY</h2>
+            <div class="filmography-grid" id="filmographyGrid">
+
+                {{#each movies}}
+                    <div class="movie-card">
+                        <a href="/movies/:{{movie.id}}">
+                            <div class="movie-poster" style="background-image: url('{{movie.posterLink}}');"></div>
+                            <div class="movie-info">
+                                <h3 class="movie-title">{{movie.name}}</h3>
+                                <p class="movie-role">{{role}}</p>
+                                <p class="movie-year">{{movie.year}}</p>
+                                <p class="movie-rated">{{movie.rating}}/5</p>
+                            </div>
+                        </a>
+                    </div>
+                {{/each}}
+            </div>
+
+            {{#if hasMoreMovies}} <!--passato dalla route se ha +di 8 film -->
+                <div class="load-more-container">
+                    <button id="loadMoreBtn" class="load-more">LOAD MORE</button>
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script src="/javascripts/actor.js"></script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 package org.example.javaserver.models;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;

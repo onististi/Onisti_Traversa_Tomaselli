@@ -17,8 +17,6 @@ public class MoviesService {
 
     @Transactional
     public Optional<Movie> findMovieById(Integer id) {
-        System.out.println("ricevuta richiesta per film id " + id);
-
         Movie movie = entityManager.find(Movie.class, id);
         if (movie == null)
             return Optional.empty();

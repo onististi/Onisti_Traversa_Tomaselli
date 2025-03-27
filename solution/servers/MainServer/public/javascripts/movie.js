@@ -85,6 +85,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const actorCard = document.createElement('div');
             actorCard.className = 'actor-card';
 
+            actorCard.style.cursor = 'pointer';
+            actorCard.addEventListener('click', () => {
+                const encodedActorName = encodeURIComponent(actor.name);
+                window.location.href = `http://localhost:3000/actors/${encodedActorName}`;
+            });
+
             const photoUrl = actor.photo || '/images/placeholder.jpg';
 
             actorCard.innerHTML = `

@@ -12,23 +12,22 @@ router.get('/:id', async function(req, res, next) {
     let responseMovie, responseActors, responseCrew;
 
     try {
-        //console.log(`Main Server: richiesta dati per film ID ${movieId}`);
-        responseMovie = await  axios.get("http://localhost:8080/api/movies/1000022");
-
-        if (!responseMovie.data || !responseMovie.data.name)
-            return res.render('movieNotFound', {title: 'Film non trovato', message: 'Film non trovato! Torna alla home page.',});
+        responseMovie = await  axios.get("http://localhost:8080/api/movies/"+movieId.replace(":","")); // se non lo trova catch per errore 404
 
         responseActors = await  axios.get("http://localhost:8080/api/actors/movie/1000022");
         responseCrew =  await  axios.get("http://localhost:8080/api/crews/1000022");
 
-        res.render('movie', {
-            title: `Movie: ${responseMovie.data.name}`,
+        res.render("movie", {
+            title: "Movie: "+responseMovie.data.name,
             movie: responseMovie.data ,//passa oggetti alla view, actors e crew non .data perche possono essere null e quinid mostrare messaggio unknown
             actors: responseActors,
             crew: responseCrew
         });
 
-    } catch (error) {res.status(500).json({ message: "Errore nel recupero del film" })}
-        //console.log(response.data);
+        } catch (error) {
+        if (error.response && error.response.status === 404)
+            return res.render('NotFound', { title: 'Attore non trovato', message: 'Attore non trovato! Torna alla home page.' });
+        res.status(500).json({ message: "Errore nel recupero del film" })
+        }
 });
 module.exports = router;
