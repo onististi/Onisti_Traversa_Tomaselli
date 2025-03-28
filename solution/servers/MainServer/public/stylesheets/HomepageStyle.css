@@ -1,0 +1,159 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+
+}
+
+header {
+    background-color: #7e2b2b;
+    color: white;
+    padding: 50px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 25px;
+    height: 80px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: white; /* Cambia colore se necessario */
+    text-align: center;
+    margin-bottom: 100px;
+}
+
+.home-icon {
+    font-size: 20px;
+    text-decoration: none;
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    top: 92px;
+    position: absolute;
+    left: 50px;
+}
+
+.search-container {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    top: 40px;
+    position: absolute;
+    left: 60px;
+}
+
+.search-container input {
+    padding: 15px;
+    border-radius: 5px 0 0 5px;
+    border: none;
+    font-size: 18px;
+    width: 300px;
+    color: black;
+    position: absolute;
+    top: 52px;
+    left: 50px;
+    display: flex;
+}
+
+.search-container button {
+    background: white;
+    border: none;
+    color: black;
+    font-size: 18px;
+    padding: 15px;
+    border-radius: 0 5px 5px 0;
+    position: absolute;
+    top: 52px;
+    left: 380px;
+    display: flex;
+    gap: 0px;
+}
+
+.nav-links {
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 0 5px 5px 0;
+    position: absolute;
+    top: 77px;
+    right: 50px;
+    display: flex;
+    gap: 10px;
+}
+
+.nav-links a {
+    color: black;
+    text-decoration: none;
+    font-size: 18px;
+    background: white;
+    border: none;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.login-btn {
+    border: 1px solid white;
+    padding: 10px;
+    align-items: center;
+
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 40px;
+}
+
+section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.slider-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.prev-arrow, .next-arrow {
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.movie-card {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    min-width: 150px;
+    text-align: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.movie-card img {
+    max-width: 250px;
+    height: 350px;
+    object-fit: cover;
+}
+
+.movie-info {
+    margin-top: 10px;
+}
+
+.movie-info h3 {
+    margin: 5px 0;
+}
+
+.movie-subtitle {
+    display: block;
+    color: #888;
+    margin-top: 5px;
+}

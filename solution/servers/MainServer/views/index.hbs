@@ -1,16 +1,74 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INDEX</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- axios da slide-->
-    <script src="/javascripts/index.js"></script>
+    <title>Cineverse</title>
+    <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+
+    <script>
+        var oscarsWinnerData = {{{ json oscarsWinner}}};
+        var latestMoviesData = {{{ json latestMovies}}};
+        var topRatedMoviesData = {{{ json topRatedMovies}}};
+    </script>
 </head>
 <body>
-<h1>Messaggio dal server Java:</h1>
-<p id="output">Caricamento...</p>
+<header>
+    <nav>
+        <h1 class="page-title">CINEVERSE</h1>
+        <a href="/" class="home-icon">🏠</a>
+        <div class="search-container">
+            <input type="text" placeholder="Search">
+            <button>X</button>
+        </div>
+        <div class="nav-links">
+            <a href="/movies">MOVIES</a>
+            <a href="/actors">ACTORS</a>
+            <a href="/chat">CHAT</a>
+            <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
+        </div>
+    </nav>
+</header>
 
+<main>
+    <section class="oscars-winner">
+        <h2>OSCAR'S WINNER</h2>
+        <div class="slider" id="oscarsWinnerSlider">
+            <!-- Oscar Winner movies will be populated by JavaScript -->
+        </div>
+        <div class="slider-nav oscars-nav">
+            <div class="prev-arrow">❮</div>
+            <div class="next-arrow">❯</div>
+        </div>
+    </section>
 
+    <section class="latest-movies">
+        <h2>LATEST MOVIES</h2>
+        <div class="slider" id="latestMoviesSlider">
+            <!-- Latest movies will be populated by JavaScript -->
+        </div>
+        <div class="slider-nav latest-nav">
+            <div class="prev-arrow">❮</div>
+            <div class="next-arrow">❯</div>
+        </div>
+    </section>
+
+    <section class="top-rated-movies">
+        <h2>TOP RATED MOVIES</h2>
+        <div class="slider" id="topRatedMoviesSlider">
+            <!-- Top rated movies will be populated by JavaScript -->
+        </div>
+        <div class="slider-nav top-rated-nav">
+            <div class="prev-arrow">❮</div>
+            <div class="next-arrow">❯</div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script src="/javascripts/home.js"></script>
 </body>
 </html>
