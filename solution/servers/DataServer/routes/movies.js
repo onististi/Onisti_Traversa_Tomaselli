@@ -3,7 +3,7 @@
 //ROUTE DI ESEMPIO per gestione chiamata da api, EXPRESS NON PARLA CON POSTGRE, LUI HA I FILM, CI PARLA JAVASERVER
 
 var express = require('express');
-const axios = require('axios');
+const axios = require('axios/dist/node/axios.cjs');
 var router = express.Router();
 
 //import {getMovieById} from '../services(movieServices)';

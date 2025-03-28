@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
+const axios = require('axios/dist/node/axios.cjs');
 
 // Configurazione endpoint JavaServer
 const JAVA_SERVER_URL = 'http://localhost:8080';

@@ -1,16 +1,13 @@
 var express = require('express');
-const axios = require('axios');
+const axios = require('axios/dist/node/axios.cjs');
 var router = express.Router();
 
 router.get('/', async function(req, res, next) {
     try {
-        // Fetch Oscar's Winner movies
         const oscarsResponse = await axios.get("http://localhost:8080/api/movies/oscars-winners");
 
-        // Fetch Latest movies
         const latestResponse = await axios.get("http://localhost:8080/api/movies/latest");
 
-        // Fetch Top Rated movies
         const topRatedResponse = await axios.get("http://localhost:8080/api/movies/top-rated");
 
         res.render('index', {

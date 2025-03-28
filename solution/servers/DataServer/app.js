@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 const indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var movieRouter = require('./routes/movies');
 var authRouter = require('./routes/auth'); // Aggiunto questo import
 

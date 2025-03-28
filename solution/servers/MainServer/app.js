@@ -1,7 +1,8 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-const socketIo = require('socket.io'); //non ne sono sicuro (bisogna vedere come fare la chat se nel mainserver o un server apposito)
+const socketIo = require('socket.io');
+const session = require('express-session');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
