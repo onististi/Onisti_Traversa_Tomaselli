@@ -1,6 +1,16 @@
-extends layout
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Errore</title>
+</head>
+<body>
+<h1>{{message}}</h1>
+{{#if error.status}}
+    <h2>Errore {{error.status}}</h2>
+{{/if}}
+{{#if error.stack}}
+    <pre>{{error.stack}}</pre>
+{{/if}}
+</body>
+</html>
 
-block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}

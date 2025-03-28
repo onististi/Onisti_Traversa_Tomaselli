@@ -1,15 +1,65 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const axios = require('axios');
 
-//le routes dovranno gestire le richieste da inviare al dataserver che fara la query su mongo per autenticazione
-//non caricare altre pagine in quanto il login sara solo una finestrella sopra alla pagina in cui ci si trova
+// Configurazione endpoint JavaServer
+const JAVA_SERVER_URL = 'http://localhost:8080';
 
-router.get('/signup', function(req, res, next) { //router per pagina ricerca film generale
-   // res.render('movie', {title: "movies"});  //qui come opzione alla ricarica della pagina passera che è stato effettuato login per il cambio della navbar
+// Pagina di registrazione
+router.get('/register', (req, res) => {
+    res.render('register', {
+        title: 'Registrazione',
+        // Rimuovi eventuali vecchi messaggi di sessione
+        error: null,
+        success: null
+    });
 });
 
-router.get('/login', function(req, res, next) {
-  //  res.render('movie', {title: "movie"+movieId});
+// Gestione registrazione POST
+router.post('/register', async (req, res) => {
+    const { username, email, password, confirmPassword } = req.body;
+
+    // Validazione lato server
+    if (password !== confirmPassword) {
+        return res.render('register', {
+            title: 'Registrazione',
+            error: 'Le password non corrispondono',
+            username,
+            email
+        });
+    }
+
+    try {
+        // Invia richiesta a JavaServer
+        const response = await axios.post(`${JAVA_SERVER_URL}/api/auth/register`, {
+            username,
+            email,
+            password
+        });
+
+        // Se la registrazione ha successo
+        if (response.data.success) {
+            // Passa il messaggio di successo direttamente alla vista login
+            return res.render('login', {
+                title: 'Login',
+                success: 'Registrazione completata! Ora puoi effettuare il login'
+            });
+        }
+    } catch (error) {
+        console.error('Registration error:', error.response ? error.response.data : error.message);
+
+        // Gestione errori da JavaServer
+        const errorMessage = error.response
+            ? error.response.data.message
+            : 'Errore durante la registrazione';
+
+        return res.render('register', {
+            title: 'Registrazione',
+            error: errorMessage,
+            username,
+            email
+        });
+    }
 });
 
 module.exports = router;

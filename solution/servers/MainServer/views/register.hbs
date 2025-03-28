@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrazione</title>
+    <script src="/javascripts/auth.js"></script>
+</head>
+<body>
+<h1>Registrazione</h1>
+<form id="registerForm" action="/auth/register" method="POST">
+    <input type="text" name="username" id="username" placeholder="Username" required>
+    <input type="email" name="email" id="email" placeholder="Email" required>
+    <input type="password" name="password" id="password" placeholder="Password" required>
+    <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Conferma password" required>
+    <button type="submit">Registrati</button>
+</form>
+<!-- Eventuali messaggi di errore o successo possono essere visualizzati qui -->
+{{#if error}}
+    <p class="message" style="color:red;">{{error}}</p>
+{{/if}}
+{{#if success}}
+    <p class="message" style="color:green;">{{success}}</p>
+{{/if}}
+</body>
+</html>

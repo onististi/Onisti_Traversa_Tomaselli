@@ -1,6 +1,5 @@
 
 
-/*
 axios.get('https://jsonplaceholder.typicode.com/posts/1', {
     headers: {
         'Accept': 'application/json'
@@ -11,4 +10,4 @@ axios.get('https://jsonplaceholder.typicode.com/posts/1', {
     })
     .catch(error => {
         console.error('Errore durante la richiesta:', error);
-    });*/
+    });
