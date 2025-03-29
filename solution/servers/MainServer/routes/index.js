@@ -166,5 +166,4 @@ router.get('/', async function(req, res, next) {
 
     } catch (error) {res.status(500).json({ message: "Errore nel recupero del film" })}
 });
-
 module.exports = router;

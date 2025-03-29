@@ -89,7 +89,6 @@ $(document).ready(function(){
     $('.oscar-nav .next-arrow').on('click', function() {
         $('.oscar-movie-slider').slick('slickNext');
     });
-
     $('.oscar-nav .prev-arrow').on('click', function() {
         $('.oscar-movie-slider').slick('slickPrev');
     });
@@ -98,7 +97,6 @@ $(document).ready(function(){
     $('.latest-nav .next-arrow').on('click', function() {
         $('.latest-movie-slider').slick('slickNext');
     });
-
     $('.latest-nav .prev-arrow').on('click', function() {
         $('.latest-movie-slider').slick('slickPrev');
     });
@@ -107,7 +105,6 @@ $(document).ready(function(){
     $('.top-nav .next-arrow').on('click', function() {
         $('.top-movie-slider').slick('slickNext');
     });
-
     $('.top-nav .prev-arrow').on('click', function() {
         $('.top-movie-slider').slick('slickPrev');
     });
