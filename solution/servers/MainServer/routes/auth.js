@@ -28,7 +28,7 @@ router.post('/login', async (req, res) => {
             req.session.isLoggedIn = true;
 
             // Reindirizza alla dashboard o homepage
-            return res.status(200).json({ message: 'Login completato', user: response.data.user });
+            return res.redirect('/');
         }
     } catch (error) {
         console.error('Login error:', error.response ? error.response.data : error.message);

@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var movieRouter = require('./routes/movies');
 var authRouter = require('./routes/auth'); // Aggiunto questo import
+require('./config/db'); // Importa la connessione al database
 
 var app = express();
 

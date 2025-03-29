@@ -3,22 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accesso</title>
+    <title>Login</title>
     <script src="/javascripts/auth.js"></script>
+    <link rel="stylesheet" href="/stylesheets/LoginStyle.css">
 </head>
 <body>
-<h1>Accesso</h1>
-<form id="registerForm" action="/auth/login" method="POST">
-    <input type="text" name="username" id="username" placeholder="Username" required>
-    <input type="password" name="password" id="password" placeholder="Password" required>
-    <button type="submit">Accedi</button>
-</form>
-<!-- Eventuali messaggi di errore o successo possono essere visualizzati qui -->
-{{#if error}}
-    <p class="message" style="color:red;">{{error}}</p>
-{{/if}}
-{{#if success}}
-    <p class="message" style="color:green;">{{success}}</p>
-{{/if}}
+<div class="login-container">
+    <h1>Login</h1>
+    <form id="registerForm" action="/auth/login" method="POST">
+        <input type="text" name="username" id="username" placeholder="Username" required>
+        <input type="password" name="password" id="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p>If you aren't already registered, <a href="register">Register</a></p>
+    <p> Return to <a href="/">home</a></p>
+    <!-- Eventuali messaggi di errore o successo possono essere visualizzati qui -->
+    {{#if error}}
+        <p class="message" style="color:red;">{{error}}</p>
+    {{/if}}
+    {{#if success}}
+        <p class="message" style="color:green;">{{success}}</p>
+    {{/if}}
+</div>
 </body>
 </html>
