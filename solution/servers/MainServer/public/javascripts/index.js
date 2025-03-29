@@ -1,71 +1,114 @@
-document.addEventListener('DOMContentLoaded', function() {
-    fetchMoviesAndInitializeSliders();
+$(document).ready(function(){
+    $('.oscar-movie-slider').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        arrows: false,
+        dots: false,
+        infinite: true,
+        autoplay: false,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 4
+                }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 3
+                }
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 2
+                }
+            }
+        ]
+    });
 
-    function fetchMoviesAndInitializeSliders() {
-        try {
-            if (oscarsWinnerData && oscarsWinnerData.length > 0)
-                populateSlider('oscarsWinnerSlider', oscarsWinnerData, 'OSCAR VINTO');
+    $('.top-movie-slider').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        arrows: false,
+        dots: false,
+        infinite: true,
+        autoplay: false,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 4
+                }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 3
+                }
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 2
+                }
+            }
+        ]
+    });
 
-            if (latestMoviesData && latestMoviesData.length > 0)
-                populateSlider('latestMoviesSlider', latestMoviesData, 'DATA USCITA');
+    $('.latest-movie-slider').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        arrows: false,
+        dots: false,
+        infinite: true,
+        autoplay: false,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 4
+                }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 3
+                }
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 2
+                }
+            }
+        ]
+    });
 
-            if (topRatedMoviesData && topRatedMoviesData.length > 0)
-                populateSlider('topRatedMoviesSlider', topRatedMoviesData, 'VALUTAZIONE');
+    $('.oscar-nav .next-arrow').on('click', function() {
+        $('.oscar-movie-slider').slick('slickNext');
+    });
 
-            initializeSliders();
-        } catch (error) {
-            console.error('Error processing movies', error);
-        }
-    }
+    $('.oscar-nav .prev-arrow').on('click', function() {
+        $('.oscar-movie-slider').slick('slickPrev');
+    });
 
-    function populateSlider(sliderId, movies, subtitleText) {
-        const slider = document.getElementById(sliderId);
-        slider.innerHTML = '';
 
-        movies.forEach(movie => {
-            const movieCard = document.createElement('div');
-            movieCard.className = 'movie-card';
-            movieCard.innerHTML = `
-                <a href="/movies/${movie.id}">
-                    <img src="${movie.posterLink}" alt="Movie Poster" class="movie-poster">
-                    <div class="movie-info">
-                        <h3>${movie.name}</h3>
-                        <p>${movie.description}</p>
-                        <span class="movie-subtitle">${subtitleText}</span>
-                    </div>
-               </a>
-            `;
-            slider.appendChild(movieCard);
-        });
-    }
+    $('.latest-nav .next-arrow').on('click', function() {
+        $('.latest-movie-slider').slick('slickNext');
+    });
 
-    function initializeSliders() {
-        initializeSlider('#oscarsWinnerSlider', '.oscars-nav');
-        initializeSlider('#latestMoviesSlider', '.latest-nav');
-        initializeSlider('#topRatedMoviesSlider', '.top-rated-nav');
-    }
+    $('.latest-nav .prev-arrow').on('click', function() {
+        $('.latest-movie-slider').slick('slickPrev');
+    });
 
-    function initializeSlider(sliderSelector, navSelector) {
-        if ($(sliderSelector).children().length > 0) {
-            $(sliderSelector).slick({
-                slidesToShow: 3,
-                slidesToScroll: 1,
-                autoplay: false,
-                dots: false,
-                infinite: true,
-                responsive: [
-                    { breakpoint: 1024, settings: { slidesToShow: 2 } },
-                    { breakpoint: 768, settings: { slidesToShow: 1 } }
-                ]
-            });
 
-            $(`${navSelector} .next-arrow`).on('click', function() {
-                $(sliderSelector).slick('slickNext');
-            });
+    $('.top-nav .next-arrow').on('click', function() {
+        $('.top-movie-slider').slick('slickNext');
+    });
 
-            $(`${navSelector} .prev-arrow`).on('click', function() {
-                $(sliderSelector).slick('slickPrev');
-            });
-        }
-    }
+    $('.top-nav .prev-arrow').on('click', function() {
+        $('.top-movie-slider').slick('slickPrev');
+    });
 });

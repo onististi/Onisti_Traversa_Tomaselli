@@ -1,71 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cineverse</title>
-    <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
+    <title>Movie Database</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
-
-    <script>
-        var oscarsWinnerData = {{{ json oscarsWinner}}};
-        var latestMoviesData = {{{ json latestMovies}}};
-        var topRatedMoviesData = {{{ json topRatedMovies}}};
-    </script>
+    <link rel="stylesheet" href="./stylesheets/homepage.css">
 </head>
 <body>
-<header>
-    <nav>
-        <h1 class="page-title">CINEVERSE</h1>
-        <a href="/" class="home-icon">🏠</a>
-        <div class="search-container">
-            <input type="text" placeholder="Search">
-            <button>X</button>
-        </div>
-        <div class="nav-links">
-            <a href="/movies">MOVIES</a>
-            <a href="/actors">ACTORS</a>
-            <a href="/chat">CHAT</a>
-            <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
-        </div>
-    </nav>
-</header>
-
 <main>
-    <section class="oscars-winner">
-        <h2>OSCAR'S WINNER</h2>
-        <div class="slider" id="oscarsWinnerSlider">
-        </div>
-        <div class="slider-nav oscars-nav">
-            <div class="prev-arrow">❮</div>
-            <div class="next-arrow">❯</div>
+    <section class="section-container">
+        <h2 class="section-title">OSCAR'S WINNER</h2>
+        <div class="slider-container">
+            <div class="oscar-movie-slider">
+                {{#each oscarsWinners}}
+                    <div class="card-container">
+                        <div class = "card">
+                        <div class="poster">
+                            <img src="{{this.poster}}" alt="{{this.title}} poster">
+                        </div>
+                        <div class="info">
+                            <h3 class="film-title">{{this.title}}</h3>
+                            <p class="film-description">{{this.description}}</p>
+                            <p class="oscar">{{this.oscarWon}}</p>
+                        </div>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+            <div class="slider-nav oscar-nav">
+                <div class="prev-arrow">❮</div>
+                <div class="next-arrow">❯</div>
+            </div>
         </div>
     </section>
 
-    <section class="latest-movies">
-        <h2>LATEST MOVIES</h2>
-        <div class="slider" id="latestMoviesSlider">
-        </div>
-        <div class="slider-nav latest-nav">
-            <div class="prev-arrow">❮</div>
-            <div class="next-arrow">❯</div>
+    <section class="section-container">
+        <h2 class="section-title">LATEST MOVIES</h2>
+        <div class="slider-container">
+            <div class="latest-movie-slider">
+                {{#each latestMovies}}
+                <div class="card-container">
+                    <div class="card" >
+                        <div class="poster">
+                            <img src="{{this.poster}}" alt="{{this.title}} poster">
+                        </div>
+                        <div class="info">
+                            <h3 class="film-title">{{this.title}}</h3>
+                            <p class="film-description">{{this.description}}</p>
+                            <p class="data-uscita">{{this.releaseDate}}</p>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            <div class="slider-nav latest-nav">
+                <div class="prev-arrow">❮</div>
+                <div class="next-arrow">❯</div>
+            </div>
         </div>
     </section>
 
-    <section class="top-rated-movies">
-        <h2>TOP RATED MOVIES</h2>
-        <div class="slider" id="topRatedMoviesSlider">
-        </div>
-        <div class="slider-nav top-rated-nav">
-            <div class="prev-arrow">❮</div>
-            <div class="next-arrow">❯</div>
+    <section class="section-container">
+        <h2 class="section-title">TOP RATED MOVIES</h2>
+        <div class="slider-container">
+            <div class="top-movie-slider">
+                {{#each topRatedMovies}}
+                <div class="card-container">
+                    <div class="card" url="">
+                        <div class="poster">
+                            <img src="{{this.poster}}" alt="{{this.title}} poster">
+                        </div>
+                        <div class="info">
+                            <h3 class="film-title">{{this.title}}</h3>
+                            <p class="film-description">{{this.description}}</p>
+                            <p class="valutazione">{{this.rating}}/10</p>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            <div class="slider-nav top-nav">
+                <div class="prev-arrow">❮</div>
+                <div class="next-arrow">❯</div>
+            </div>
         </div>
     </section>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!--usato per il carosello -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-<script src="/javascripts/home.js"></script>
+<script src="./javascripts/index.js"></script>
 </body>
 </html>
