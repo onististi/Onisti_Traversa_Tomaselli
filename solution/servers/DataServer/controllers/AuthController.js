@@ -27,8 +27,8 @@ exports.register = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(' Errore durante la registrazione:', error);
-        return res.status(500).json({ success: false, message: 'Errore during registration' });
+        console.error(' Error during registration:', error);
+        return res.status(500).json({ success: false, message: 'Error during registration' });
     }
 };
 
@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
         const { username, password } = req.body;
 
         if (!username || !password) {
-            return res.status(400).json({ success: false, message: 'Username e password are mandatory' });
+            return res.status(400).json({ success: false, message: 'Username and password are mandatory' });
         }
 
         const user = await User.findOne({ username });
@@ -63,7 +63,7 @@ exports.login = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(' Errore durante il login:', error);
+        console.error(' Error durante il login:', error);
         return res.status(500).json({ success: false, message: 'Error during login' });
     }
 };
