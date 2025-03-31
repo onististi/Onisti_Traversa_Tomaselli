@@ -155,11 +155,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 ]
             });
 
-            $('.actors-nav .next-arrow').on('click', function() {
+            $('.actors-nav .next-arrow-actors').on('click', function() {
                 $('.actors-slider').slick('slickNext');
             });
 
-            $('.actors-nav .prev-arrow').on('click', function() {
+            $('.actors-nav .prev-arrow-actors').on('click', function() {
                 $('.actors-slider').slick('slickPrev');
             });
         }
@@ -194,11 +194,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             //eventhandlers per frecce come per attori
-            $('.crew-nav .next-arrow').on('click', function() {
+            $('.crew-nav .next-arrow-crew').on('click', function() {
                 $('.crew-slider').slick('slickNext');
             });
 
-            $('.crew-nav .prev-arrow').on('click', function() {
+            $('.crew-nav .prev-arrow-crew').on('click', function() {
                 $('.crew-slider').slick('slickPrev');
             });
         }
