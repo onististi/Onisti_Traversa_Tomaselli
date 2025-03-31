@@ -113,4 +113,41 @@ public class MoviesService {
 
         return Optional.of(movie);
     }
+
+    @Transactional
+    public List<Movie> findLatestMovies(int limit) {
+        String query = "SELECT m FROM Movie m ORDER BY m.year DESC, m.id DESC";
+        List<Movie> movies = entityManager.createQuery(query, Movie.class)
+                .setMaxResults(limit)
+                .getResultList();
+
+        List<Movie> enrichedMovies = new ArrayList<>();
+        for (Movie movie : movies) {
+            Optional<Movie> enrichedMovie = findMovieById(movie.getId());
+            if (enrichedMovie.isPresent()) {
+                enrichedMovies.add(enrichedMovie.get());
+            }
+        }
+
+        return enrichedMovies;
+    }
+
+    @Transactional
+    public List<Movie> findTopRatedMovies(int limit) {
+
+        String query = "SELECT m FROM Movie m WHERE m.rating IS NOT NULL ORDER BY m.rating DESC, m.year DESC";
+        List<Movie> movies = entityManager.createQuery(query, Movie.class)
+                .setMaxResults(limit)
+                .getResultList();
+
+        List<Movie> enrichedMovies = new ArrayList<>();
+        for (Movie movie : movies) {
+            Optional<Movie> enrichedMovie = findMovieById(movie.getId());
+            if (enrichedMovie.isPresent()) {
+                enrichedMovies.add(enrichedMovie.get());
+            }
+        }
+
+        return enrichedMovies;
+    }
 }

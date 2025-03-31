@@ -36,4 +36,16 @@ public class MoviesController {
         return movie.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build()); //404 se non presente
     }
 
+    @GetMapping("/latest")
+    public ResponseEntity<List<Movie>> getLatestMovies() {
+        List<Movie> movies = moviesService.findLatestMovies(20);
+        return ResponseEntity.ok(movies);
+    }
+
+    @GetMapping("/top-rated")
+    public ResponseEntity<List<Movie>> getTopRatedMovies() {
+        List<Movie> movies = moviesService.findTopRatedMovies(20); //limite 20 film
+        return ResponseEntity.ok(movies);
+    }
+
 }

@@ -41,10 +41,10 @@ nav {
 }
 
 .home-icon {
-    font-size: 20px;
+    font-size: 16px;
     text-decoration: none;
     color: black;
-    padding: 10px;
+    padding: 9px;
     border-radius: 5px;
     background: #ffffff;
     position: absolute;
@@ -229,8 +229,11 @@ section {
 }
 
 .prev-arrow {
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
-    margin: 0 5px;
     width: 30px;
     height: 30px;
     background-color: #333;
@@ -239,11 +242,15 @@ section {
     line-height: 30px;
     border-radius: 50%;
     font-size: 18px;
+    z-index: 10;
 }
 
 .next-arrow {
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
-    margin: 0 5px;
     width: 30px;
     height: 30px;
     background-color: #333;
@@ -252,6 +259,7 @@ section {
     line-height: 30px;
     border-radius: 50%;
     font-size: 18px;
+    z-index: 10;
 }
 
 /* Media queries per responsive */
