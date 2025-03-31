@@ -17,7 +17,7 @@ router.get('/:id', function(req, res, next) { //router per pagina singolo film,
     const movieId = req.params.id;
     console.log("Richiesta dal Mainserver per informazioni su film");
 
-    //qui ci deve stare la chiamata alla funzione importata dal service per la cosa richiesta (recensione/utente/oscar) ognuno con con la sua route
+    //qui ci deve stare la chiamata alla funzione importata dal service per la cosa richiesta (recensione/utente/oscar) ognuno con la sua route
     res.json({id : '888'});
 });
 
