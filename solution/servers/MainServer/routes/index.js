@@ -70,7 +70,7 @@ router.get('/', async function(req, res, next) {
                     title: "Challengers",
                     description: "Un triangolo amoroso tra tennisti professionisti con un passato comune.",
                     releaseDate: "24 Aprile 2024",
-                    poster: "/images/challengers.jpg"
+                    poster: "https://a.ltrbxd.com/resized/film-poster/8/4/2/3/0/1/842301-challengers-0-230-0-345-crop.jpg?v=a7cd63cbef"
                 },
                 {
                     title: "Civil War",

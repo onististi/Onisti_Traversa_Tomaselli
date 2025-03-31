@@ -1,20 +1,137 @@
-.card-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+body {
     font-family: Arial, sans-serif;
-    padding-left: 15px;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #7e2b2b;
+    color: white;
+    padding: 20px 50px;
+    position: relative;
+    height: 120px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin: 0 0 10px 0;
+}
+
+nav {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.welcome-message {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.home-icon {
+    font-size: 20px;
+    text-decoration: none;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    background: #ffffff;
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-container {
+    position: absolute;
+    top: 50px;
+    left: 70px;
+    display: flex;
+}
+
+.search-container input {
+    padding: 10px;
+    border-radius: 5px 0 0 5px;
+    border: none;
+    font-size: 16px;
+    width: 300px;
+}
+
+.search-container button {
+    background: white;
+    border: none;
+    color: black;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 0 5px 5px 0;
+}
+
+.nav-links {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    display: flex;
+    gap: 10px;
+}
+
+.nav-links a {
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    background: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    display: inline-block;
+}
+
+.login-btn {
+    border: 1px solid white;
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Card styles */
+.card-container {
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .card {
     display: flex;
     flex-direction: row;
-    width: 400px;
+    width: 100%;
     height: 200px;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid #eee;
-    text-align: center;
     background-color: #fff;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -26,17 +143,19 @@
 
 .poster {
     flex: 1;
+    max-width: 40%;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .poster img {
-    max-width: 100%;
-    max-height: 100%;
-    background-color: #333333;
-    border-radius: 8px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    background-color: #333333;
+    border-radius: 8px 0 0 8px;
 }
 
 .info {
@@ -44,7 +163,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 0 10px;
+    padding: 15px;
     text-align: left;
     overflow: hidden;
 }
@@ -52,10 +171,10 @@
 .film-title {
     font-size: 1.2rem;
     font-weight: bold;
-    margin: 0;
+    margin: 0 0 10px 0;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Impedisce il testo troppo lungo di sbordare */
+    text-overflow: ellipsis;
 }
 
 .film-description {
@@ -63,38 +182,52 @@
     margin: 5px 0;
     opacity: 0.8;
     display: -webkit-box;
-    -webkit-line-clamp: 3; /* Limita a 3 righe */
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.data-uscita {
+.data-uscita, .oscar, .valutazione {
     font-size: 0.9rem;
     font-weight: bold;
     color: #555;
+    margin-top: 5px;
 }
 
-.title {
-    display: block;
-    font-size: 2em;
-    font-weight: bold;
-    font-size: larger;
-    unicode-bidi: isolate;
-
+/* Slider container styles */
+.section-container {
+    margin-bottom: 40px;
+    padding: 0 20px;
 }
 
-.section-title{
-    font-family: inter;
-    padding-left: 2%;
+.slider-container {
+    position: relative;
 }
 
+/* Slick slider custom styles */
+.slick-slider {
+    margin-bottom: 30px;
+}
+
+.slick-slide {
+    margin: 0 10px;
+}
+
+.slick-track {
+    display: flex;
+    padding: 20px 0;
+}
+
+/* Slider navigation styles */
 .slider-nav {
     text-align: right;
     display: flex;
     justify-content: flex-end;
     align-items: center;
     margin-top: 10px;
+    margin-right: 20px;
 }
+
 .prev-arrow, .next-arrow {
     cursor: pointer;
     margin: 0 5px;
@@ -105,4 +238,287 @@
     text-align: center;
     line-height: 30px;
     border-radius: 50%;
+    font-size: 18px;
+}
+
+/* Media queries per responsive */
+@media (max-width: 768px) {
+    header {
+        padding: 15px;
+        height: auto;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    header {
+        background-color: #7e2b2b;
+        color: white;
+        padding: 20px 50px;
+        position: relative;
+        height: 120px;
+    }
+
+    .page-title {
+        font-size: 32px;
+        font-weight: bold;
+        color: white;
+        text-align: center;
+        margin: 0 0 10px 0;
+    }
+
+    nav {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .home-icon {
+        font-size: 20px;
+        text-decoration: none;
+        color: black;
+        padding: 12px;
+        border-radius: 5px;
+        background: #ffffff;
+        position: absolute;
+        top: 50px;
+        left: 0;
+    }
+
+    .search-container {
+        position: absolute;
+        top: 50px;
+        left: 60px;
+        display: flex;
+    }
+
+    .search-container input {
+        padding: 10px;
+        border-radius: 5px 0 0 5px;
+        border: none;
+        font-size: 16px;
+        width: 300px;
+    }
+
+    .search-container button {
+        background: white;
+        border: none;
+        color: black;
+        font-size: 16px;
+        padding: 10px;
+        border-radius: 0 5px 5px 0;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        display: flex;
+        gap: 10px;
+    }
+
+    .nav-links a {
+        color: black;
+        text-decoration: none;
+        font-size: 16px;
+        background: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        display: inline-block;
+    }
+
+    .login-btn {
+        border: 1px solid white;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    section {
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-family: 'Inter', sans-serif;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Card styles */
+    .card-container {
+        padding: 10px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    .card {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: 200px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #eee;
+        background-color: #fff;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .poster {
+        flex: 1;
+        max-width: 40%;
+        min-width: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #333333;
+    }
+
+    .poster img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px 0 0 8px;
+    }
+
+    /* Fallback quando l'immagine non si carica */
+    .poster img:not([src]),
+    .poster img[src=""],
+    .poster img[src="null"],
+    .poster img[src="undefined"],
+    .poster img[alt="null poster"],
+    .poster img:not([src])[alt] {
+        display: none;
+    }
+
+    .info {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 15px;
+        text-align: left;
+        overflow: hidden;
+    }
+
+    .film-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .film-description {
+        font-size: 0.9rem;
+        margin: 5px 0;
+        opacity: 0.8;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .data-uscita, .oscar, .valutazione {
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #555;
+        margin-top: 5px;
+    }
+
+    /* Slider container styles */
+    .section-container {
+        margin-bottom: 40px;
+        padding: 0 20px;
+    }
+
+    .slider-container {
+        position: relative;
+    }
+
+    /* Slick slider custom styles */
+    .slick-slider {
+        margin-bottom: 30px;
+    }
+
+    .slick-slide {
+        margin: 0 10px;
+    }
+
+    .slick-track {
+        display: flex;
+        padding: 20px 0;
+    }
+
+    /* Slider navigation styles */
+    .slider-nav {
+        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 10px;
+        margin-right: 20px;
+    }
+
+    .prev-arrow, .next-arrow {
+        cursor: pointer;
+        margin: 0 5px;
+        width: 30px;
+        height: 30px;
+        background-color: #333;
+        color: white;
+        text-align: center;
+        line-height: 30px;
+        border-radius: 50%;
+        font-size: 18px;
+    }
+
+    /* Media queries per responsive */
+    @media (max-width: 768px) {
+        header {
+            padding: 15px;
+            height: auto;
+        }
+
+        .page-title {
+            font-size: 24px;
+        }
+
+        .search-container input {
+            width: 200px;
+        }
+
+        .nav-links {
+            flex-wrap: wrap;
+        }
+
+        .card {
+            height: 160px;
+        }
+
+        .film-title {
+            font-size: 1rem;
+        }
+
+        .film-description {
+            -webkit-line-clamp: 2;
+        }
+    }
 }

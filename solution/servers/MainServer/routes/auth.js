@@ -24,10 +24,14 @@ router.post('/login', async (req, res) => {
         // Se l'autenticazione ha successo
         if (response.data.success) {
             // Salva l'utente in sessione
-            req.session.user = response.data.user;
+            req.session.user = {
+                id: response.data.id,
+                username: response.data.username,
+                email: response.data.email
+            };
             req.session.isLoggedIn = true;
 
-            // Reindirizza alla dashboard o homepage
+            // Reindirizza alla homepage
             return res.redirect('/');
         }
     } catch (error) {

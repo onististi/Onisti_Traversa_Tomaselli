@@ -1,14 +1,46 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Database</title>
+    <title>Cineverse</title>
+    <link rel="stylesheet" href="/stylesheets/homepage.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
-    <link rel="stylesheet" href="./stylesheets/homepage.css">
+
+    <script>
+        var oscarsWinnerData = {{{ json oscarsWinner}}};
+        var latestMoviesData = {{{ json latestMovies}}};
+        var topRatedMoviesData = {{{ json topRatedMovies}}};
+    </script>
 </head>
 <body>
+<header>
+    {{#if isLoggedIn}}
+        <div class="welcome-message">
+            Benvenuto, {{user.username}}
+        </div>
+    {{/if}}
+    <nav>
+        <h1 class="page-title">CINEVERSE</h1>
+        <a href="/" class="home-icon">🏠</a>
+        <div class="search-container">
+            <input type="text" placeholder="Search">
+            <button>X</button>
+        </div>
+        <div class="nav-links">
+            <a href="/movies">MOVIES</a>
+            <a href="/actors">ACTORS</a>
+            <a href="/chat">CHAT</a>
+            {{#if isLoggedIn}}
+                <a href="/auth/logout">Logout</a>
+            {{else}}
+                <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
+            {{/if}}
+        </div>
+    </nav>
+</header>
+
 <main>
     <section class="section-container">
         <h2 class="section-title">OSCAR'S WINNER</h2>
@@ -17,14 +49,14 @@
                 {{#each oscarsWinners}}
                     <div class="card-container">
                         <div class = "card">
-                        <div class="poster">
-                            <img src="{{this.poster}}" alt="{{this.title}} poster">
-                        </div>
-                        <div class="info">
-                            <h3 class="film-title">{{this.title}}</h3>
-                            <p class="film-description">{{this.description}}</p>
-                            <p class="oscar">{{this.oscarWon}}</p>
-                        </div>
+                            <div class="poster">
+                                <img src="{{this.poster}}" alt="{{this.title}} poster">
+                            </div>
+                            <div class="info">
+                                <h3 class="film-title">{{this.title}}</h3>
+                                <p class="film-description">{{this.description}}</p>
+                                <p class="oscar">{{this.oscarWon}}</p>
+                            </div>
                         </div>
                     </div>
                 {{/each}}
@@ -41,18 +73,18 @@
         <div class="slider-container">
             <div class="latest-movie-slider">
                 {{#each latestMovies}}
-                <div class="card-container">
-                    <div class="card" >
-                        <div class="poster">
-                            <img src="{{this.poster}}" alt="{{this.title}} poster">
-                        </div>
-                        <div class="info">
-                            <h3 class="film-title">{{this.title}}</h3>
-                            <p class="film-description">{{this.description}}</p>
-                            <p class="data-uscita">{{this.releaseDate}}</p>
+                    <div class="card-container">
+                        <div class="card" >
+                            <div class="poster">
+                                <img src="{{this.poster}}" alt="{{this.title}} poster">
+                            </div>
+                            <div class="info">
+                                <h3 class="film-title">{{this.title}}</h3>
+                                <p class="film-description">{{this.description}}</p>
+                                <p class="data-uscita">{{this.releaseDate}}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
                 {{/each}}
             </div>
             <div class="slider-nav latest-nav">
@@ -68,18 +100,18 @@
         <div class="slider-container">
             <div class="top-movie-slider">
                 {{#each topRatedMovies}}
-                <div class="card-container">
-                    <div class="card" url="">
-                        <div class="poster">
-                            <img src="{{this.poster}}" alt="{{this.title}} poster">
-                        </div>
-                        <div class="info">
-                            <h3 class="film-title">{{this.title}}</h3>
-                            <p class="film-description">{{this.description}}</p>
-                            <p class="valutazione">{{this.rating}}/10</p>
+                    <div class="card-container">
+                        <div class="card" url="">
+                            <div class="poster">
+                                <img src="{{this.poster}}" alt="{{this.title}} poster">
+                            </div>
+                            <div class="info">
+                                <h3 class="film-title">{{this.title}}</h3>
+                                <p class="film-description">{{this.description}}</p>
+                                <p class="valutazione">{{this.rating}}/10</p>
+                            </div>
                         </div>
                     </div>
-                </div>
                 {{/each}}
             </div>
             <div class="slider-nav top-nav">
@@ -90,8 +122,8 @@
     </section>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!--usato per il carosello -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-<script src="./javascripts/index.js"></script>
+<script src="/javascripts/index.js"></script>
 </body>
 </html>
