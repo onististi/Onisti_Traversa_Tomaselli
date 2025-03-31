@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    setupSearchButton();
+
     const loadBtn = document.getElementById('loadMoreBtn');
     let currentPage = 0;
     const actorName = document.querySelector('h1').textContent.trim(); // Ottieni il nome dell'attore dal titolo
@@ -54,4 +57,24 @@ document.addEventListener('DOMContentLoaded', function() {
             filmographyGrid.appendChild(movieElement);
         });
     }
+
+    function setupSearchButton() {
+        const searchButton = document.querySelector('.search-container button');
+        const searchInput = document.querySelector('.search-container input');
+
+        if (searchButton && searchInput) {
+            // Pulisci il campo di ricerca quando si clicca sulla X
+            searchButton.addEventListener('click', function() {
+                searchInput.value = '';
+            });
+
+            // Gestisci la ricerca quando si preme Enter
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch(searchInput.value);
+                }
+            });
+        }
+    }
+
 });

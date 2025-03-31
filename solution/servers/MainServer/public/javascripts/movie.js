@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    setupSearchButton();
    //tutto questo è per gli slideshows di attori e crew
 
     function transformCrewData(rawCrewData) {
@@ -198,6 +200,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             $('.crew-nav .prev-arrow').on('click', function() {
                 $('.crew-slider').slick('slickPrev');
+            });
+        }
+    }
+
+    function setupSearchButton() {
+        const searchButton = document.querySelector('.search-container button');
+        const searchInput = document.querySelector('.search-container input');
+
+        if (searchButton && searchInput) {
+            // Pulisci il campo di ricerca quando si clicca sulla X
+            searchButton.addEventListener('click', function() {
+                searchInput.value = '';
+            });
+
+            // Gestisci la ricerca quando si preme Enter
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch(searchInput.value);
+                }
             });
         }
     }
