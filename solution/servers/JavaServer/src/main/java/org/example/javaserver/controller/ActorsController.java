@@ -38,9 +38,14 @@ public class ActorsController {
         return actors.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{name}/movies")  //films dell attore
-    public ResponseEntity<List<ActorMovie>> getMoviesByActor(@PathVariable String name) {
-        Optional<List<ActorMovie>> moviesWithRole = actorsService.findMoviesByActor(name);
+    @GetMapping("/{name}/movies")
+    public ResponseEntity<List<ActorMovie>> getMoviesByActor(
+            @PathVariable String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size) {
+
+        Optional<List<ActorMovie>> moviesWithRole = actorsService.findMoviesByActor(name, page, size);
         return moviesWithRole.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 }

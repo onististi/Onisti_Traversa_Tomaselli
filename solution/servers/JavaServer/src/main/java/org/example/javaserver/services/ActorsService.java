@@ -42,22 +42,24 @@ public class ActorsService {
     }
 
     @Transactional
-    public Optional<List<ActorMovie>> findMoviesByActor(String actor_name){
+    public Optional<List<ActorMovie>> findMoviesByActor(String actor_name, int page, int size) {
         String jpql = """
-        SELECT m, STRING_AGG(a.role, ' '), p.id.link FROM Actor a
-        JOIN Movie m ON a.id_movie = m.id
-        JOIN Poster p ON p.id.idMovie = m.id
-        WHERE a.name = :name GROUP BY m, p.id.link""";
+    SELECT m, STRING_AGG(a.role, ' '), p.id.link FROM Actor a
+    JOIN Movie m ON a.id_movie = m.id
+    JOIN Poster p ON p.id.idMovie = m.id
+    WHERE a.name = :name GROUP BY m, p.id.link""";
 
         List<Object[]> results = entityManager.createQuery(jpql, Object[].class)
                 .setParameter("name", actor_name)
+                .setFirstResult(page * size)
+                .setMaxResults(size)
                 .getResultList();
 
         List<ActorMovie> movieRoles = results.stream()
                 .map(result -> {
                     Movie movie = (Movie) result[0];
                     String roles = (String) result[1];
-                    movie.setPosterLink((String)result[2]);
+                    movie.setPosterLink((String) result[2]);
                     if (roles == null)
                         roles = "unknown";
 

@@ -12,11 +12,14 @@ router.get('/', function(req, res, next) { //router per pagina ricerca film gene
 router.get("/:name", async function(req, res, next) {
     const actorName = req.params.name;
     let responseActor, responseMovies;
+    const page = req.query.page || 0;
+    const size = req.query.size || 8;
 
     try {
         responseActor = await axios.get("http://localhost:8080/api/actors/"+actorName);// se non lo trova catch 404
 
-        responseMovies = await axios.get("http://localhost:8080/api/actors/"+actorName+"/movies");
+        responseMovies = await axios.get(`http://localhost:8080/api/actors/${actorName}/movies?page=${page}&size=${size + 1}`);
+
 
         let highestRated = 0;
         let lowestRated = 0;
@@ -35,8 +38,8 @@ router.get("/:name", async function(req, res, next) {
         }
 
         //verifica se ci sono più film da caricare da pulsante
-        const hasMoreMovies = responseMovies.data.length > 8;
-        const initialMovies = responseMovies.data.slice(0, 8);
+        const hasMoreMovies = responseMovies.data.length > size;
+        const initialMovies = responseMovies.data.slice(0, size);
 
         let actor = {
             name : actorName,
