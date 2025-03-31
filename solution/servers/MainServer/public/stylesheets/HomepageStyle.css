@@ -228,7 +228,20 @@ section {
     margin-right: 20px;
 }
 
-.prev-arrow, .next-arrow {
+.prev-arrow {
+    cursor: pointer;
+    margin: 0 5px;
+    width: 30px;
+    height: 30px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 50%;
+    font-size: 18px;
+}
+
+.next-arrow {
     cursor: pointer;
     margin: 0 5px;
     width: 30px;

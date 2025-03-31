@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
         // Torna alla pagina di login con errore
         return res.render('login', {
             title: 'Login',
-            error: 'Username o password non validi',
+            error: 'Invalid username or password',
             username: req.body.username
         });
     }
@@ -59,7 +59,7 @@ router.post('/register', async (req, res) => {
         if (password !== confirmPassword) {
             return res.render('register', {
                 title: 'Registrazione',
-                error: 'Le password non corrispondono',
+                error: 'Password does not match',
                 username,
                 email
             });
@@ -77,7 +77,7 @@ router.post('/register', async (req, res) => {
             // Reindirizza alla pagina di login con messaggio di successo
             return res.render('login', {
                 title: 'Login',
-                success: 'Registrazione completata! Ora puoi effettuare il login',
+                success: 'Registration completed! Now you can login',
                 username
             });
         }
@@ -86,7 +86,7 @@ router.post('/register', async (req, res) => {
         // Torna alla pagina di registrazione con errore
         return res.render('register', {
             title: 'Registrazione',
-            error: error.response ? error.response.data.message : 'Errore durante la registrazione',
+            error: error.response ? error.response.data.message : 'Error during registration',
             username: req.body.username,
             email: req.body.email
         });

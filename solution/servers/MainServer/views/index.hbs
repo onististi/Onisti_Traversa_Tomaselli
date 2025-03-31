@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cineverse</title>
-    <link rel="stylesheet" href="/stylesheets/homepage.css">
+    <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 
@@ -18,7 +18,7 @@
 <header>
     {{#if isLoggedIn}}
         <div class="welcome-message">
-            Benvenuto, {{user.username}}
+            Welcome, {{user.username}}
         </div>
     {{/if}}
     <nav>
@@ -33,7 +33,7 @@
             <a href="/actors">ACTORS</a>
             <a href="/chat">CHAT</a>
             {{#if isLoggedIn}}
-                <a href="/auth/logout">Logout</a>
+                <a href="/auth/logout">LOGOUT</a>
             {{else}}
                 <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
             {{/if}}
