@@ -31,6 +31,9 @@ public class Movie {
     @Column(name = "rating", precision = 4, scale = 2)
     private BigDecimal rating;
 
+    @OneToMany(mappedBy = "movie")
+    private List<MovieOscar> movieOscars;
+
     //i transient non sono presenti nella tabella movies direttamente
     @Transient
     private String posterLink;
@@ -52,6 +55,9 @@ public class Movie {
 
     @Transient
     private String releaseInfo;
+
+    @Transient
+    private Integer yearCeremony;
 
     public Integer getId() {return id;}
 
@@ -108,4 +114,12 @@ public class Movie {
     public String getReleaseInfo() {return releaseInfo;}
 
     public void setReleaseInfo(String releaseInfo) {this.releaseInfo = releaseInfo;}
+
+    public Integer getYearCeremony() {
+        return yearCeremony;
+    }
+
+    public void setYearCeremony(Integer integer) {
+        this.yearCeremony = integer;
+    }
 }

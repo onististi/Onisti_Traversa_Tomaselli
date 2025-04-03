@@ -48,4 +48,10 @@ public class MoviesController {
         return ResponseEntity.ok(movies);
     }
 
+    @GetMapping("/oscars-winners")
+    public ResponseEntity<List<Movie>> getOscarWinners() {
+        List<Movie> movies = moviesService.getOscarWinners(20);
+        return ResponseEntity.ok(movies);
+    }
+
 }

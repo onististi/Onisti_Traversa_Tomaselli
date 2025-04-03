@@ -5,9 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityManager;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,8 +27,8 @@ public class MoviesService {
 
         if (!posterLinks.isEmpty())
             movie.setPosterLink(posterLinks.get(0));
-         else
-             movie.setPosterLink(null);
+        else
+            movie.setPosterLink(null);
 
 
         List<Genre> genreEntities = entityManager.createQuery(
@@ -49,10 +47,10 @@ public class MoviesService {
                 .setParameter("movieId", id)
                 .getResultList();
 
-       List<String> studios = studioEntities.stream()
+        List<String> studios = studioEntities.stream()
                 .map(Studio::getStudio)
                 .toList();
-       movie.setStudios(studios);
+        movie.setStudios(studios);
 
         List<Theme> themeEntities = entityManager.createQuery(
                         "SELECT t FROM Theme t WHERE t.id.idMovie = :movieId", Theme.class)
@@ -77,6 +75,15 @@ public class MoviesService {
         } else {
             movie.setLanguage("Unknown");
         }
+
+        String ceremonyQuery = "SELECT MAX(mo.yearCeremony) FROM MovieOscar mo " +
+                "WHERE mo.movieId = :movieId AND mo.winner = true";
+
+        Integer ceremonyYear = entityManager.createQuery(ceremonyQuery, Integer.class)
+                .setParameter("movieId", id)
+                .getSingleResult();
+
+        movie.setYearCeremony(ceremonyYear);
 
         List<Language> dubbedLanguageEntities = entityManager.createQuery(
                         "SELECT l FROM Language l WHERE l.id.idMovie = :movieId AND l.id.type = 'Spoken Language'", Language.class)
@@ -150,4 +157,51 @@ public class MoviesService {
 
         return enrichedMovies;
     }
+
+    @Transactional
+    public List<Movie> getOscarWinners(int limit) {
+        List<Movie> movies = new ArrayList<>();
+        int currentLimit = limit;
+        int currentYear = 2024;
+        Set<String> uniqueMovieTitles = new HashSet<>(); // Per evitare i film duplicati
+
+        while (movies.size() < limit) {
+            String query = "SELECT DISTINCT m.id FROM Movie m " +
+                    "JOIN m.movieOscars mo " +
+                    "WHERE mo.winner = true AND mo.yearCeremony = :year";
+
+            List<Integer> result = entityManager.createQuery(query, Integer.class)
+                    .setParameter("year", currentYear)
+                    .setMaxResults(currentLimit)
+                    .getResultList();
+
+            for (Integer movieId : result) {
+                Optional<Movie> optionalMovie = findMovieById(movieId);
+                if (optionalMovie.isPresent()) {
+                    Movie movie = optionalMovie.get();
+
+                    if (!uniqueMovieTitles.contains(movie.getName())) {
+                        uniqueMovieTitles.add(movie.getName());
+                        movies.add(movie);
+                        if (movies.size() >= limit) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            currentLimit = limit - movies.size();
+            currentYear--; // Passa all'anno precedente se non ha caricato limit film
+            if (currentYear < 1929) break; // Stoppa al primo anno degli Oscar
+        }
+
+        // Ordinamento per anno di cerimonia più recente
+        movies.sort(Comparator.comparing(
+                Movie::getYearCeremony,
+                Comparator.nullsLast(Comparator.reverseOrder()) // Gestione date nulle
+        ));
+
+        return movies;
+    }
+
 }

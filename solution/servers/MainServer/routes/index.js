@@ -4,9 +4,16 @@ var router = express.Router();
 
 router.get('/', async function(req, res, next) {
     try {
-        //const oscarsResponse = await axios.get("http://localhost:8080/api/movies/oscars-winners");
+        const oscarsResponse = await axios.get("http://localhost:8080/api/movies/oscars-winners");
         const latestResponse = await axios.get("http://localhost:8080/api/movies/latest");
         const topRatedResponse = await axios.get("http://localhost:8080/api/movies/top-rated");
+
+        const oscarWinners = oscarsResponse.data.map(movie => ({
+            title: movie.name,
+            description: movie.description || "No description available",
+            oscarYear: movie.yearCeremony, //  yearCeremony
+            poster: movie.posterLink || "/images/default-poster.jpg"
+        }));
 
 
         const latestMovies = latestResponse.data.map(movie => {
@@ -36,7 +43,7 @@ router.get('/', async function(req, res, next) {
 
         res.render("index", {
             title: "Cineverse",
-            //oscarsWinners: oscarWinners,
+            oscarsWinners: oscarWinners,
             latestMovies: latestMovies,
             topRatedMovies: topRatedMovies,
             //topChats : topChats
