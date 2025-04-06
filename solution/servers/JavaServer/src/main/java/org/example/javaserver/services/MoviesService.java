@@ -123,7 +123,7 @@ public class MoviesService {
 
     @Transactional
     public List<Movie> findLatestMovies(int limit) {
-        String query = "SELECT m FROM Movie m ORDER BY m.year DESC, m.id DESC";
+        String query = "SELECT m FROM Movie m WHERE m.year IS NOT NULL ORDER BY m.year DESC, m.id DESC";
         List<Movie> movies = entityManager.createQuery(query, Movie.class)
                 .setMaxResults(limit)
                 .getResultList();
