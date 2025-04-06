@@ -15,6 +15,31 @@
     </script>
 </head>
 <body>
+<header>
+    {{#if isLoggedIn}}
+        <div class="welcome-message">
+            Welcome, {{user.username}}
+        </div>
+    {{/if}}
+    <nav>
+        <h1 class="page-title">CINEVERSE</h1>
+        <a href="/" class="home-icon">🏠</a>
+        <div class="search-container">
+            <input type="text" placeholder="Search">
+            <button>X</button>
+        </div>
+        <div class="nav-links">
+            <a href="/movies">MOVIES</a>
+            <a href="/actors">ACTORS</a>
+            <a href="/chat">CHAT</a>
+            {{#if isLoggedIn}}
+                <a href="/auth/logout">LOGOUT</a>
+            {{else}}
+                <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
+            {{/if}}
+        </div>
+    </nav>
+</header>
 
 
 <div class="movie-container">
@@ -49,8 +74,8 @@
                     <!-- Slideshow fillato da js se ci sono, se no unknown -->
                 </div>
                 <div class="slider-nav actors-nav">
-                    <div class="prev-arrow">❮</div>
-                    <div class="next-arrow">❯</div>
+                    <div class="prev-arrow-actors">❮</div>
+                    <div class="next-arrow-actors">❯</div>
                 </div>
             </div>
 
@@ -60,8 +85,8 @@
                     <!-- Slideshow fillato da js se ci sono, se no unknown -->
                 </div>
                 <div class="slider-nav crew-nav">
-                    <div class="prev-arrow">❮</div>
-                    <div class="next-arrow">❯</div>
+                    <div class="prev-arrow-crew">❮</div>
+                    <div class="next-arrow-crew">❯</div>
                 </div>
             </div>
 
