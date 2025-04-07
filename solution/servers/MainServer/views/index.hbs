@@ -48,16 +48,18 @@
             <div class="oscar-movie-slider">
                 {{#each oscarsWinners}}
                     <div class="card-container">
-                        <div class = "card">
-                            <div class="poster">
-                                <img src="{{this.poster}}" alt="{{this.title}} poster">
+                        <a href="/movies/:{{this.id}}">
+                            <div class = "card">
+                                <div class="poster">
+                                    <img src="{{this.poster}}" alt="{{this.title}} poster">
+                                </div>
+                                <div class="info">
+                                    <h3 class="film-title">{{this.title}}</h3>
+                                    <p class="film-description">{{this.description}}</p>
+                                    <p class="oscar">{{this.oscarYear}}</p>
+                                </div>
                             </div>
-                            <div class="info">
-                                <h3 class="film-title">{{this.title}}</h3>
-                                <p class="film-description">{{this.description}}</p>
-                                <p class="oscar">{{this.oscarYear}}</p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 {{/each}}
             </div>
@@ -74,16 +76,18 @@
             <div class="latest-movie-slider">
                 {{#each latestMovies}}
                     <div class="card-container">
-                        <div class="card" >
-                            <div class="poster">
-                                <img src="{{this.poster}}" alt="{{this.title}} poster">
+                        <a href="/movies/:{{this.id}}">
+                            <div class="card" >
+                                <div class="poster">
+                                    <img src="{{this.poster}}" alt="{{this.title}} poster">
+                                </div>
+                                <div class="info">
+                                    <h3 class="film-title">{{this.title}}</h3>
+                                    <p class="film-description">{{this.description}}</p>
+                                    <p class="data-uscita">{{this.releaseDate}}</p>
+                                </div>
                             </div>
-                            <div class="info">
-                                <h3 class="film-title">{{this.title}}</h3>
-                                <p class="film-description">{{this.description}}</p>
-                                <p class="data-uscita">{{this.releaseDate}}</p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 {{/each}}
             </div>
@@ -101,16 +105,18 @@
             <div class="top-movie-slider">
                 {{#each topRatedMovies}}
                     <div class="card-container">
-                        <div class="card" url="">
-                            <div class="poster">
-                                <img src="{{this.poster}}" alt="{{this.title}} poster">
+                        <a href="/movies/:{{this.id}}">
+                            <div class="card" url="">
+                                <div class="poster">
+                                    <img src="{{this.poster}}" alt="{{this.title}} poster">
+                                </div>
+                                <div class="info">
+                                    <h3 class="film-title">{{this.title}}</h3>
+                                    <p class="film-description">{{this.description}}</p>
+                                    <p class="valutazione">{{this.rating}}/5</p>
+                                </div>
                             </div>
-                            <div class="info">
-                                <h3 class="film-title">{{this.title}}</h3>
-                                <p class="film-description">{{this.description}}</p>
-                                <p class="valutazione">{{this.rating}}/5</p>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 {{/each}}
             </div>

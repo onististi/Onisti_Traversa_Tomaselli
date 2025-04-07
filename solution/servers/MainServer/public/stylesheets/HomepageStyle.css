@@ -125,6 +125,8 @@ section {
 }
 
 .card {
+    text-decoration: none;
+    color: inherit;
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -139,6 +141,15 @@ section {
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card-container a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.card-container a:hover {
+    text-decoration: none;
 }
 
 .poster {

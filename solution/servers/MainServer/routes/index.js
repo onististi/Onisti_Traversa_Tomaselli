@@ -9,6 +9,7 @@ router.get('/', async function(req, res, next) {
         const topRatedResponse = await axios.get("http://localhost:8080/api/movies/top-rated");
 
         const oscarWinners = oscarsResponse.data.map(movie => ({
+            id: movie.id,
             title: movie.name,
             description: movie.description || "No description available",
             oscarYear: movie.yearCeremony, //  yearCeremony
@@ -26,6 +27,7 @@ router.get('/', async function(req, res, next) {
             }
 
             return {
+                id: movie.id,
                 title: movie.name,
                 description: movie.description || "No description available",
                 releaseDate: releaseDate,
@@ -34,6 +36,7 @@ router.get('/', async function(req, res, next) {
         });
 
         const topRatedMovies = topRatedResponse.data.map(movie => ({
+            id: movie.id,
             title: movie.name,
             description: movie.description || "No description available",
             rating: movie.rating ? movie.rating : "N/A",
