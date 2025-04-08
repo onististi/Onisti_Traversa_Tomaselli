@@ -1,0 +1,253 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+    color: #ffffff;
+}
+
+header {
+    background-color: #7e2b2b;
+    color: white;
+    padding: 20px 50px;
+    position: relative;
+    height: 120px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    margin: 0 0 10px 0;
+}
+
+nav {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.welcome-message {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: white;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.home-icon {
+    font-size: 16px;
+    text-decoration: none;
+    color: black;
+    padding: 9px;
+    border-radius: 5px;
+    background: #ffffff;
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-container {
+    position: absolute;
+    top: 50px;
+    left: 70px;
+    display: flex;
+}
+
+.search-container input {
+    padding: 10px;
+    border-radius: 5px 0 0 5px;
+    border: none;
+    font-size: 16px;
+    width: 300px;
+}
+
+.search-container button {
+    background: white;
+    border: none;
+    color: black;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 0 5px 5px 0;
+}
+
+.nav-links {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    display: flex;
+    gap: 10px;
+}
+
+.nav-links a {
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    background: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    display: inline-block;
+}
+
+.login-btn {
+    border: 1px solid white;
+}
+
+.content-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    border-right: 2px solid #000000;
+    padding: 10px;
+    overflow-y: auto;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 160px;
+    bottom: 0;
+}
+
+.sidebar h2 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 20px;
+    color: #000000;
+}
+
+.film-list {
+    list-style: none;
+    padding: 0 10px;
+}
+
+.film-list li {
+    padding: 10px;
+    border-bottom: 1px solid #000000;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.film-list li:hover {
+    background-color: #333;
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-left: 350px;
+    overflow: hidden;
+}
+
+.chat-header h2 {
+    font-size: 20px;
+    color: #000000;
+    margin-top: 0;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 2px solid #000000;
+    max-width: 75%;
+    background-color: #ffffff;
+}
+
+.message-username {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #7e2b2b;
+    font-size: 15px;
+}
+
+.message-text {
+    margin-bottom: 8px;
+    line-height: 1.4;
+    color: #000000;
+    font-size: 15px;
+}
+
+.message-time {
+    font-size: 12px;
+    color: #999;
+    text-align: right;
+}
+
+.chat-input {
+    display: flex;
+    padding: 15px 0;
+    border-top: 1px solid #000000;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #000000;
+    margin-right: 10px;
+    border: 2px solid;
+}
+
+.chat-input button {
+    padding: 10px 15px;
+    background-color: #7e2b2b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.chat-input button:hover {
+    background-color: #833636;
+}
+
+/* Per rendere la pagina responsive */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #333;
+        margin-top: 0;
+    }
+
+    .chat-container {
+        margin-left: 0;
+    }
+
+    .nav-links {
+        gap: 10px;
+    }
+}
