@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
         //lowercase del genere selezionato se no non matcha con quelli scritti in minore nelle cards
         const normalizedSelectedGenres = selectedGenres.map(g => g.toLowerCase().trim());
 
-         filteredActors = [...allActors];
+        filteredActors = [...allActors];
 
-         //ifltro per genere
+        //ifltro per genere
         if (selectedGenres.length > 0 && !selectedGenres.includes('all')) {
             filteredActors = filteredActors.filter(actor => {
                 if (!actor.genres) return false;
@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
         renderActors(paginatedActors, true);
         loadMoreBtn.dataset.currentPage = (currentPage+1).toString();
 
-        // Hide load more button if no more actors to show
         if (endIndex >= filteredActors.length) {
             loadMoreBtn.style.display = 'none';
         }
