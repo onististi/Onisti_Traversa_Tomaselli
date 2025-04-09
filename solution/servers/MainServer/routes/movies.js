@@ -12,10 +12,10 @@ router.get('/:id', async function(req, res, next) {
     let responseMovie, responseActors, responseCrew;
 
     try {
-        responseMovie = await  axios.get("http://localhost:8080/api/movies/"+movieId.replace(":","")); // se non lo trova catch per errore 404
+        responseMovie = await  axios.get("http://localhost:8080/api/movies/"+encodeURIComponent(movieId.replace(":",""))); // se non lo trova catch per errore 404
 
-        responseActors = await  axios.get("http://localhost:8080/api/actors/movie/1000022");
-        responseCrew =  await  axios.get("http://localhost:8080/api/crews/1000022");
+        responseActors = await  axios.get("http://localhost:8080/api/actors/movie/"+encodeURIComponent(movieId.replace(":","")));
+        responseCrew =  await  axios.get("http://localhost:8080/api/crews/"+encodeURIComponent(movieId.replace(":","")));
 
         res.render("movie", {
             title: "Movie: "+responseMovie.data.name,

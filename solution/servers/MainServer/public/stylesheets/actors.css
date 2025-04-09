@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    color: #333;
+    text-decoration: none;
+}
+
+.title{
+    color: black;
+    text-align: center;
+    font-size: 2.5rem;
+    margin: 20px 20px;
+}
+
+.filters-section {
+    display: flex;
+    padding: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+    background-color:rgba(0,0,0,0.1);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.filter-group label {
+    font-size: small;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.filter-group select, .filter-group input {
+    padding: 6px 10px;
+    min-width: 140px;
+    border-radius: 8px;
+}
+
+#sort-select:hover{
+    border: 16px black;
+}
+
+.genre-select + .select2-container .select2-selection--multiple {
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    height: 30px;
+    padding: 2px 0;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.select2-selection__choice__remove {
+   font-size: large;
+}
+
+.select2-selection__choice__remove:hover {
+    color: #c9302c !important;
+}
+
+.select2-selection__choice li{
+    background-color: #cccccc;
+}
+
+.select2-search--inline {
+    display: none !important;
+}
+
+.select2-dropdown {
+    width: 200px !important;
+    max-width: 200px !important;/*larghezza fissa tendina dropdown*/
+}
+
+.select2-results__option:hover {
+    box-shadow: 0 0 10px 100px #28aca8 inset;
+}
+
+.add-filter-btn {
+    background-color: #757474;
+    color: white;
+    border: 5px black;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-filter-btn:hover {
+    background-color: black;
+}
+
+.genre-select + .select2-container .select2-selection__rendered {
+    line-height: 26px !important;
+    padding-left: 0 !important;
+    margin: 0;
+    color: inherit;
+    font-size: 14px;
+    font-weight: normal;
+    background: none;
+}
+
+.genre-select + .select2-container.select2-container--focus .select2-selection--multiple {
+    border: none !important;
+    background-color: transparent !important;
+}
+
+
+.filter-value {
+    margin-right: 5px;
+}
+
+.actors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.actor-card {
+    background-color: white;
+    overflow: hidden;
+    border: 1px solid #eee;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.actor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.actor-image {
+    width: 100%;
+    height: 180px;
+    background-color: #eee;
+}
+
+.actor-meta{
+    text-align: center;
+}
+
+.actor-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.actor-name {
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.movie-count{
+    text-align: center;
+    display: block;
+    margin-bottom:7px;
+}
+
+.avg_rating{
+    text-align: center;
+    display: block;
+    margin-bottom:7px;
+}
+
+.load-more-container {
+    text-align: center;
+    margin: 40px 0;
+}
+
+#load-more {
+    padding: 10px 30px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: large;
+}
+
+#load-more:hover {
+    background-color: #555;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .filters-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .filter-group select, .filter-group input {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .active-filter {
+        margin-top: 5px;
+        margin-left: 0;
+    }
+
+    .actors-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}

@@ -23,6 +23,8 @@ hbs.registerHelper('json', function(context) {
 });
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.set('strict routing', false);
 
 // Imposta sessione (nuova parte)
 app.use(session({
