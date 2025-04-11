@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         closeOnSelect: false,
         width: 'auto'
     });
+
     //bottone + aggiunta filtri apre il dropdown
     document.querySelector('.add-filter-btn').addEventListener('click', function() {
         genreSelect.select2('open');
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         filteredActors = [...allActors];
 
-        //ifltro per genere
+        //filtro per genere
         if (selectedGenres.length > 0 && !selectedGenres.includes('all')) {
             filteredActors = filteredActors.filter(actor => {
                 if (!actor.genres) return false;
@@ -134,14 +135,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="actor-meta">
                         <span class="movie-count">${actor.movies_count} movies</span>
                         <span class="avg_rating">average rating: ${actor.avg_rating}</span>
-                        <span>${actor.genres.join(', ')}</span>
+                        <span>${actor.genres.join(',')}</span>
                     </div>
                 </a>`;
             container.appendChild(card);
         });
     }
 
-    function createLoadMoreButton(filteredActors) {
+    function createLoadMoreButton() {
 
         const container = document.createElement('div');
         container.className = 'load-more-container';

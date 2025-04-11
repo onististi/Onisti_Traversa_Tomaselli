@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <link rel="stylesheet" href="/stylesheets/MoviespageStyle.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+</head>
+<body>
+<main>
+    <section class="filters-section">
+        <div class="filter-group">
+            <label>SORT BY:</label>
+            <select id="sort-select">
+                <option value="name_asc">NAME (A-Z)</option>
+                <option value="name_desc">NAME (Z-A)</option>
+                <option value="release">RELEASE DATE</option>
+                <option value="rating">RATING</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>FILTER BY GENRES:</label>
+            <select class="genre-select" multiple="multiple">
+                <option value="all">ALL GENRES</option>
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Animation">Animation</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Crime">Crime</option>
+                <option value="Documentary">Documentary</option>
+                <option value="Drama">Drama</option>
+                <option value="Family">Family</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="History">History</option>
+                <option value="Horror">Horror</option>
+                <option value="Music">Music</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Romance">Romance</option>
+                <option value="Science Fiction">Science Fiction</option>
+                <option value="Thriller">Thriller</option>
+                <option value="TV Movie">TV Movie</option>
+                <option value="War">War</option>
+                <option value="Western">Western</option>
+            </select>
+            <button class="add-filter-btn" title="Aggiungi filtro">+</button>
+        </div>
+    </section>
+
+    <h1 class="title">TOP MOVIES</h1>
+    <section class="movies-grid" id="movies-container">
+        {{#each movies}}
+            <div class="movie-card" data-movie-id="{{id}}">
+                <a href="/movies/:{{id}}">
+                    <div class="movie-poster">
+                        <img src="{{poster}}" alt="{{name}}" onerror="this.src='/images/default-movie.jpg'">
+                    </div>
+                    <h3 class="movie-name">{{name}}</h3>
+                    <div class="movie-meta">
+                        <span class="rating">{{rating}}</span>
+                        <span>{{genres}}</span>
+                    </div>
+                </a>
+            </div>
+        {{/each}}
+    </section>
+
+    <div class="load-more-container">
+        <button id="load-more" data-current-page="1">LOAD MORE</button>
+    </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+<script src="/javascripts/movies.js"></script>
+</body>
+</html>
