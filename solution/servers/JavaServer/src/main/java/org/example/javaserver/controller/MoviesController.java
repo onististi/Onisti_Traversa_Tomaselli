@@ -2,10 +2,8 @@ package org.example.javaserver.controller;
 import org.example.javaserver.models.Movie;
 import org.example.javaserver.services.MoviesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +19,9 @@ public class MoviesController {
         this.moviesService = moviesService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Movie>> getAllMovies() {
-       // List<Movie> movies = moviesService.findAllMovies();
-        //return ResponseEntity.ok(movies);
-        Movie movie = new Movie();
-        List<Movie> movies = List.of(movie);
+    @GetMapping("") //pagina movies
+    public ResponseEntity<List<Movie>> getMovies() {
+        List<Movie> movies = moviesService.getMovies();
         return ResponseEntity.ok(movies);
     }
 

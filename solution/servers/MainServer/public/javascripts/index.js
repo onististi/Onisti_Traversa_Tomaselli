@@ -1,16 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Inizializza i carousel
     initializeSliders();
-
-    // Aggiungi funzionalità al pulsante di ricerca
     setupSearchButton();
-
-    // Gestisci le immagini mancanti
     handleMissingImages();
 });
 
 function initializeSliders() {
-    // Opzioni generali per tutti i slider
     const sliderOptions = {
         dots: false,
         infinite: true,
@@ -72,12 +66,10 @@ function setupSearchButton() {
     const searchInput = document.querySelector('.search-container input');
 
     if (searchButton && searchInput) {
-        // Pulisci il campo di ricerca quando si clicca sulla X
         searchButton.addEventListener('click', function() {
             searchInput.value = '';
         });
 
-        // Gestisci la ricerca quando si preme Enter
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 performSearch(searchInput.value);
@@ -87,11 +79,8 @@ function setupSearchButton() {
 }
 
 function performSearch(searchTerm) {
-    // Qui puoi implementare la logica di ricerca
     if (searchTerm.trim() !== '') {
-        // Reindirizza alla pagina di ricerca o esegui una richiesta AJAX
         console.log(`Ricerca per: ${searchTerm}`);
-        // Esempio: window.location.href = `/search?term=${encodeURIComponent(searchTerm)}`;
     }
 }
 
@@ -100,7 +89,6 @@ function handleMissingImages() {
     const posterImages = document.querySelectorAll('.poster img');
 
     posterImages.forEach(img => {
-        // Controlla se l'immagine è caricata correttamente
         img.addEventListener('error', function() {
             // Aggiungi una classe per applicare stili alternativi
             this.parentElement.classList.add('missing-image');

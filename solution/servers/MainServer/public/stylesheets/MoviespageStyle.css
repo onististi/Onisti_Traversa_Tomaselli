@@ -55,6 +55,24 @@
     display: flex;
     align-items: center;
 }
+.movie-meta{
+    overflow-wrap: break-word;
+    word-break: keep-all;
+}
+
+.genre-link {
+    color: #757474;
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+    display: inline-block;
+}
+
+.genre-link:hover {
+    text-decoration: underline black;
+}
+
 
 .select2-selection__choice__remove {
     font-size: large;
@@ -149,6 +167,7 @@
     width: 100%;
     height: 180px;
     background-color: #eee;
+
 }
 
 .movie-meta{
@@ -158,7 +177,7 @@
 .movie-poster img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .movie-name {

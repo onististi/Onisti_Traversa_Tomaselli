@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let loadMoreBtn = document.getElementById('load-more');
     loadMoreBtn.addEventListener('click', loadMoreActors);
 
-
     //inizializza select2 per il dropdown dei generi
     const genreSelect = $('.genre-select').select2({
         placeholder: "ALL GENRES",
@@ -40,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     //se rimuove l'ultimo filtro mette all come unico
-    genreSelect.on('select2:unselect', function(e) {
+    genreSelect.on('select2:unselect', function() {
         const selected = genreSelect.val();
         if (!selected || selected.length === 0)
             genreSelect.val(['all']).trigger('change');
@@ -90,15 +89,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const paginatedActors = filteredActors.slice(0, ITEMS_PER_PAGE);
         renderActors(paginatedActors, false);
 
-        if (filteredActors.length > ITEMS_PER_PAGE) {
-            if (loadMoreBtn)
-                loadMoreBtn.dataset.currentPage = '1';
-            else
-                createLoadMoreButton(filteredActors);
+        if (filteredMovies.length > ITEMS_PER_PAGE) {
 
-        } else if (loadMoreBtn) {
+            if (getComputedStyle(loadMoreBtn).display !== 'none')
+                loadMoreBtn.dataset.currentPage = '1';
+            else if(getComputedStyle(loadMoreBtn).display === 'none') {
+                loadMoreBtn.style.display = 'inline'
+                loadMoreBtn.dataset.currentPage = '1'
+            }
+        } else if (loadMoreBtn)
             loadMoreBtn.style.display = 'none';
-        }
     }
 
     function loadMoreActors() {
@@ -126,6 +126,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement('div');
             card.className = 'actor-card';
             card.dataset.actorName = actor.name;
+
+            const genreLinks = actor.genres.map(genre =>
+                `<a href="/movies?genre=${encodeURIComponent(genre)}" class="genre-link">`+genre.toLowerCase()+`</a>`);
+
             card.innerHTML = `
                 <a href="/actors/${actor.name}">
                     <div class="actor-image">
@@ -135,25 +139,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="actor-meta">
                         <span class="movie-count">${actor.movies_count} movies</span>
                         <span class="avg_rating">average rating: ${actor.avg_rating}</span>
-                        <span>${actor.genres.join(',')}</span>
+                         <span>${genreLinks}</span>
                     </div>
                 </a>`;
             container.appendChild(card);
         });
     }
 
-    function createLoadMoreButton() {
-
-        const container = document.createElement('div');
-        container.className = 'load-more-container';
-        container.innerHTML = '<button id="load-more">LOAD MORE</button>';
-        document.querySelector('main').appendChild(container);
-
-        const newLoadMoreBtn = document.getElementById('load-more');
-        if (newLoadMoreBtn) {
-            newLoadMoreBtn.addEventListener('click', loadMoreActors);
-            newLoadMoreBtn.dataset.currentPage = '1';
-        }
-    }
     applyFilters();
 });

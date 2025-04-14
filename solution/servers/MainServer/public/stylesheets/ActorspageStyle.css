@@ -56,6 +56,24 @@
     align-items: center;
 }
 
+.actor-meta{
+    overflow-wrap: break-word;
+    word-break: keep-all;
+}
+
+.genre-link {
+    color: #757474;
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+    display: inline-block;
+}
+
+.genre-link:hover {
+    text-decoration: underline black;
+}
+
 .select2-selection__choice__remove {
     font-size: large;
 }

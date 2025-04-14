@@ -56,7 +56,7 @@
             <div class="movie-card" data-movie-id="{{id}}">
                 <a href="/movies/:{{id}}">
                     <div class="movie-poster">
-                        <img src="{{poster}}" alt="{{name}}" onerror="this.src='/images/default-movie.jpg'">
+                        <img class="posterlink" src="{{posterLink}}" alt="{{name}}" onerror="this.style.display='none'">
                     </div>
                     <h3 class="movie-name">{{name}}</h3>
                     <div class="movie-meta">

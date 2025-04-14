@@ -4,6 +4,8 @@ import org.example.javaserver.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityManager;
+
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +20,6 @@ public class MoviesService {
         Movie movie = entityManager.find(Movie.class, id);
         if (movie == null)
             return Optional.empty();
-
 
         String posterQuery = "SELECT p.id.link FROM Poster p WHERE p.id.idMovie = :movieId";
         List<String> posterLinks = entityManager.createQuery(posterQuery, String.class)
@@ -122,8 +123,57 @@ public class MoviesService {
     }
 
     @Transactional
+    public List<Movie> getMovies() {
+        String movieQuery = "SELECT m.id, m.name, m.year, m.minute, m.rating FROM Movie m  WHERE m.rating IS NOT NULL AND m.rating >=    4 ORDER BY m.name LIMIT 300";
+        List<Object[]> movieResults =  entityManager.createQuery(movieQuery).getResultList();
+
+        List<Movie> movies = new ArrayList<>();
+        List<Integer> movieIds = new ArrayList<>();
+
+        for (Object[] result : movieResults) {   //in "dati separati" perche non serve descrizione e tagline
+            Movie movie = new Movie();
+            movie.setId((Integer) result[0]);
+            movie.setName((String) result[1]);
+            movie.setYear((Integer) result[2]);
+            movie.setMinute((Integer) result[3]);
+            movie.setRating((BigDecimal) result[4]);
+
+            movies.add(movie);
+            movieIds.add(movie.getId());
+        }
+
+        movies.forEach(movie ->{
+
+            String posterQuery = "SELECT p.id.link FROM Poster p WHERE p.id.idMovie = :movieId";
+            List<String> posterLinks = entityManager.createQuery(posterQuery, String.class)
+                    .setParameter("movieId", movie.getId())
+                    .getResultList();
+
+            if (!posterLinks.isEmpty())
+                movie.setPosterLink(posterLinks.get(0));
+            else
+                movie.setPosterLink(null);
+
+
+            List<Genre> genreEntities = entityManager.createQuery(
+                            "SELECT g FROM Genre g WHERE g.id.idMovie = :movieId", Genre.class)
+                    .setParameter("movieId", movie.getId())
+                    .getResultList();
+
+            List<String> genres = genreEntities.stream()
+                    .map(Genre::getGenre)
+                    .toList();
+            movie.setGenres(genres);
+
+        });
+
+
+        return movies;
+    }
+
+    @Transactional
     public List<Movie> findLatestMovies(int limit) {
-        String query = "SELECT m FROM Movie m WHERE m.year IS NOT NULL ORDER BY m.year DESC, m.id DESC";
+        String query = "SELECT m FROM Movie m WHERE m.year IS NOT NULL ORDER BY m.year DESC";
         List<Movie> movies = entityManager.createQuery(query, Movie.class)
                 .setMaxResults(limit)
                 .getResultList();

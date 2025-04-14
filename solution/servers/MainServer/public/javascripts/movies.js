@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let loadMoreBtn = document.getElementById('load-more');
     loadMoreBtn.addEventListener('click', loadMoreMovies);
 
-
     //inizializza select2 per il dropdown dei generi
     const genreSelect = $('.genre-select').select2({
         placeholder: "ALL GENRES",
@@ -22,9 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const movieCards = document.querySelectorAll('.movie-card');
     let allMovies = Array.from(movieCards).map(card => ({
         id: card.dataset.movieId,
-        name: card.querySelector('.movie-name').textContent,
-        rating: parseFloat(card.querySelector('.rating').textContent),
-        genres: card.querySelector('.movie-meta span:last-child').textContent.split(',').map(g => g.trim())
+        name: card.querySelector(".movie-name").textContent,
+        rating: parseFloat(card.querySelector(".rating").textContent),
+        genres: card.querySelector(".movie-meta span:last-child").textContent.split(',').map(g => g.trim()),
+        posterLink : card.querySelector(".posterlink").src
     }));
 
 
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     //se rimuove l'ultimo filtro mette all come unico
-    genreSelect.on('select2:unselect', function(e) {
+    genreSelect.on('select2:unselect', function() {
         const selected = genreSelect.val();
         if (!selected || selected.length === 0)
             genreSelect.val(['all']).trigger('change');
@@ -55,8 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     //imposta i generi passati all'url se presenti
-    const urlParams = new URLSearchParams(window.location.search);
-    const genreFromUrl = urlParams.get('genre');
+    const genreFromUrl = new URLSearchParams(window.location.search).get('genre');
     if (genreFromUrl) {
         genreSelect.val([genreFromUrl]).trigger('change');
     }
@@ -89,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             else if (sortBy === "release")
                 return b.movies_count - a.movies_count;
             else if(sortBy === "rating")
-                return b.avg_rating - a.avg_rating;
+                return b.rating - a.rating;
             return 0;
         });
 
@@ -98,14 +97,15 @@ document.addEventListener('DOMContentLoaded', function() {
         renderMovies(paginatedMovies, false);
 
         if (filteredMovies.length > ITEMS_PER_PAGE) {
-            if (loadMoreBtn)
+            //gestione bottone dopo applicazione filtri (uguale ad actors): se dopo il filtraggio n<16 display=none, se dopo cambio filtrli > display = true
+            if (getComputedStyle(loadMoreBtn).display !== 'none')
                 loadMoreBtn.dataset.currentPage = '1';
-            else
-                createLoadMoreButton(filteredMovies);
-
-        } else if (loadMoreBtn) {
+            else if(getComputedStyle(loadMoreBtn).display === 'none') { //resetta a 1 la pagina, "slice" di film visionabili
+                loadMoreBtn.style.display = 'inline'
+                loadMoreBtn.dataset.currentPage = '1'
+            }
+        } else if (loadMoreBtn)
             loadMoreBtn.style.display = 'none';
-        }
     }
 
     function loadMoreMovies() {
@@ -133,33 +133,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement('div');
             card.className = 'movie-card';
             card.dataset.movieID = movie.id;
+
+            const genreLinks = movie.genres.map(genre =>
+                `<a href="/movies?genre=${encodeURIComponent(genre)}" class="genre-link">`+genre.toLowerCase()+`</a> `);
+
             card.innerHTML = `
                 <a href="/movies/:${movie.id}">
                     <div class="movie-poster">
-                        <img src="/images/default-movie.jpg" alt="${movie.name}" onerror="this.style.display='none'">
+                        <img src="${movie.posterLink}" alt="${movie.name}" onerror="this.style.display='none'">
                     </div>
                     <h3 class="movie-name">${movie.name}</h3>
                     <div class="movie-meta">
-                        <span class="rating">average rating: ${movie.rating}</span>
-                        <span>${movie.genres.join(',')}</span>
+                        <span class="rating">average rating: ${movie.rating}</span><br>
+                        <span>${genreLinks}</span>
                     </div>
                 </a>`;
             container.appendChild(card);
         });
     }
 
-    function createLoadMoreButton() {
-
-        const container = document.createElement('div');
-        container.className = 'load-more-container';
-        container.innerHTML = '<button id="load-more">LOAD MORE</button>';
-        document.querySelector('main').appendChild(container);
-
-        const newLoadMoreBtn = document.getElementById('load-more');
-        if (newLoadMoreBtn) {
-            newLoadMoreBtn.addEventListener('click', loadMoreMovies);
-            newLoadMoreBtn.dataset.currentPage = '1';
-        }
-    }
     applyFilters();
 });
