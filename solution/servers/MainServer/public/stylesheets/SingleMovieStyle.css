@@ -233,7 +233,6 @@ h2 {
     text-align: center;
     line-height: 30px;
     border-radius: 50%;
-    position: absolute;
     left: 140px;
     top: 800px;
 }
@@ -247,7 +246,6 @@ h2 {
     text-align: center;
     line-height: 30px;
     border-radius: 50%;
-    position: absolute;
     right: 140px;
     top: 800px;
 }
@@ -261,7 +259,6 @@ h2 {
     text-align: center;
     line-height: 30px;
     border-radius: 50%;
-    position: absolute;
     left: 140px;
     top: 1150px;
 }
@@ -275,7 +272,6 @@ h2 {
     text-align: center;
     line-height: 30px;
     border-radius: 50%;
-    position: absolute;
     right: 140px;
     top: 1150px;
 }
