@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    setupSearchButton();
+
     let filteredActors;
     const ITEMS_PER_PAGE = 16;
     let loadMoreBtn = document.getElementById('load-more');
@@ -147,4 +149,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     applyFilters();
+
+    function setupSearchButton() {
+        const searchButton = document.querySelector('.search-container button');
+        const searchInput = document.querySelector('.search-container input');
+
+        if (searchButton && searchInput) {
+
+            searchButton.addEventListener('click', function() {
+                searchInput.value = '';
+            });
+
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch(searchInput.value);
+                }
+            });
+        }
+    }
 });
