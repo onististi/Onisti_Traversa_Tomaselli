@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
 // Registrazione nuovo utente
 exports.register = async (req, res) => {
@@ -37,33 +38,56 @@ exports.login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        if (!username || !password) {
-            return res.status(400).json({ success: false, message: 'Username and password are mandatory' });
-        }
-
         const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(401).json({ success: false, message: 'Invalid username or password' });
+        if (!user || !(await user.comparePassword(password))) {
+            return res.status(401).json({ message: 'Credenziali non valide' });
         }
 
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.status(401).json({ success: false, message: 'Invalid username or password' });
-        }
+        const token = jwt.sign(
+            {
+                id: user._id,
+                username: user.username,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }//token durata sessione
+        );
 
-        // Aggiorna last_login
-        user.last_login = new Date();
-        await user.save();
+        console.log('Token generato (login):', token);
 
-        return res.status(200).json({
+        res.status(200).json({
             success: true,
+            token,
             id: user._id,
-            username: user.username,
-            email: user.email
+            email: user.email,
+            role: user.role
         });
-
     } catch (error) {
-        console.error(' Error durante il login:', error);
-        return res.status(500).json({ success: false, message: 'Error during login' });
+        console.error('Errore durante il login:', error.message);
+        res.status(500).json({ message: 'Errore del server' });
+    }
+};
+
+
+exports.refreshToken = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            return res.status(400).json({ success: false, message: 'Refresh token is required' });
+        }
+
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'default-refresh-secret-key');
+
+        const newToken = jwt.sign(
+            { id: decoded.id },
+            process.env.JWT_SECRET || 'default-secret-key',
+            { expiresIn: '1h' }
+        );
+
+        return res.status(200).json({ success: true, token: newToken });
+    } catch (error) {
+        console.error('Error refreshing token:', error.message);
+        return res.status(401).json({ success: false, message: 'Invalid refresh token' });
     }
 };

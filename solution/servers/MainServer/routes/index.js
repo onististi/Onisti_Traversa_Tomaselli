@@ -3,8 +3,10 @@ const axios = require('axios');
 var router = express.Router();
 const NodeCache = require ('node-cache');
 const movieCache = new NodeCache({stdTTL: 86400});
+const { syncUserSession } = require('../middleware/auth');
+const { ensureAuthenticated } = require('../middleware/auth');
 
-router.get('/', async function(req, res, next) {
+router.get('/', syncUserSession, async function(req, res, next) {
     try {
         //Chiave cache
         const cacheKey = 'homepage_data';
@@ -82,6 +84,41 @@ router.get('/', async function(req, res, next) {
 router.get('/refresh-cache', function(req, res) {
     movieCache.del('homepage_data');
     res.redirect('/');
+});
+
+
+router.get('/refresh-user-status', (req, res, next) => {
+    // Verifica che l'utente sia autenticato
+    if (!req.session.isLoggedIn || !req.session.user) {
+        return res.redirect('/auth/login');
+    }
+    next();
+}, syncUserSession, async (req, res) => {
+    try {
+        // Verifica che DATA_SERVER_URL sia definito
+        const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:3001';
+
+        const response = await axios.get(`${DATA_SERVER_URL}/api/users/${req.session.user.id}?t=${Date.now()}`, {
+            headers: {
+                'Authorization': `Bearer ${req.session.token}`,
+                'X-User-Id': req.session.user.id
+            }
+        });
+
+        if (response.data && response.data.user) {
+            req.session.user = response.data.user;
+            // Salva la sessione in modo sincrono prima di reindirizzare
+            req.session.save((err) => {
+                if (err) console.error('Error saving session:', err);
+                res.redirect('/requests/request');
+            });
+        } else {
+            res.redirect('/requests/request');
+        }
+    } catch (error) {
+        console.error('Error refreshing user data:', error);
+        res.redirect('/requests/request');
+    }
 });
 
 module.exports = router;

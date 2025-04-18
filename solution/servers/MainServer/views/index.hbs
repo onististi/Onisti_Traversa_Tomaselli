@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{#if user}}
+        <meta name="user-id" content="{{user.id}}">
+        <meta name="user-role" content="{{user.role}}">
+        <meta name="user-status" content="{{user.requestStatus}}">
+    {{/if}}
     <title>Cineverse</title>
     <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
-
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/socketManager.js"></script>
     <script>
         var oscarsWinnerData = {{{ json oscarsWinner}}};
         var latestMoviesData = {{{ json latestMovies}}};
@@ -15,33 +21,9 @@
     </script>
 </head>
 <body>
-<header>
-    {{#if isLoggedIn}}
-        <div class="welcome-message">
-            Welcome, {{user.username}}
-        </div>
-    {{/if}}
-    <nav>
-        <h1 class="page-title">CINEVERSE</h1>
-        <a href="/" class="home-icon">🏠</a>
-        <div class="search-container">
-            <input type="text" placeholder="Search">
-            <button>X</button>
-        </div>
-        <div class="nav-links">
-            <a href="/movies">MOVIES</a>
-            <a href="/actors">ACTORS</a>
-            <a href="/chat">CHAT</a>
-            {{#if isLoggedIn}}
-                <a href="/auth/logout">LOGOUT</a>
-            {{else}}
-                <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
-            {{/if}}
-        </div>
-    </nav>
-</header>
-
+{{> header}}
 <main>
+
     <section class="section-container">
         <h2 class="section-title">OSCAR'S WINNER</h2>
         <div class="slider-container">

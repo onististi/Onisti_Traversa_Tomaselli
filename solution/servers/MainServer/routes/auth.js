@@ -1,92 +1,103 @@
 const express = require('express');
-const router = express.Router();
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
+const router = express.Router();
 
-// Configurazione endpoint DataServer
-const DATA_SERVER_URL = 'http://localhost:3001';
-
-// Pagina di login
+// Rotte GET per login e registrazione
 router.get('/login', (req, res) => {
-    res.render('login', { title: 'Login' });
+    res.render('login', {
+        title: 'Login',
+        error: req.query.error,
+        success: req.query.success
+    });
 });
 
-// Gestione login POST
+router.get('/register', (req, res) => {
+    res.render('register', {
+        title: 'Registrazione',
+        error: req.query.error,
+        username: req.query.username,
+        email: req.query.email
+    });
+});
+
+// Login
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-
-        // Invia richiesta a DataServer
-        const response = await axios.post(`${DATA_SERVER_URL}/api/auth/login`, {
+        const response = await axios.post(`${process.env.DATA_SERVER_URL}/api/auth/login`, {
             username,
             password
         });
 
-        // Se l'autenticazione ha successo
-        if (response.data.success) {
-            // Salva l'utente in sessione
-            req.session.user = {
-                id: response.data.id,
-                username: response.data.username,
-                email: response.data.email
-            };
-            req.session.isLoggedIn = true;
+        const { token, id, email, role, requestStatus } = response.data;
+        console.log('Token ricevuto dal DataServer:', token);
 
-            // Reindirizza alla homepage
-            return res.redirect('/');
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key');
+            console.log('Token verificato:', decoded);
+        } catch (error) {
+            console.error('Errore nella verifica del token:', error.message);
+            return res.render('login', {
+                title: 'Login',
+                error: 'Token non valido. Contatta il supporto.'
+            });
         }
+
+        req.session.isLoggedIn = true;
+        req.session.user = { id, username, email, role, requestStatus };
+
+        // Qui deve essere assegnato il token ricevuto, NON process.env.JWT_SECRET
+        req.session.token = token;
+        console.log('Token salvato nella sessione:', req.session.token);
+
+        await new Promise((resolve, reject) => {
+            req.session.save(err => {
+                if (err) reject(err);
+                else resolve();
+            });
+        });
+
+        res.redirect('/');
     } catch (error) {
-        console.error('Login error:', error.response ? error.response.data : error.message);
-        // Torna alla pagina di login con errore
-        return res.render('login', {
+        res.render('login', {
             title: 'Login',
-            error: 'Invalid username or password',
+            error: error.response?.data?.message || 'Login fallito',
             username: req.body.username
         });
     }
 });
 
-// Pagina di registrazione
-router.get('/register', (req, res) => {
-    res.render('register', { title: 'Registrazione' });
-});
 
-// Gestione registrazione POST
+// Registrazione
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password, confirmPassword } = req.body;
 
-        // Validazione lato client
         if (password !== confirmPassword) {
             return res.render('register', {
                 title: 'Registrazione',
-                error: 'Password does not match',
+                error: 'Le password non coincidono',
                 username,
                 email
             });
         }
 
-        // Invia richiesta a DataServer
-        const response = await axios.post(`${DATA_SERVER_URL}/api/auth/register`, {
+        const response = await axios.post(`${process.env.DATA_SERVER_URL}/api/auth/register`, {
             username,
             email,
             password
         });
 
-        // Se la registrazione ha successo
         if (response.data.success) {
-            // Reindirizza alla pagina di login con messaggio di successo
-            return res.render('login', {
-                title: 'Login',
-                success: 'Registration completed! Now you can login',
-                username
-            });
+            // Reindirizza al login con messaggio di successo
+            return res.redirect('/auth/login?success=Registrazione completata! Ora puoi fare il login');
         }
+
     } catch (error) {
-        console.error('Registration error:', error.response ? error.response.data : error.message);
-        // Torna alla pagina di registrazione con errore
-        return res.render('register', {
+        res.render('register', {
             title: 'Registrazione',
-            error: error.response ? error.response.data.message : 'Error during registration',
+            error: error.response?.data?.message || 'Errore durante la registrazione',
             username: req.body.username,
             email: req.body.email
         });
@@ -95,8 +106,38 @@ router.post('/register', async (req, res) => {
 
 // Logout
 router.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
+    req.session.destroy(() => {
+        res.clearCookie('connect.sid');
+        res.redirect('/auth/login');
+    });
 });
+
+
+router.get('/check', async (req, res) => {
+    try {
+        if (!req.session?.token) {
+            console.error('Token mancante nella sessione');
+            return res.status(401).json({ authenticated: false, message: 'Token mancante' });
+        }
+
+        console.log('Token salvato nella sessione:', req.session.token);
+
+        const response = await axios.get(
+            `${process.env.DATA_SERVER_URL}/api/users/${req.session.user.id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${req.session.token}`
+                }
+            }
+        );
+
+        console.log('Risposta dal DataServer:', response.data);
+        return res.status(200).json({ authenticated: true });
+    } catch (error) {
+        console.error('Errore durante la verifica dell\'autenticazione:', error.message);
+        res.status(401).json({ authenticated: false });
+    }
+});
+
 
 module.exports = router;

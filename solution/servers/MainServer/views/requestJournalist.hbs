@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Journalist - Cineverse</title>
+    <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
+    <link rel="stylesheet" href="/stylesheets/requestJournalistStyle.css">
+</head>
+{{> header}}
+<body>
+<main>
+    <div class="request-container">
+        <h2>Richiedi di diventare Journalist</h2>
+
+        <div class="dynamic-status">
+            {{#if (eq user.requestStatus "pending")}}
+                <div class="status-pending">
+                    ⏳ Richiesta in attesa di approvazione
+                </div>
+            {{else if (eq user.requestStatus "rejected")}}
+                <div class="status-rejected">
+                    ❌ Richiesta rifiutata
+                </div>
+            {{/if}}
+        </div>
+
+
+        {{#unless (eq user.requestStatus "pending")}}
+            <form action="/requests/request" method="POST">
+                <div class="form-group">
+                    <label for="motivation">Motivazione:</label>
+                    <textarea id="motivation" name="motivation" required></textarea>
+                </div>
+                <div class="form-controls">
+                    <button type="submit" class="submit-request-btn">Invia Richiesta</button>
+                    <a href="/" class="cancel-btn">Annulla</a>
+                </div>
+            </form>
+        {{/unless}}
+    </div>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/javascripts/adminRequests.js"></script>
+</body>
+</html>

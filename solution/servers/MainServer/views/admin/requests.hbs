@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Journalist - Cineverse</title>
+    <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
+    <link rel="stylesheet" href="/stylesheets/AdminStyle.css">
+</head>
+<body>
+<header>
+    {{#if isLoggedIn}}
+        <div class="welcome-message">
+            <div class="user-status-container">
+                <span class="welcome-text">Welcome, {{user.username}}</span>
+                <span class="user-role-badge clickable" id="roleToggle">
+                    {{capitalize user.role}} ⌄
+                </span>
+
+                {{#if (eq user.role 'user')}}
+                    <div class="role-popup hidden" id="rolePopup">
+                        {{#if (eq user.requestStatus 'none')}}
+                            <form method="POST" action="/admin/request">
+                                <textarea name="motivation"
+                                          placeholder="Why do you want to be a journalist?"
+                                          required></textarea>
+                                <button type="submit">Request Journalist</button>
+                            </form>
+                        {{else if (eq user.requestStatus 'pending')}}
+                            <p class="request-pending">Request Pending ⏳</p>
+                        {{else if (eq user.requestStatus 'rejected')}}
+                            <form method="POST" action="/admin/request">
+                                <p class="rejected-text">Previous request rejected. Try again?</p>
+                                <textarea name="motivation"
+                                          placeholder="Try a better motivation..."
+                                          required></textarea>
+                                <button type="submit">Request Again</button>
+                            </form>
+                        {{/if}}
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+
+        {{#if (eq user.role 'master')}}
+            <div class="journalist-request">
+                <a href="/admin/requests" class="admin-requests-btn">Manage Requests</a>
+            </div>
+        {{/if}}
+    {{/if}}
+    <nav>
+        <h1 class="page-title">CINEVERSE</h1>
+        <a href="/" class="home-icon">🏠</a>
+        <div class="search-container">
+            <input type="text" placeholder="Search">
+            <button>X</button>
+        </div>
+        <div class="nav-links">
+            <a href="/movies">MOVIES</a>
+            <a href="/actors">ACTORS</a>
+            <a href="/chat">CHAT</a>
+            {{#if isLoggedIn}}
+                <a href="/auth/logout">LOGOUT</a>
+            {{else}}
+                <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
+            {{/if}}
+        </div>
+    </nav>
+</header>
+
+<main class="admin-container">
+    <h1>Manage Requests Journalist</h1>
+
+    {{#if success}}
+        <div class="alert alert-success">{{success}}</div>
+    {{/if}}
+    {{#if error}}
+        <div class="alert alert-danger">{{error}}</div>
+    {{/if}}
+
+    <section class="requests-section">
+        <h2>Pending Requests</h2>
+
+        {{#if requests.length}}
+            <table class="requests-table">
+                <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Request Date</th>
+                    <th>Motivation</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each requests}}
+                    <tr>
+                        <td>{{this.username}}</td>
+                        <td>{{this.email}}</td>
+                        <td>{{formatDate this.created_at}}</td>
+                        <td>{{this.motivation}}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <form action="/admin/handle" method="POST">
+                                    <input type="hidden" name="userId" value="{{this._id}}">
+                                    <input type="hidden" name="action" value="approve">
+                                    <button type="submit" class="btn-approve">Approve</button>
+                                </form>
+                                <form action="/admin/handle" method="POST">
+                                    <input type="hidden" name="userId" value="{{this._id}}">
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="btn-reject">Reject</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        {{else}}
+            <p>No Such Pending Requests Left.</p>
+        {{/if}}
+    </section>
+</main>
+<script src="/javascripts/index.js"></script>
+</body>
+</html>

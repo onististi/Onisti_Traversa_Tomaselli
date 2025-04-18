@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeSliders();
-
     setupSearchButton();
-
     handleMissingImages();
 });
 
@@ -34,17 +32,21 @@ function initializeSliders() {
         ]
     };
 
+    // Inizializza slider Oscar
     $('.oscar-movie-slider').slick(sliderOptions);
     setupNavButtons('.oscar-nav', '.oscar-movie-slider');
 
+    // Inizializza slider Latest Movies
     $('.latest-movie-slider').slick(sliderOptions);
     setupNavButtons('.latest-nav', '.latest-movie-slider');
 
+    // Inizializza slider Top Rated
     $('.top-movie-slider').slick(sliderOptions);
     setupNavButtons('.top-nav', '.top-movie-slider');
 }
 
 function setupNavButtons(navSelector, sliderSelector) {
+    // Configura i pulsanti di navigazione
     const prevBtn = document.querySelector(`${navSelector} .prev-arrow`);
     const nextBtn = document.querySelector(`${navSelector} .next-arrow`);
 
@@ -64,11 +66,9 @@ function setupSearchButton() {
     const searchInput = document.querySelector('.search-container input');
 
     if (searchButton && searchInput) {
-
         searchButton.addEventListener('click', function() {
             searchInput.value = '';
         });
-
 
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -79,30 +79,29 @@ function setupSearchButton() {
 }
 
 function performSearch(searchTerm) {
-
     if (searchTerm.trim() !== '') {
         console.log(`Ricerca per: ${searchTerm}`);
     }
 }
 
 function handleMissingImages() {
-
+    // Gestisci immagini mancanti o non caricate
     const posterImages = document.querySelectorAll('.poster img');
 
     posterImages.forEach(img => {
-
         img.addEventListener('error', function() {
-
+            // Aggiungi una classe per applicare stili alternativi
             this.parentElement.classList.add('missing-image');
             this.style.display = 'none';
 
+            // Crea un elemento di fallback
             const fallback = document.createElement('div');
             fallback.className = 'image-fallback';
             fallback.textContent = 'No Image';
             this.parentElement.appendChild(fallback);
         });
 
-
+        // Verifica anche le immagini già non caricate
         if (!img.complete || img.naturalHeight === 0 || !img.src || img.src === 'null' || img.src === 'undefined') {
             img.dispatchEvent(new Event('error'));
         }

@@ -56,6 +56,165 @@ nav {
     justify-content: center;
 }
 
+.user-role {
+    font-size: 1rem;
+    color: #333;
+    margin-left: 10px;
+}
+
+.role-text {
+    font-weight: bold;
+    background: #f4f4f4;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+
+/* Stile per Master */
+.admin-requests-btn {
+    background: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.admin-requests-btn:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+#status-notification {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px; /* Notifica visibile in alto a destra */
+    background-color: #4CAF50; /* Verde per successo */
+    color: white;
+    padding: 12px 16px; /* Ridimensiona il padding per meno spazio */
+    border-radius: 8px; /* Angoli più arrotondati */
+    box-shadow: 0px 6px 12px rgba(0,0,0,0.25); /* Ombra più morbida */
+    z-index: 1000;
+    font-size: 14px; /* Testo più piccolo per leggibilità */
+    font-weight: bold;
+    max-width: 250px; /* Dimensione contenuta per non eccedere */
+    word-wrap: break-word;
+    text-align: center; /* Centra il testo */
+    animation: fadeIn 0.5s ease, fadeOut 0.5s ease 4.5s; /* Animazioni */
+}
+
+#close-notification {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+}
+
+#close-notification:hover {
+    color: #ddd;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.status-notification.error {
+    background-color: #f44336; /* Rosso per errore */
+}
+
+.status-notification.warning {
+    background-color: #ff9800; /* Giallo per avvisi */
+}
+
+.status-notification.info {
+    background-color: #2196F3; /* Blu per informazioni */
+}
+
+
+
+@keyframes slideInRight {
+    from {
+        right: -300px;
+        opacity: 0;
+    }
+    to {
+        right: 20px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.request-journalist-btn {
+    background: #2196F3;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.request-journalist-btn:hover {
+    background: #1976D2;
+    transform: translateY(-2px);
+}
+
 .search-container {
     position: absolute;
     top: 50px;

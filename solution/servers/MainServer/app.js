@@ -1,51 +1,44 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-const socketIo = require('socket.io');
-const session = require('express-session');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('dotenv').config();
+const express = require('express');
+const path = require('path');
+const hbs = require('hbs');
+const { sessionMiddleware, ensureAuthenticated, injectAuthVariables, syncUserSession } = require('./middleware/auth');
+const { setupWebSockets } = require('./websocket');
 
-var indexRouter = require('./routes/index');
+const app = express();
+const server = require('http').createServer(app);
+
+
+// Importazione delle route
+const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const movieRouter = require('./routes/movies');
 const actorRouter = require('./routes/actors');
 const chatRouter = require('./routes/chat');
+const adminRouter = require('./routes/admin');
+const requestsRouter = require('./routes/requests');
 
-const app = express();
-
-// View engine setup
-app.set('views', path.join(__dirname, 'views'));
+// Configurazione view engine
+hbs.registerPartials(path.join(__dirname, 'views/partials'));
 app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
 
-const hbs = require('hbs');
-hbs.registerHelper('json', function(context) {
-  return JSON.stringify(context || []);
-});
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+// Middleware
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(sessionMiddleware);
+app.use(injectAuthVariables);
+app.use(syncUserSession);
 
-// Impost session
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000
-  }
-}));
+// Setup WebSocket
+setupWebSockets(server);
 
-// Middleware for `isLoggedIn` variable
-app.use((req, res, next) => {
-  res.locals.isLoggedIn = req.session && req.session.isLoggedIn;
-  res.locals.user = req.session.user;
-  next();
-});
+// Register HBS helpers
+hbs.registerHelper('json', context => JSON.stringify(context || []));
+hbs.registerHelper('eq', (a, b) => a === b);
+hbs.registerHelper('formatDate', date => new Date(date).toLocaleDateString('it-IT'));
+hbs.registerHelper('capitalize', str => typeof str === 'string' ? str.charAt(0).toUpperCase() + str.slice(1) : '');
 
 // Routes definition
 app.use('/', indexRouter);
@@ -53,19 +46,16 @@ app.use('/auth', authRouter);
 app.use('/movies', movieRouter);
 app.use('/actors', actorRouter);
 app.use('/chat', chatRouter);
+app.use('/requests', requestsRouter);
+app.use('/admin', adminRouter);
 
-// Catch 404 e forward a error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-// Error handler
-app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  res.status(err.status || 500);
-  res.render('error');
+// Gestione errori
+app.use((err, req, res, next) => {
+  console.error('Global error:', err);
+  res.status(err.status || 500).render('error', {
+    message: err.message,
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  });
 });
 
 module.exports = app;

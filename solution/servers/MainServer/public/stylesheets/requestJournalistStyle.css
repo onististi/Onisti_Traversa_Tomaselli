@@ -1,0 +1,191 @@
+/* stylesheets/requestJournalistStyle.css */
+.request-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: #e0e0e0;
+}
+
+.request-container h2 {
+    color: #ff4081;
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.request-details {
+    background-color: #252525;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+}
+
+.request-form .form-group {
+    margin-bottom: 20px;
+}
+
+.request-form textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 4px;
+    background-color: #333;
+    border: 1px solid #444;
+    color: #fff;
+    resize: vertical;
+}
+
+.form-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+/* Stati e messaggi */
+.dynamic-status {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+.status-rejected {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.status-approved {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.hidden { display: none; }
+
+/* Pulsanti */
+.submit-request-btn {
+    background-color: #ff4081;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-btn {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #ccc;
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .request-container {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .form-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* Stile specifico per la sezione rejected */
+.rejected-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.request-again-btn {
+    background-color: #ff4081;
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.request-again-btn:hover {
+    background-color: #f50057;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Aggiungi questi stili */
+.request-journalist-btn,
+.request-again-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+/* Sostituisci .request-again-btn con */
+.status-rejected .request-journalist-btn {
+    background-color: #ff4081;
+    color: white;
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+}
+
+/* Aggiungi stati hover */
+.submit-request-btn:hover,
+.request-journalist-btn:hover,
+.request-again-btn:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
+}
+
+/* Migliora la visibilità del textarea */
+.request-form textarea:focus {
+    outline: 2px solid #ff4081;
+    outline-offset: 2px;
+}
+
+/* Allinea meglio gli elementi nello status */
+.dynamic-status p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Aggiungi transizioni */
+.request-journalist-btn,
+.submit-request-btn,
+.cancel-btn {
+    transition:
+            background-color 0.3s ease,
+            transform 0.2s ease,
+            box-shadow 0.3s ease;
+}
+
+/* Migliora il responsive */
+@media (max-width: 480px) {
+    .request-container h2 {
+        font-size: 1.4rem;
+    }
+
+    .status-indicator {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

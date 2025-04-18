@@ -1,0 +1,61 @@
+<header>
+    <div class="user-role">
+        <span class="role-text">
+            Role: {{#if user.role}}{{capitalize user.role}}{{else}}Not logged{{/if}}
+        </span>
+    </div>
+    {{#if isLoggedIn}}
+        <div class="welcome-message">
+            <div class="user-status-container">
+                <span class="welcome-text">Welcome, {{user.username}}</span>
+
+                <div class="status-indicator">
+                    {{#if (eq user.role 'user')}}
+                        {{#if (eq user.requestStatus 'none')}}
+                            <a href="/requests/request" class="request-journalist-btn">
+                                <span class="icon">📝</span> Become a Journalist
+                            </a>
+                        {{else if (eq user.requestStatus 'pending')}}
+                            <div class="status-pending">
+                                <span class="icon">⏳</span> Request pending
+                            </div>
+                        {{else if (eq user.requestStatus 'rejected')}}
+                            <div class="status-rejected">
+                                <span class="icon">❌</span> Request rejected
+                                <a href="/requests/request" class="request-journalist-btn">
+                                    <span class="icon">✉️</span> Request Again
+                                </a>
+                            </div>
+                        {{/if}}
+                    {{else if (eq user.role 'master')}}
+                        <a href="/admin/requests" class="admin-requests-btn">
+                            <span class="icon">⚙️</span> Manage Requests
+                        </a>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    {{/if}}
+    <div id="status-notification">
+        <span id="notification-message">Your session is about to expire.</span>
+        <button id="close-notification" style="display: none;" onclick="hideNotification()">✖</button>
+    </div>
+    <nav>
+        <h1 class="page-title">CINEVERSE</h1>
+        <a href="/" class="home-icon">🏠</a>
+        <div class="search-container">
+            <input type="text" placeholder="Search">
+            <button>X</button>
+        </div>
+        <div class="nav-links">
+            <a href="/movies">MOVIES</a>
+            <a href="/actors">ACTORS</a>
+            <a href="/chat">CHAT</a>
+            {{#if isLoggedIn}}
+                <a href="/auth/logout">LOGOUT</a>
+            {{else}}
+                <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
+            {{/if}}
+        </div>
+    </nav>
+</header>

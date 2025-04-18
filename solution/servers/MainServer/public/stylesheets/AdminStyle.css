@@ -1,0 +1,65 @@
+/* Admin Dashboard Styling */
+.admin-dashboard {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.requests-list {
+    margin-top: 2rem;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Adatta la tabella */
+.admin-dashboard table {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .actions {
+        flex-direction: column;
+    }
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons form {
+    margin: 0;
+}
+
+.btn-approve, .btn-reject {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-approve {
+    background-color: #4CAF50;
+}
+
+.btn-reject {
+    background-color: #f44336;
+}
+
+.btn-approve:hover {
+    background-color: #45a049;
+}
+
+.btn-reject:hover {
+    background-color: #d32f2f;
+}
