@@ -1,7 +1,6 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
-const { createClient } = require('redis');
 
 
 const sessionMiddleware = session({
