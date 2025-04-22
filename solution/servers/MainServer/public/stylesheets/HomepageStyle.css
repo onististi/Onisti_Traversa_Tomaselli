@@ -10,7 +10,7 @@ header {
     color: white;
     padding: 20px 50px;
     position: relative;
-    height: 120px;
+    height: 110px;
 }
 
 .page-title {
@@ -48,7 +48,7 @@ nav {
     border-radius: 5px;
     background: #ffffff;
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 10px;
     height: 20px;
     display: flex;
@@ -63,7 +63,7 @@ nav {
 }
 
 .role-text {
-    font-weight: bold;
+    color: #000000;
     background: #f4f4f4;
     padding: 5px 10px;
     border-radius: 5px;
@@ -81,6 +81,8 @@ nav {
     gap: 8px;
     text-decoration: none;
     transition: all 0.3s ease;
+    position: relative;
+    margin-top: 6px;
 }
 
 .admin-requests-btn:hover {
@@ -93,19 +95,19 @@ nav {
     display: none;
     position: fixed;
     top: 20px;
-    right: 20px; /* Notifica visibile in alto a destra */
-    background-color: #4CAF50; /* Verde per successo */
+    right: 20px;
+    background-color: #4CAF50;
     color: white;
-    padding: 12px 16px; /* Ridimensiona il padding per meno spazio */
-    border-radius: 8px; /* Angoli più arrotondati */
-    box-shadow: 0px 6px 12px rgba(0,0,0,0.25); /* Ombra più morbida */
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0px 6px 12px rgba(0,0,0,0.25);
     z-index: 1000;
-    font-size: 14px; /* Testo più piccolo per leggibilità */
+    font-size: 14px;
     font-weight: bold;
-    max-width: 250px; /* Dimensione contenuta per non eccedere */
+    max-width: 250px;
     word-wrap: break-word;
-    text-align: center; /* Centra il testo */
-    animation: fadeIn 0.5s ease, fadeOut 0.5s ease 4.5s; /* Animazioni */
+    text-align: center;
+    animation: fadeIn 0.5s ease, fadeOut 0.5s ease 4.5s;
 }
 
 #close-notification {
@@ -187,16 +189,20 @@ nav {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    position: relative;
+    margin-top: 6px;
 }
 
 .status-rejected {
     background: #f8d7da;
     color: #721c24;
-    padding: 8px 12px;
+    padding:0;
     border-radius: 4px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    position: relative;
+    margin-top: 6px;
 }
 
 .request-journalist-btn {
@@ -206,8 +212,14 @@ nav {
     border-radius: 20px;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     transition: all 0.3s ease;
+    position: relative;
+    margin-top: 6px;
+    top: -2px;
+    margin-right: 6px;
+    margin-left: 6px;
+    text-decoration: none;
 }
 
 .request-journalist-btn:hover {
@@ -217,7 +229,7 @@ nav {
 
 .search-container {
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 70px;
     display: flex;
 }
@@ -241,7 +253,7 @@ nav {
 
 .nav-links {
     position: absolute;
-    top: 50px;
+    top: 60px;
     right: 0;
     display: flex;
     gap: 10px;

@@ -1,18 +1,24 @@
-/* stylesheets/requestJournalistStyle.css */
 .request-container {
     max-width: 800px;
     margin: 40px auto;
-    padding: 30px;
+    padding: 50px;
     background-color: #1a1a1a;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    color: #e0e0e0;
+    color: #ffffff;
+}
+
+.form-group label {
+    position: relative;
+    top: -20px;
+    display: inline-block;
 }
 
 .request-container h2 {
-    color: #ff4081;
+    color: #2196F3;
     font-size: 24px;
-    margin-bottom: 15px;
+    margin-top: -10px;
+    margin-bottom: 50px;
     text-align: center;
 }
 
@@ -40,10 +46,9 @@
 .form-controls {
     display: flex;
     justify-content: space-between;
-    margin-top: 30px;
+    margin-top: 60px;
 }
 
-/* Stati e messaggi */
 .dynamic-status {
     padding: 15px;
     margin: 20px 0;
@@ -71,9 +76,8 @@
 
 .hidden { display: none; }
 
-/* Pulsanti */
 .submit-request-btn {
-    background-color: #ff4081;
+    background-color: #2196F3;
     color: white;
     padding: 12px 24px;
     border: none;
@@ -88,9 +92,10 @@
     color: #ccc;
     padding: 10px 20px;
     border-radius: 4px;
+    text-decoration: none;
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
     .request-container {
         margin: 20px;
@@ -103,7 +108,7 @@
     }
 }
 
-/* Stile specifico per la sezione rejected */
+
 .rejected-section {
     display: flex;
     flex-direction: column;
@@ -128,7 +133,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Aggiungi questi stili */
+
 .request-journalist-btn,
 .request-again-btn {
     display: inline-flex;
@@ -137,7 +142,6 @@
     font-weight: 500;
 }
 
-/* Sostituisci .request-again-btn con */
 .status-rejected .request-journalist-btn {
     background-color: #ff4081;
     color: white;
@@ -146,7 +150,6 @@
     border: none;
 }
 
-/* Aggiungi stati hover */
 .submit-request-btn:hover,
 .request-journalist-btn:hover,
 .request-again-btn:hover {
@@ -154,13 +157,11 @@
     transform: translateY(-1px);
 }
 
-/* Migliora la visibilità del textarea */
 .request-form textarea:focus {
     outline: 2px solid #ff4081;
     outline-offset: 2px;
 }
 
-/* Allinea meglio gli elementi nello status */
 .dynamic-status p {
     margin: 0;
     display: flex;
@@ -168,7 +169,6 @@
     gap: 8px;
 }
 
-/* Aggiungi transizioni */
 .request-journalist-btn,
 .submit-request-btn,
 .cancel-btn {
@@ -178,7 +178,7 @@
             box-shadow 0.3s ease;
 }
 
-/* Migliora il responsive */
+
 @media (max-width: 480px) {
     .request-container h2 {
         font-size: 1.4rem;
