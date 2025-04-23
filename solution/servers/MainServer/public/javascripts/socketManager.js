@@ -1,18 +1,28 @@
 class SocketManager {
-    static init({ userId, role, requestStatus }) {
+    static init({userId, role, requestStatus}) {
+        console.log('Esecuzione SocketManager.init()', {userId, role, requestStatus});
+
+        if (this.socket) {
+            console.log('Il socket è già stato inizializzato. Stato attuale:', {
+                userId: this.userId,
+                role: this.role,
+                requestStatus: this.requestStatus
+            });
+            return;
+        }
+
         this.userId = userId;
         this.role = role;
         this.requestStatus = requestStatus;
 
-        console.log('Initializing SocketManager for user:', userId);
+        // Crea una connessione socket la logga
+        this.socket = io({withCredentials: true});
+        console.log('Socket creato:', this.socket);
 
-        if (this.socket) {
-            console.log('Socket already initialized');
-            return;
-        }
-
-        this.socket = io({ withCredentials: true, reconnection: true, reconnectionAttempts: 3, reconnectionDelay: 5000 });
         this.setupEventHandlers();
+
+        // Segnala che l'inizializzazione è completata
+        console.log('SocketManager inizializzato con successo.');
     }
 
 
@@ -22,17 +32,14 @@ class SocketManager {
         });
 
         this.socket.on('status-update', (data) => {
-            console.log('Status update received:', data);
-            if (data.userId === this.userId && data.requestStatus !== this.requestStatus) {
+            console.log('Evento status-update ricevuto dal WebSocket:', data);
+            // Aggiorna sempre la UI, anche se lo stato è uguale a quello attuale
+            if (data.userId === this.userId) {
                 this.requestStatus = data.requestStatus;
                 this.updateStatusUI(data.requestStatus);
-
-                //Ricarica solamente quando ci sono cambiamenti di status
-                if (data.requestStatus === 'approved' ||
-                    (data.requestStatus === 'rejected' && window.location.pathname !== '/requests/request')) {
-                    console.log('Status changed to', data.requestStatus, '. Reloading page.');
-                    setTimeout(() => window.location.reload(), 2000);
-                }
+                console.log(`Stato aggiornato per userId ${data.userId}: ${data.requestStatus}`);
+            } else {
+                console.warn(`Nessun aggiornamento per userId ${data.userId}. Stato corrente: ${this.requestStatus}`);
             }
         });
 
@@ -86,7 +93,41 @@ class SocketManager {
         }
     }
 
+    static updateStatusUI(requestStatus) {
+        const statusIndicator = document.querySelector('.status-indicator');
+        console.log('Elemento status-indicator trovato?', !!statusIndicator);
+
+        if (statusIndicator) {
+            if (requestStatus === 'approved') {
+                // Mostra una notifica temporanea
+                statusIndicator.innerHTML = `
+                <div class="status-approved notification">
+                    <span class="icon">✅</span> Request approved
+                </div>`;
+                console.log('Aggiornamento dello stato in: approved (notifica temporanea)');
+
+                // Nascondi o rimuovi la notifica dopo 5 secondi (5000 ms)
+                setTimeout(() => {
+                    statusIndicator.innerHTML = '';
+                    console.log('Notifica approved rimossa automaticamente');
+                }, 5000);
+            } else if (requestStatus === 'rejected') {
+                // Mostra la notifica persistente per il rifiuto, con opzione per richiedere nuovamente
+                statusIndicator.innerHTML = `
+                <div class="status-rejected">
+                    <span class="icon">❌</span> Request rejected
+                    <a href="/requests/request" class="request-journalist-btn">
+                        <span class="icon">✉️</span> Request Again
+                    </a>
+                </div>`;
+                console.log('Aggiornamento dello stato in: rejected (notifica persistente)');
+            } else {
+                console.warn('Stato non gestito:', requestStatus);
+            }
+        } else {
+            console.error('Elemento status-indicator non trovato nel DOM.');
+        }
+    }
 }
 
-// Export for global use
 window.SocketManager = SocketManager;

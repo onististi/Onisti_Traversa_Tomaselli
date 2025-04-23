@@ -9,7 +9,7 @@
             <div class="user-status-container">
                 <span class="welcome-text">Welcome, {{user.username}}</span>
 
-                <div class="status-indicator">
+                <div class="status-indicator" data-status="{{user.requestStatus}}">
                     {{#if (eq user.role 'user')}}
                         {{#if (eq user.requestStatus 'none')}}
                             <a href="/requests/request" class="request-journalist-btn">
@@ -19,13 +19,6 @@
                             <div class="status-pending">
                                 <span class="icon">⏳</span> Request pending
                             </div>
-                        {{else if (eq user.requestStatus 'rejected')}}
-                            <div class="status-rejected">
-                                <span class="icon">❌</span> Request rejected
-                                <a href="/requests/request" class="request-journalist-btn">
-                                    <span class="icon">✉️</span> Request Again
-                                </a>
-                            </div>
                         {{/if}}
                     {{else if (eq user.role 'master')}}
                         <a href="/admin/requests" class="admin-requests-btn">
@@ -33,6 +26,7 @@
                         </a>
                     {{/if}}
                 </div>
+
             </div>
         </div>
     {{/if}}
@@ -42,7 +36,7 @@
     </div>
     <nav>
         <h1 class="page-title">CINEVERSE</h1>
-        <a href="/" class="home-icon">🏠</a>
+        <a href="/" id="home-icon" class="home-icon">🏠</a>
         <div class="search-container">
             <input type="text" placeholder="Search">
             <button>X</button>
@@ -58,4 +52,6 @@
             {{/if}}
         </div>
     </nav>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="/javascripts/adminRequests.js"></script>
 </header>

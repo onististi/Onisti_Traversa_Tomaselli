@@ -1,6 +1,5 @@
-const User = require('../models/User');  // Make sure this path is correct
+const User = require('../models/User');
 
-// Nel UserController.js
 exports.getUserById = async (req, res) => {
     try {
         const userId = req.params.id;

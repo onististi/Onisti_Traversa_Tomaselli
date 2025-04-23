@@ -13,20 +13,6 @@
     <div class="request-container">
         <h2>Richiedi di diventare Journalist</h2>
 
-        <div class="dynamic-status">
-            {{#if (eq user.requestStatus "pending")}}
-                <div class="status-pending">
-                    ⏳ Richiesta in attesa di approvazione
-                </div>
-            {{else if (eq user.requestStatus "rejected")}}
-                <div class="status-rejected">
-                    ❌ Richiesta rifiutata
-                </div>
-            {{/if}}
-        </div>
-
-
-        {{#unless (eq user.requestStatus "pending")}}
             <form action="/requests/request" method="POST">
                 <div class="form-group">
                     <label for="motivation">Motivazione:</label>
@@ -37,7 +23,6 @@
                     <a href="/" class="cancel-btn">Annulla</a>
                 </div>
             </form>
-        {{/unless}}
     </div>
 </main>
 

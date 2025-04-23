@@ -80,12 +80,6 @@ router.get('/', syncUserSession, async function(req, res, next) {
     }
 });
 
-// Endpoint per forzare il refresh della cache se necessario
-router.get('/refresh-cache', function(req, res) {
-    movieCache.del('homepage_data');
-    res.redirect('/');
-});
-
 
 router.get('/refresh-user-status', (req, res, next) => {
     // Verifica che l'utente sia autenticato
@@ -110,10 +104,10 @@ router.get('/refresh-user-status', (req, res, next) => {
             // Salva la sessione in modo sincrono prima di reindirizzare
             req.session.save((err) => {
                 if (err) console.error('Error saving session:', err);
-                res.redirect('/requests/request');
+                res.redirect('/');
             });
         } else {
-            res.redirect('/requests/request');
+            res.redirect('/');
         }
     } catch (error) {
         console.error('Error refreshing user data:', error);

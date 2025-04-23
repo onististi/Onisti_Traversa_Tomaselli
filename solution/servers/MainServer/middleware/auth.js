@@ -10,7 +10,7 @@ const sessionMiddleware = session({
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000 // 1 day
+        maxAge: 24 * 60 * 60 * 1000 // 1 giorno
     }
 });
 
@@ -37,23 +37,57 @@ const ensureAuthenticated = async (req, res, next) => {
 const syncUserSession = async (req, res, next) => {
     console.log('Token PRIMA di syncUserSession:', req.session.token);
 
+    if (!req.session || !req.session.user || !req.session.user.id) {
+        console.warn('Sessione o utente non definiti. Salto syncUserSession.');
+        return next();
+    }
+
     try {
         const response = await axios.get(
-            `${process.env.DATA_SERVER_URL}/api/users/${req.session.user.id}`,
+            `${process.env.DATA_SERVER_URL}/api/users/${req.session.user.id}?t=${Date.now()}`,
             {
-                headers: { 'Authorization': `Bearer ${req.session.token}` }
+                headers: {
+                    'Authorization': `Bearer ${req.session.token}`,
+                    'Cache-Control': 'no-store'
+                }
             }
         );
 
-        req.session.user = response.data.user;
-        await req.session.save();
-        console.log('Token DOPO syncUserSession:', req.session.token);
+        const userFromDataServer = response.data.user;
+        console.log('Dati ricevuti dal DataServer:', userFromDataServer);
+
+        // Aggiorna i dati della sessione solo se differiscono
+        if (JSON.stringify(userFromDataServer) !== JSON.stringify(req.session.user)) {
+            console.log(
+                `Aggiornamento dati nella sessione: da ${JSON.stringify(req.session.user)} a ${JSON.stringify(userFromDataServer)}`
+            );
+            req.session.user = userFromDataServer;
+
+            // Rigenera il token basandosi sui nuovi dati
+            req.session.token = jwt.sign(
+                {
+                    id: req.session.user.id,
+                    username: req.session.user.username,
+                    role: req.session.user.role
+                },
+                process.env.JWT_SECRET || 'default-secret-key',
+                { expiresIn: '1h' }
+            );
+
+            console.log('Nuovo token generato nella sessione:', req.session.token);
+            await req.session.save();
+        } else {
+            console.log('I dati ricevuti sono identici a quelli in sessione. Nessun aggiornamento necessario.');
+        }
+
         next();
     } catch (error) {
         console.error('Errore syncUserSession:', error.message);
         next();
     }
 };
+
+
 
 
 

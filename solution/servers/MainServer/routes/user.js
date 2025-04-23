@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const { notifyUser } = require('../websocket');
+const jwt = require('jsonwebtoken');
 
 const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:3001';
 
@@ -42,26 +44,36 @@ router.post('/refresh-session', async (req, res) => {
     }
 });
 
-router.post('/update-notification', async (req, res) => {
-    try {
-        const { userId, status, role } = req.body;
+router.post('/api/refresh-token', (req, res) => {
+    // Utilizza i dati aggiornati della sessione
+    const user = req.session.user;
+    if (!user) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    // Genera un nuovo token con i dati aggiornati della sessione
+    const newToken = jwt.sign(
+        {
+            id: user.id,
+            username: user.username,
+            role: user.role
+        },
+        process.env.JWT_SECRET || 'default-secret-key',
+        { expiresIn: '1h' }
+    );
+    res.json({
+        success: true,
+        token: newToken
+    });
+});
 
-        if (!userId || !status || !role) {
-            return res.status(400).json({ success: false, message: 'Dati mancanti' });
-        }
 
-        const io = req.app.get('io');
-        io.to(`user_${userId}`).emit('status-update', {
-            userId,
-            status: status || 'unknown',
-            role: role || 'user',
-            timestamp: Date.now()
-        });
-
+router.post('/api/notify-user', (req, res) => {
+    const { userId, requestStatus } = req.body;
+    const result = notifyUser(userId, requestStatus);
+    if(result) {
         res.json({ success: true });
-    } catch (error) {
-        console.error('Errore durante l\'invio della notifica:', error.message);
-        res.status(500).json({ success: false, message: 'Errore interno' });
+    } else {
+        res.status(500).json({ success: false, message: 'Notifica fallita.' });
     }
 });
 

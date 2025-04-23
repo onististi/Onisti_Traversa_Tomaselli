@@ -6,19 +6,6 @@ const { ensureAuthenticated, ensureMaster } = require('../middleware/auth');
 
 const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:3001';
 
-// Valida la richiesta
-const validateRequest = (req, res, next) => {
-    const { userId, action } = req.body;
-    if (!userId || !['approve', 'reject'].includes(action)) {
-        return res.status(400).render('error', {
-            message: 'Richiesta non valida',
-            error: { status: 400 }
-        });
-    }
-    next();
-};
-
-
 // Pagina richiesta giornalista
 router.get('/request', ensureAuthenticated, (req, res) => {
     res.render('requestJournalist', {
