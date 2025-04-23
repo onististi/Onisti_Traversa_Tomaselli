@@ -1,8 +1,9 @@
-body {
+* {
     margin: 0;
     padding: 0;
-    height: 100%;
-    width: 100%;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    text-decoration: none;
 }
 
 .movie-container {
@@ -23,7 +24,7 @@ header {
     color: white;
     padding: 20px 50px;
     position: relative;
-    height: 80px;
+    height: 150px;
 }
 
 .page-title {
@@ -57,13 +58,13 @@ nav {
     font-size: 16px;
     text-decoration: none;
     color: black;
-    padding: 9px;
+    padding: 10px;
     border-radius: 5px;
     background: #ffffff;
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 10px;
-    height: 20px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,7 +72,7 @@ nav {
 
 .search-container {
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 70px;
     display: flex;
 }
@@ -95,7 +96,7 @@ nav {
 
 .nav-links {
     position: absolute;
-    top: 50px;
+    top: 60px;
     right: 0;
     display: flex;
     gap: 10px;
@@ -115,7 +116,6 @@ nav {
 .login-btn {
     border: 1px solid white;
 }
-
 
 .content-wrapper {
     padding: 20px;

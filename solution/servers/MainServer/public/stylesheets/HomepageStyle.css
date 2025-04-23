@@ -10,7 +10,7 @@ header {
     color: white;
     padding: 20px 50px;
     position: relative;
-    height: 120px;
+    height: 110px;
 }
 
 .page-title {
@@ -48,7 +48,7 @@ nav {
     border-radius: 5px;
     background: #ffffff;
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 10px;
     height: 20px;
     display: flex;
@@ -63,7 +63,7 @@ nav {
 }
 
 .role-text {
-    font-weight: bold;
+    color: #000000;
     background: #f4f4f4;
     padding: 5px 10px;
     border-radius: 5px;
@@ -81,6 +81,8 @@ nav {
     gap: 8px;
     text-decoration: none;
     transition: all 0.3s ease;
+    position: relative;
+    margin-top: 6px;
 }
 
 .admin-requests-btn:hover {
@@ -187,16 +189,20 @@ nav {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    position: relative;
+    margin-top: 6px;
 }
 
 .status-rejected {
     background: #f8d7da;
     color: #721c24;
-    padding: 8px 12px;
+    padding:0;
     border-radius: 4px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    position: relative;
+    margin-top: 6px;
 }
 
 .status-approved {
@@ -216,8 +222,14 @@ nav {
     border-radius: 20px;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     transition: all 0.3s ease;
+    position: relative;
+    margin-top: 6px;
+    top: -2px;
+    margin-right: 6px;
+    margin-left: 6px;
+    text-decoration: none;
 }
 
 .request-journalist-btn:hover {
@@ -227,7 +239,7 @@ nav {
 
 .search-container {
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 70px;
     display: flex;
 }
@@ -251,7 +263,7 @@ nav {
 
 .nav-links {
     position: absolute;
-    top: 50px;
+    top: 60px;
     right: 0;
     display: flex;
     gap: 10px;

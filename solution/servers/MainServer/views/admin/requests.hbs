@@ -13,9 +13,6 @@
         <div class="welcome-message">
             <div class="user-status-container">
                 <span class="welcome-text">Welcome, {{user.username}}</span>
-                <span class="user-role-badge clickable" id="roleToggle">
-                    {{capitalize user.role}} ⌄
-                </span>
 
                 {{#if (eq user.role 'user')}}
                     <div class="role-popup hidden" id="rolePopup">
@@ -44,7 +41,7 @@
 
         {{#if (eq user.role 'master')}}
             <div class="journalist-request">
-                <a href="/admin/requests" class="admin-requests-btn">Manage Requests</a>
+                <a href="/admin/requests" class="admin-requests-btn">Refresh Requests</a>
             </div>
         {{/if}}
     {{/if}}
@@ -67,7 +64,6 @@
         </div>
     </nav>
 </header>
-
 <main class="admin-container">
     <h1>Manage Requests Journalist</h1>
 

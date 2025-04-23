@@ -1,12 +1,9 @@
-body {
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #ffffff;
-    color: #ffffff;
+    text-decoration: none;
 }
 
 header {
@@ -14,7 +11,7 @@ header {
     color: white;
     padding: 20px 50px;
     position: relative;
-    height: 80px;
+    height: 140px;
 }
 
 .page-title {
@@ -48,13 +45,13 @@ nav {
     font-size: 16px;
     text-decoration: none;
     color: black;
-    padding: 9px;
+    padding: 10px;
     border-radius: 5px;
     background: #ffffff;
     position: absolute;
     top: 50px;
     left: 10px;
-    height: 20px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
