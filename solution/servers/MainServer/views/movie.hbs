@@ -103,6 +103,61 @@
                 </table>
             </div>
         </div>
+        <div class="reviews-section">
+            <h2>REVIEWS</h2>
+            <div class="reviews-container" id="reviewsContainer">
+                {{#if reviews.length}}
+                    {{#each reviews}}
+                        <div class="review-item">
+                            <div class="review-header">
+                                <span class="review-author">{{this.author}}</span>
+                                <div class="review-rating">
+                                    {{#times this.rating}}
+                                        <span class="star">★</span>
+                                    {{/times}}
+                                    {{#times (subtract 5 this.rating)}}
+                                        <span class="star empty">☆</span>
+                                    {{/times}}
+                                </div>
+                                <span class="review-date">{{formatDate this.date}}</span>
+                            </div>
+                            <div class="review-content">
+                                <p>{{this.content}}</p>
+                            </div>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <div class="no-reviews">
+                        <p>No reviews yet. Be the first to review this movie!</p>
+                    </div>
+                {{/if}}
+            </div>
+            <div class="add-review-section">
+                <h3>Add Your Review</h3>
+                <form id="reviewForm" action="/movie/{{movie.id}}/review" method="POST">
+                    <div class="form-group">
+                        <label for="reviewRating">Rating:</label>
+                        <div class="rating-input">
+                            <input type="radio" id="star5" name="rating" value="5" required>
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1">★</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewContent">Your Review:</label>
+                        <textarea id="reviewContent" name="content" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-review-btn">Submit Review</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
