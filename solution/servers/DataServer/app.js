@@ -12,13 +12,18 @@ require('./config/db'); // Importa la connessione al database
 var indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const movieRouter = require('./routes/movies');
-
+const chatRouter = require('./routes/chat');
 const requestsRouter = require('./routes/journalistRequests');
 const userRoutes = require('./routes/user');
 
 var app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: process.env.MAIN_SERVER_URL || 'http://localhost:3000',
+    methods: ["GET", "POST"]
+  }
+});
 
 // CORS middleware per permettere connessioni WebSocket dal MainServer
 app.use((req, res, next) => {
@@ -28,18 +33,32 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rendi disponibile io per i controller
 app.set('io', io);
 
-// WebSocket del DataServer
 io.on('connection', (socket) => {
   console.log('DataServer: Client connected to WebSocket', socket.id);
+
+  socket.on('join-film-room', (filmId) => {
+    socket.join(`film-${filmId}`);
+    console.log(`Client ${socket.id} joined room film-${filmId}`);
+  });
+
+  socket.on('chat-message', async (messageData) => {
+    try {
+      const response = await axios.post('http://localhost:' + (process.env.PORT || '8080') + '/api/chat/messages', messageData);
+      const savedMessage = response.data;
+
+      io.to(`film-${messageData.filmId}`).emit('new-chat-message', savedMessage);
+    } catch (error) {
+      console.error('Errore nella gestione del messaggio:', error);
+      socket.emit('error', { message: 'Errore nel processare il messaggio' });
+    }
+  });
 
   socket.on('disconnect', () => {
     console.log('DataServer: Client disconnected');
   });
 });
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -51,12 +70,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.use('/api/movies', movieRouter);
-app.use('/api/auth', authRouter);
-app.use('/api/requests', requestsRouter);
-app.use('/api/users', userRoutes);
-
 //middleware per bloccare richieste che non sono API
 app.use((req, res, next) => {
   if (!req.originalUrl.startsWith('/api'))
@@ -64,6 +77,12 @@ app.use((req, res, next) => {
   else
     next();
 });
+
+app.use('/api/movies', movieRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/requests', requestsRouter);
+app.use('/api/users', userRoutes);
+app.use('/api/chat', chatRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
