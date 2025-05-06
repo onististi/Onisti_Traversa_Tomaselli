@@ -8,37 +8,53 @@
     <link rel="stylesheet" href="/stylesheets/ChatStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="javascipts/chat.js"></script>
 </head>
 <body>
-    {{> header}}
+{{> header}}
+
+<div class="content-container">
     <div class="sidebar">
         <h2>Film in Chat</h2>
         <ul class="film-list">
             {{#each filmList}}
-            <li>{{this.title}}</li>
+                <li class="{{#if (eq this.id ../filmId)}}active{{/if}}" data-film-id="{{this.id}}">
+                    <a href="/chat?filmId={{this.id}}">{{this.title}}</a>
+                </li>
             {{/each}}
         </ul>
     </div>
 
     <div class="chat-container">
-        <div class="chat-header">
-            <h2>Chat su: {{currentFilm.title}}</h2>
-        </div>
-
-        <div class="chat-messages">
-            {{#each messages}}
-            <div class="message">
-                <div class="message-username">{{this.username}}</div>
-                <div class="message-text">{{this.text}}</div>
-                <div class="message-time">{{this.time}}</div>
+        {{#if currentFilm}}
+            <div class="chat-header">
+                <h2>Chat su: {{currentFilm.title}}</h2>
+                <div id="connection-status" class="connection-status disconnected">Disconnesso</div>
             </div>
-            {{/each}}
-        </div>
 
-        <div class="chat-input">
-            <input type="text" placeholder="Scrivi un messaggio..." id="message-input">
-            <button id="send-button">Invia</button>
-        </div>
+            <div class="chat-messages" id="chat-messages">
+                {{#each messages}}
+                    <div class="message">
+                        <div class="message-username">{{this.username}}</div>
+                        <div class="message-text">{{this.text}}</div>
+                        <div class="message-time">{{this.time}}</div>
+                    </div>
+                {{/each}}
+            </div>
+
+            <div class="typing-indicator" id="typing-indicator"></div>
+
+            <div class="chat-input">
+                <input type="text" placeholder="{{#if userId}}Scrivi un messaggio...{{else}}Accedi per partecipare alla chat{{/if}}"
+                       id="message-input" {{#unless userId}}disabled{{/unless}}>
+                <button id="send-button" {{#unless userId}}disabled{{/unless}}>Invia</button>
+            </div>
+        {{else}}
+            <div class="no-film-selected">
+                <p>Seleziona un film dalla sidebar per partecipare alla chat</p>
+            </div>
+        {{/if}}
     </div>
+</div>
 </body>
-</html>

@@ -12,6 +12,7 @@ header {
     padding: 20px 50px;
     position: relative;
     height: 140px;
+    z-index: 10;
 }
 
 .page-title {
@@ -104,10 +105,19 @@ nav {
     border: 1px solid white;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
 .content-container {
     display: flex;
     flex: 1;
     overflow: hidden;
+    position: relative;
+    height: calc(100vh - 140px);
 }
 
 .sidebar {
@@ -119,8 +129,9 @@ nav {
     height: 100%;
     position: fixed;
     left: 0;
-    top: 160px;
+    top: 140px;
     bottom: 0;
+    z-index: 5;
 }
 
 .sidebar h2 {
@@ -128,6 +139,7 @@ nav {
     margin-bottom: 20px;
     font-size: 20px;
     color: #000000;
+    text-align: center;
 }
 
 .film-list {
@@ -139,42 +151,74 @@ nav {
     padding: 10px;
     border-bottom: 1px solid #000000;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 4px;
+    margin-bottom: 5px;
 }
 
 .film-list li:hover {
-    background-color: #333;
+    background-color: #7e2b2b;
+    color: white;
+}
+
+.film-list li a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+}
+
+.film-list li.active {
+    background-color: #7e2b2b;
+    color: white;
 }
 
 .chat-container {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    margin-left: 350px;
+    margin-left: 250px;
+    height: calc(100vh - 140px);
     overflow: hidden;
+    position: relative;
+}
+
+.chat-header {
+    padding: 15px 20px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #000000;
 }
 
 .chat-header h2 {
     font-size: 20px;
     color: #000000;
-    margin-top: 0;
+    margin: 0;
 }
 
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    margin-bottom: 20px;
-    padding: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    scroll-behavior: smooth;
 }
 
 .message {
     margin-bottom: 15px;
-    padding: 6px 10px;
+    padding: 10px 15px;
     border-radius: 8px;
-    border: 2px solid #000000;
+    border: 1px solid #e0e0e0;
     max-width: 75%;
     background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .message-username {
@@ -189,6 +233,7 @@ nav {
     line-height: 1.4;
     color: #000000;
     font-size: 15px;
+    word-wrap: break-word;
 }
 
 .message-time {
@@ -199,52 +244,157 @@ nav {
 
 .chat-input {
     display: flex;
-    padding: 15px 0;
+    padding: 15px 20px;
     border-top: 1px solid #000000;
+    background-color: #f5f5f5;
 }
 
 .chat-input input {
     flex: 1;
-    padding: 10px 15px;
+    padding: 12px 15px;
     border-radius: 4px;
     background-color: #ffffff;
     color: #000000;
     margin-right: 10px;
-    border: 2px solid;
+    border: 1px solid #cccccc;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+.chat-input input:focus {
+    outline: none;
+    border-color: #7e2b2b;
+    box-shadow: 0 0 0 2px rgba(126, 43, 43, 0.2);
+}
+
+.chat-input input:disabled {
+    background-color: #e9e9e9;
+    color: #999;
+    cursor: not-allowed;
 }
 
 .chat-input button {
-    padding: 10px 15px;
+    padding: 12px 20px;
     background-color: #7e2b2b;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
+    transition: background-color 0.3s;
 }
 
 .chat-input button:hover {
-    background-color: #833636;
+    background-color: #6a2424;
+}
+
+.chat-input button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.connection-status {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    color: white;
+    z-index: 10;
+}
+
+.connection-status.connected {
+    background-color: #4CAF50;
+}
+
+.connection-status.disconnected {
+    background-color: #f44336;
+}
+
+.typing-indicator {
+    font-size: 14px;
+    color: #666;
+    padding: 5px 0;
+    font-style: italic;
+    height: 24px;
 }
 
 /* Per rendere la pagina responsive */
 @media (max-width: 768px) {
-    body {
-        flex-direction: column;
-    }
-
     .sidebar {
         width: 100%;
+        position: relative;
+        top: 0;
+        height: auto;
+        max-height: 200px;
         border-right: none;
-        border-bottom: 1px solid #333;
-        margin-top: 0;
+        border-bottom: 1px solid #000000;
     }
 
     .chat-container {
         margin-left: 0;
+        height: calc(100vh - 340px);
     }
 
     .nav-links {
-        gap: 10px;
+        gap: 5px;
+    }
+
+    .search-container input {
+        width: 150px;
+    }
+
+    .welcome-message {
+        font-size: 14px;
+        right: 10px;
+    }
+}
+
+/* Per schermi molto piccoli */
+@media (max-width: 480px) {
+    header {
+        padding: 10px;
+        height: auto;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+
+    .search-container {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .search-container input {
+        width: 100%;
+    }
+
+    .nav-links {
+        position: relative;
+        top: 0;
+        right: 0;
+        width: 100%;
+        margin-top: 10px;
+        justify-content: center;
+    }
+
+    .home-icon {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-top: 10px;
+    }
+
+    .welcome-message {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin-top: 10px;
+        text-align: center;
     }
 }

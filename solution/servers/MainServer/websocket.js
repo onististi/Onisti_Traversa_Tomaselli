@@ -37,7 +37,7 @@ const setupWebSockets = (server) => {
                     token,
                     process.env.JWT_SECRET || 'default-secret-key'
                 );
-                console.log('Token decodificato (WebSocket):', decoded);
+                //console.log('Token decodificato (WebSocket):', decoded);
 
                 // Calcolo tempo rimanente della sessione
                 const timeRemaining = (decoded.exp * 1000) - Date.now();

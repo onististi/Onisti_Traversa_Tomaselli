@@ -7,15 +7,26 @@ router.get('/messages/:filmId', async (req, res) => {
     try {
         const filmId = req.params.filmId;
 
+        if (!filmId) {
+            return res.status(400).json({ error: 'ID film mancante' });
+        }
+
         if (!mongoose.Types.ObjectId.isValid(filmId)) {
             return res.status(400).json({ error: 'ID film non valido' });
         }
 
         const messages = await Message.find({ filmId })
             .sort({ timestamp: 1 })
-            .limit(100); // Limita il numero di messaggi restituiti per prestazioni
+            .limit(100)
+            .lean();
 
-        res.json(messages);
+        // Formatta i timestamp
+        const formattedMessages = messages.map(msg => ({
+            ...msg,
+            time: new Date(msg.timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+        }));
+
+        res.json(formattedMessages);
     } catch (error) {
         console.error('Errore nel recupero dei messaggi:', error);
         res.status(500).json({ error: 'Errore nel recupero dei messaggi' });
@@ -38,17 +49,22 @@ router.post('/messages', async (req, res) => {
             filmId,
             username,
             text,
-            userId: userId || null
+            userId: userId || null,
+            timestamp: new Date()
         });
 
         const savedMessage = await newMessage.save();
+        const formattedMessage = {
+            ...savedMessage.toObject(),
+            time: new Date(savedMessage.timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+        };
 
         const io = req.app.get('io');
         if (io) {
-            io.emit('new-chat-message', savedMessage);
+            io.to(`film-${filmId}`).emit('new-chat-message', formattedMessage);
         }
 
-        res.status(201).json(savedMessage);
+        res.status(201).json(formattedMessage);
     } catch (error) {
         console.error('Errore nel salvataggio del messaggio:', error);
         res.status(500).json({ error: 'Errore nel salvataggio del messaggio' });
@@ -63,7 +79,17 @@ router.delete('/messages/:messageId', async (req, res) => {
             return res.status(400).json({ error: 'ID messaggio non valido' });
         }
 
-        await Message.findByIdAndDelete(messageId);
+        const deletedMessage = await Message.findByIdAndDelete(messageId);
+
+        if (!deletedMessage) {
+            return res.status(404).json({ error: 'Messaggio non trovato' });
+        }
+
+        const io = req.app.get('io');
+        if (io) {
+            io.to(`film-${deletedMessage.filmId}`).emit('message-deleted', { messageId });
+        }
+
         res.status(200).json({ message: 'Messaggio eliminato con successo' });
     } catch (error) {
         console.error('Errore nell\'eliminazione del messaggio:', error);

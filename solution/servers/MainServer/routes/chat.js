@@ -2,9 +2,6 @@ var express = require('express');
 var router = express.Router();
 const axios = require('axios');
 
-const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:8080/api';
-const DATA_SERVER_WS_URL = process.env.DATA_SERVER_WS_URL || 'http://localhost:8080';
-
 router.get('/', async function(req, res, next) {
     try {
 

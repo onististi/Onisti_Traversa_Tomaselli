@@ -7,6 +7,7 @@ var logger = require('morgan');
 const http = require('http');
 const socketIo = require('socket.io');
 const axios = require('axios');
+require('dotenv').config();
 require('./config/db'); // Importa la connessione al database
 
 var indexRouter = require('./routes/index');
@@ -34,7 +35,6 @@ app.use((req, res, next) => {
 });
 
 app.set('io', io);
-
 io.on('connection', (socket) => {
   console.log('DataServer: Client connected to WebSocket', socket.id);
 
@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
 
   socket.on('chat-message', async (messageData) => {
     try {
-      const response = await axios.post('http://localhost:' + (process.env.PORT || '8080') + '/api/chat/messages', messageData);
+      const response = await axios.post('http://localhost:' + (process.env.PORT || '3001') + '/api/chat/messages', messageData);
       const savedMessage = response.data;
 
       io.to(`film-${messageData.filmId}`).emit('new-chat-message', savedMessage);
@@ -59,10 +59,6 @@ io.on('connection', (socket) => {
     console.log('DataServer: Client disconnected');
   });
 });
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -97,7 +93,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.status(500).json({ error: err.message || 'Errore interno del server' });
 });
 
 module.exports = { app, server };

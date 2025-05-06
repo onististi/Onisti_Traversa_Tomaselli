@@ -25,17 +25,17 @@ router.get('/register', (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const response = await axios.post(`${process.env.DATA_SERVER_URL}/api/auth/login`, {
+        const response = await axios.post(process.env.DATA_SERVER_URL+'/auth/login', {
             username,
             password
         });
 
         const { token, id, email, role, requestStatus } = response.data;
-        console.log('Token ricevuto dal DataServer:', token);
+        //console.log('Token ricevuto dal DataServer:', token);
 
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key');
-            console.log('Token verificato:', decoded);
+         //   console.log('Token verificato:', decoded);
         } catch (error) {
             console.error('Errore nella verifica del token:', error.message);
             return res.render('login', {
@@ -83,7 +83,7 @@ router.post('/register', async (req, res) => {
             });
         }
 
-        const response = await axios.post(`${process.env.DATA_SERVER_URL}/api/auth/register`, {
+        const response = await axios.post(process.env.DATA_SERVER_URL+'/auth/register', {
             username,
             email,
             password
@@ -95,6 +95,12 @@ router.post('/register', async (req, res) => {
         }
 
     } catch (error) {
+        console.error('Errore durante la registrazione:', {
+            message: error.message,
+            responseData: error.response?.data,
+            status: error.response?.status
+        });
+
         res.render('register', {
             title: 'Registrazione',
             error: error.response?.data?.message || 'Errore durante la registrazione',
@@ -120,10 +126,10 @@ router.get('/check', async (req, res) => {
             return res.status(401).json({ authenticated: false, message: 'Token mancante' });
         }
 
-        console.log('Token salvato nella sessione:', req.session.token);
+        //console.log('Token salvato nella sessione:', req.session.token);
 
         const response = await axios.get(
-            `${process.env.DATA_SERVER_URL}/api/users/${req.session.user.id}`,
+            process.env.DATA_SERVER_URL+'/users/${req.session.user.id}',
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`

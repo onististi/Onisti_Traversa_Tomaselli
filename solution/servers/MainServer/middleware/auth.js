@@ -35,11 +35,11 @@ const ensureAuthenticated = async (req, res, next) => {
 
 
 const syncUserSession = async (req, res, next) => {
-    console.log('Token PRIMA di syncUserSession:', req.session.token);
+   // console.log('Token PRIMA di syncUserSession:', req.session.token);
 
     try {
         const response = await axios.get(
-            `${process.env.DATA_SERVER_URL}/api/users/${req.session.user.id}`,
+            `http://localhost:3001/api/users/${req.session.user.id}`,
             {
                 headers: { 'Authorization': `Bearer ${req.session.token}` }
             }
@@ -47,7 +47,7 @@ const syncUserSession = async (req, res, next) => {
 
         req.session.user = response.data.user;
         await req.session.save();
-        console.log('Token DOPO syncUserSession:', req.session.token);
+       // console.log('Token DOPO syncUserSession:', req.session.token);
         next();
     } catch (error) {
         console.error('Errore syncUserSession:', error.message);
