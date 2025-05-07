@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cineverse</title>
-    <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
+    <title>Cineverse - Chat</title>
     <link rel="stylesheet" href="/stylesheets/ChatStyle.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
-    <script src="javascipts/chat.js"></script>
+    <script src="/javascripts/chat.js" defer></script>
 </head>
 <body>
 {{> header}}
 
 <div class="content-container">
     <div class="sidebar">
-        <h2>Film in Chat</h2>
+        <h2>Film's Chat</h2>
         <ul class="film-list">
             {{#each filmList}}
-                <li class="{{#if (eq this.id ../filmId)}}active{{/if}}" data-film-id="{{this.id}}">
-                    <a href="/chat?filmId={{this.id}}">{{this.title}}</a>
+                <li class="{{#if (eq this.filmId ../filmId)}}active{{/if}}">
+                    <a href="/chat?filmId={{this._id}}">
+                    {{this.title}}
+                    </a>
                 </li>
             {{/each}}
         </ul>
@@ -29,25 +28,24 @@
     <div class="chat-container">
         {{#if currentFilm}}
             <div class="chat-header">
-                <h2>Chat su: {{currentFilm.title}}</h2>
+                <h2>{{currentFilm.title}}'s chat</h2>
                 <div id="connection-status" class="connection-status disconnected">Disconnesso</div>
             </div>
 
             <div class="chat-messages" id="chat-messages">
                 {{#each messages}}
                     <div class="message">
-                        <div class="message-username">{{this.username}}</div>
-                        <div class="message-text">{{this.text}}</div>
+                        <div class="message-username">{{this.sender.username}}</div>
+                        <div class="message-text">{{this.content}}</div>
                         <div class="message-time">{{this.time}}</div>
                     </div>
                 {{/each}}
             </div>
 
-            <div class="typing-indicator" id="typing-indicator"></div>
-
             <div class="chat-input">
-                <input type="text" placeholder="{{#if userId}}Scrivi un messaggio...{{else}}Accedi per partecipare alla chat{{/if}}"
-                       id="message-input" {{#unless userId}}disabled{{/unless}}>
+                <input type="text" id="message-input"
+                       placeholder="{{#if userId}}Scrivi un messaggio...{{else}}Accedi per partecipare{{/if}}"
+                       {{#unless userId}}disabled{{/unless}}>
                 <button id="send-button" {{#unless userId}}disabled{{/unless}}>Invia</button>
             </div>
         {{else}}
@@ -57,4 +55,14 @@
         {{/if}}
     </div>
 </div>
+
+<script>
+    window.chatData = {
+        filmId: '{{filmId}}',
+        userId: '{{userId}}',
+        username: '{{username}}',
+        dataServerUrl: '{{dataServerUrl}}'
+    };
+</script>
 </body>
+</html>

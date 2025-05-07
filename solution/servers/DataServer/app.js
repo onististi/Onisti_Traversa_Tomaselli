@@ -12,7 +12,6 @@ require('./config/db'); // Importa la connessione al database
 
 var indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
-const movieRouter = require('./routes/movies');
 const chatRouter = require('./routes/chat');
 const requestsRouter = require('./routes/journalistRequests');
 const userRoutes = require('./routes/user');
@@ -74,7 +73,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/movies', movieRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/requests', requestsRouter);
 app.use('/api/users', userRoutes);

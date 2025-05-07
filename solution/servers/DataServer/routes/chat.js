@@ -1,45 +1,80 @@
 const express = require('express');
 const router = express.Router();
 const Message = require('../models/message');
+const Movie = require('../models/movies');
+const User = require('../models/users');
 const mongoose = require('mongoose');
+
+//popola sidebar coi film
+router.get('/films', async (req, res) => {
+    try {
+        const filmsWithMessages = await Movie.find({ last_message_id: { $exists: true, $ne: null } })
+            .populate({
+                path: 'last_message_id',
+                model: 'Message',
+                populate: {
+                    path: 'sender_id',
+                    select: 'username'
+                }
+            })
+            .sort({ updated_at: -1 });
+        res.json(filmsWithMessages);
+    } catch (error) {
+        console.error("Errore nel recupero dei film con chat:", error);
+        res.status(500).json({ error: 'Errore nel recupero dei film con chat' });
+    }
+});
 
 router.get('/messages/:filmId', async (req, res) => {
     try {
-        const filmId = req.params.filmId;
+        const filmId = req.params.filmId.replace(":", "");
 
-        if (!filmId) {
-            return res.status(400).json({ error: 'ID film mancante' });
-        }
+        const { page = 1, limit = 50 } = req.query;
 
         if (!mongoose.Types.ObjectId.isValid(filmId)) {
             return res.status(400).json({ error: 'ID film non valido' });
         }
 
-        const messages = await Message.find({ filmId })
-            .sort({ timestamp: 1 })
-            .limit(100)
-            .lean();
+        // Cerca i messaggi per film_id
+        const messages = await Message.find({ film_id: filmId })
+            .sort({ created_at: -1 })
+            .limit(parseInt(limit))
+            .populate('sender_id', 'username')  //"join" per aggiugere nome utente
 
-        // Formatta i timestamp
-        const formattedMessages = messages.map(msg => ({
-            ...msg,
-            time: new Date(msg.timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
-        }));
+        const totalMessages = await Message.countDocuments({ film_id: filmId });
 
-        res.json(formattedMessages);
+        res.json({
+            messages: messages.map(msg => ({ //necessario per semplificare i dati
+                _id: msg._id,
+                sender: {
+                    id: msg.sender_id._id,
+                    username: msg.sender_id.username
+                },
+                film: {
+                    id: msg.film_id._id,
+                    title: msg.film_id.title
+                },
+                content: msg.content,
+                time: msg.created_at.toLocaleTimeString('it-IT'),
+                date: msg.created_at.toLocaleDateString('it-IT')
+            })),
+            total: totalMessages,
+            page: parseInt(page),
+            pages: Math.ceil(totalMessages / limit)
+        });
     } catch (error) {
-        console.error('Errore nel recupero dei messaggi:', error);
+        console.error("Errore nel recupero dei messaggi:", error);
         res.status(500).json({ error: 'Errore nel recupero dei messaggi' });
     }
 });
 
+// Invia un nuovo messaggio
 router.post('/messages', async (req, res) => {
-    try {
-        const { filmId, username, text, userId } = req.body;
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-        if (!filmId || !username || !text) {
-            return res.status(400).json({ error: 'filmId, username e text sono obbligatori' });
-        }
+    try {
+        const { filmId, userId, username, content } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(filmId)) {
             return res.status(400).json({ error: 'ID film non valido' });
@@ -47,53 +82,53 @@ router.post('/messages', async (req, res) => {
 
         const newMessage = new Message({
             filmId,
-            username,
-            text,
             userId: userId || null,
-            timestamp: new Date()
+            username,
+            content
         });
 
-        const savedMessage = await newMessage.save();
-        const formattedMessage = {
-            ...savedMessage.toObject(),
-            time: new Date(savedMessage.timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
-        };
+        await newMessage.save({ session });
+
+        // Aggiorna l'ultimo messaggio nel film
+        await Movie.findByIdAndUpdate(
+            filmId,
+            { last_message_id: newMessage._id, updated_at: Date.now() },
+            { session }
+        );
+
+        await session.commitTransaction();
+
+        // Popola i dati per il socket
+        const populatedMsg = await Message.findById(newMessage._id)
+            .populate('filmId', 'title')
+            .populate('userId', 'username');
 
         const io = req.app.get('io');
         if (io) {
-            io.to(`film-${filmId}`).emit('new-chat-message', formattedMessage);
+            io.to(`film-${filmId}`).emit('new-chat-message', {
+                _id: populatedMsg._id,
+                filmId: populatedMsg.filmId,
+                userId: populatedMsg.userId,
+                username: populatedMsg.username,
+                content: populatedMsg.content,
+                time: populatedMsg.created_at.toLocaleTimeString('it-IT')
+            });
         }
 
-        res.status(201).json(formattedMessage);
+        res.status(201).json({
+            _id: populatedMsg._id,
+            filmId: populatedMsg.filmId,
+            userId: populatedMsg.userId,
+            username: populatedMsg.username,
+            content: populatedMsg.content,
+            time: populatedMsg.created_at.toLocaleTimeString('it-IT')
+        });
     } catch (error) {
-        console.error('Errore nel salvataggio del messaggio:', error);
+        await session.abortTransaction();
+        console.error("Errore nel salvataggio del messaggio:", error);
         res.status(500).json({ error: 'Errore nel salvataggio del messaggio' });
-    }
-});
-
-router.delete('/messages/:messageId', async (req, res) => {
-    try {
-        const messageId = req.params.messageId;
-
-        if (!mongoose.Types.ObjectId.isValid(messageId)) {
-            return res.status(400).json({ error: 'ID messaggio non valido' });
-        }
-
-        const deletedMessage = await Message.findByIdAndDelete(messageId);
-
-        if (!deletedMessage) {
-            return res.status(404).json({ error: 'Messaggio non trovato' });
-        }
-
-        const io = req.app.get('io');
-        if (io) {
-            io.to(`film-${deletedMessage.filmId}`).emit('message-deleted', { messageId });
-        }
-
-        res.status(200).json({ message: 'Messaggio eliminato con successo' });
-    } catch (error) {
-        console.error('Errore nell\'eliminazione del messaggio:', error);
-        res.status(500).json({ error: 'Errore nell\'eliminazione del messaggio' });
+    } finally {
+        session.endSession();
     }
 });
 

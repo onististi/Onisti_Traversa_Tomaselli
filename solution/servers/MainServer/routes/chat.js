@@ -1,51 +1,37 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const axios = require('axios');
 
 router.get('/', async function(req, res, next) {
     try {
 
-        const moviesResponse = await axios.get(`${DATA_SERVER_URL}/movies`);
-        const filmList = moviesResponse.data.map(movie => ({
-            id: movie.id || movie._id,
-            title: movie.name || movie.title
-        }));
+        const filmsResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/films`);
+        const filmList = filmsResponse.data;
 
-
-        const filmId = req.query.filmId || (filmList.length > 0 ? filmList[0].id : null);
-        const currentFilm = filmList.find(film => film.id === filmId) ||
-            { id: 0, title: 'Nessun film disponibile' };
-
-
+        const filmId = req.query.filmId;
+        let currentFilm = null;
         let messages = [];
         if (filmId) {
             try {
-                const messagesResponse = await axios.get(`${DATA_SERVER_URL}/chat/messages/${filmId}`);
-                messages = messagesResponse.data.map(msg => ({
-                    username: msg.username,
-                    text: msg.text,
-                    time: new Date(msg.timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }),
-                    userId: msg.userId
-                }));
-            } catch (chatErr) {
-                console.error('Errore nel recupero dei messaggi:', chatErr);
-
+                const messagesResponse = await axios.get(
+                    `${process.env.DATA_SERVER_URL}/chat/messages/:${filmId}`
+                );
+                messages = messagesResponse.data.messages;
+                currentFilm = filmList.find(film => film._id === filmId);
+            } catch (err) {
+                console.error("Errore nel recupero dei messaggi:", err);
+                messages = [];
             }
         }
 
         let userId = null;
         let username = null;
 
-        if (req.cookies && req.cookies.userId) {
-            userId = req.cookies.userId;
-            try {
-                const userResponse = await axios.get(`${DATA_SERVER_URL}/users/${userId}`);
-                username = userResponse.data.username;
-            } catch (userErr) {
-                console.error('Errore nel recupero delle informazioni utente:', userErr);
-            }
+        if (req.session && req.session.user) {
+            userId = req.session.user.id;
+            username = req.session.user.username;
         }
-
+        console.log(messages)
         res.render('chat', {
             title: 'Cineverse - Chat',
             filmList,
@@ -54,7 +40,7 @@ router.get('/', async function(req, res, next) {
             filmId,
             userId,
             username,
-            dataServerUrl: DATA_SERVER_WS_URL // URL del server WebSocket
+            dataServerUrl: process.env.DATA_SERVER_WS_URL
         });
     } catch (error) {
         console.error("Errore nel caricamento della chat:", error);
