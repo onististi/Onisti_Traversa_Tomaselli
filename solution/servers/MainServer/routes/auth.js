@@ -40,14 +40,13 @@ router.post('/login', async (req, res) => {
             console.error('Errore nella verifica del token:', error.message);
             return res.render('login', {
                 title: 'Login',
-                error: 'Token non valido. Contatta il supporto.'
+                error: 'Token non valido.'
             });
         }
 
         req.session.isLoggedIn = true;
         req.session.user = { id, username, email, role, requestStatus };
 
-        // Qui deve essere assegnato il token ricevuto, NON process.env.JWT_SECRET
         req.session.token = token;
         console.log('Token salvato nella sessione:', req.session.token);
 
