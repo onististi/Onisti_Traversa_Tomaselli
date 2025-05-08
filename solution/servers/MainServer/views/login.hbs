@@ -13,7 +13,7 @@
     <form id="registerForm" action="/auth/login" method="POST">
         <input type="text" name="username" id="username" placeholder="Username" required>
         <input type="password" name="password" id="password" placeholder="Password" required>
-        <button type="submit">Login</button>
+        <button type="submit" value={{redirect}} name="redirect">Login</button>
     </form>
     <p>If you aren't already registered, <a href="register">Register</a></p>
     <p> Return to <a href="/">home</a></p>

@@ -54,8 +54,17 @@
             {{#if isLoggedIn}}
                 <a href="/auth/logout">LOGOUT</a>
             {{else}}
-                <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
+                <a class="login-btn" id="login-btn">LOGIN / SIGN UP</a> <!--per un redirect post login corretto-->
             {{/if}}
         </div>
     </nav>
 </header>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const loginLink = document.getElementById("login-btn");
+        if (loginLink) {
+            const redirectUrl = encodeURIComponent(window.location.pathname + window.location.search);
+            loginLink.href = `/auth/login?redirect=${redirectUrl}`;
+        }
+    });
+</script>

@@ -8,17 +8,19 @@ router.get('/login', (req, res) => {
     res.render('login', {
         title: 'Login',
         error: req.query.error,
-        success: req.query.success
+        success: req.query.success,
+        redirect: req.query.redirect || '/' //se non è specificato(ovvero accedede direttamente cercando il login) porta alla home se no alla pag precendete
     });
 });
 
+
 router.get('/register', (req, res) => {
-    res.render('register', {
-        title: 'Registrazione',
-        error: req.query.error,
-        username: req.query.username,
-        email: req.query.email
-    });
+        res.render('register', {
+            title: 'Registrazione',
+            error: req.query.error,
+            username: req.query.username,
+            email: req.query.email
+        });
 });
 
 // Login
@@ -57,8 +59,8 @@ router.post('/login', async (req, res) => {
                 else resolve();
             });
         });
-
-        res.redirect('/');
+    console.log("aaaa"+req.body.redirect)
+        res.redirect(req.body.redirect || '/');
     } catch (error) {
         res.render('login', {
             title: 'Login',

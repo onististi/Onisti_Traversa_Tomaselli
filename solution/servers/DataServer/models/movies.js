@@ -5,20 +5,15 @@ const movieSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    last_message_id: {
+    last_message: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message'
     },
-    created_by: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+    code: {
+        type: Number,
         required: true
     },
-    created_at: {
-        type: Date,
-        default: Date.now
-    },
-    updated_at: {
+    last_updated: {
         type: Date,
         default: Date.now
     }

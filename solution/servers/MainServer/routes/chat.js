@@ -8,16 +8,16 @@ router.get('/', async function(req, res, next) {
         const filmsResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/films`);
         const filmList = filmsResponse.data;
 
-        const filmId = req.query.filmId;
+        const filmCode = req.query.filmCode;
         let currentFilm = null;
         let messages = [];
-        if (filmId) {
+        if (filmCode) {
             try {
                 const messagesResponse = await axios.get(
-                    `${process.env.DATA_SERVER_URL}/chat/messages/:${filmId}`
+                    `${process.env.DATA_SERVER_URL}/chat/messages/:${filmCode}`
                 );
                 messages = messagesResponse.data.messages;
-                currentFilm = filmList.find(film => film._id === filmId);
+                currentFilm = filmList.find(film => film.code == filmCode);
             } catch (err) {
                 console.error("Errore nel recupero dei messaggi:", err);
                 messages = [];
@@ -31,13 +31,13 @@ router.get('/', async function(req, res, next) {
             userId = req.session.user.id;
             username = req.session.user.username;
         }
-        console.log(messages)
+
         res.render('chat', {
             title: 'Cineverse - Chat',
             filmList,
             currentFilm,
             messages,
-            filmId,
+            filmCode,
             userId,
             username,
             dataServerUrl: process.env.DATA_SERVER_WS_URL

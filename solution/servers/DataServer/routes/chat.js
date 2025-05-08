@@ -8,9 +8,9 @@ const mongoose = require('mongoose');
 //popola sidebar coi film
 router.get('/films', async (req, res) => {
     try {
-        const filmsWithMessages = await Movie.find({ last_message_id: { $exists: true, $ne: null } })
+        const filmsWithMessages = await Movie.find({ last_message: { $exists: true, $ne: null } })
             .populate({
-                path: 'last_message_id',
+                path: 'last_message',
                 model: 'Message',
                 populate: {
                     path: 'sender_id',
@@ -18,6 +18,7 @@ router.get('/films', async (req, res) => {
                 }
             })
             .sort({ updated_at: -1 });
+        console.log(filmsWithMessages)
         res.json(filmsWithMessages);
     } catch (error) {
         console.error("Errore nel recupero dei film con chat:", error);
@@ -25,23 +26,16 @@ router.get('/films', async (req, res) => {
     }
 });
 
-router.get('/messages/:filmId', async (req, res) => {
+
+router.get('/messages/:filmCode', async (req, res) => {
     try {
-        const filmId = req.params.filmId.replace(":", "");
+        const filmCode = req.params.filmCode.replace(":", "");
 
-        const { page = 1, limit = 50 } = req.query;
+         movie = await Movie.findOne({ code: filmCode });
 
-        if (!mongoose.Types.ObjectId.isValid(filmId)) {
-            return res.status(400).json({ error: 'ID film non valido' });
-        }
-
-        // Cerca i messaggi per film_id
-        const messages = await Message.find({ film_id: filmId })
+        const messages = await Message.find({ film_id: movie._id })
             .sort({ created_at: -1 })
-            .limit(parseInt(limit))
             .populate('sender_id', 'username')  //"join" per aggiugere nome utente
-
-        const totalMessages = await Message.countDocuments({ film_id: filmId });
 
         res.json({
             messages: messages.map(msg => ({ //necessario per semplificare i dati
@@ -55,12 +49,7 @@ router.get('/messages/:filmId', async (req, res) => {
                     title: msg.film_id.title
                 },
                 content: msg.content,
-                time: msg.created_at.toLocaleTimeString('it-IT'),
-                date: msg.created_at.toLocaleDateString('it-IT')
             })),
-            total: totalMessages,
-            page: parseInt(page),
-            pages: Math.ceil(totalMessages / limit)
         });
     } catch (error) {
         console.error("Errore nel recupero dei messaggi:", error);
@@ -68,7 +57,7 @@ router.get('/messages/:filmId', async (req, res) => {
     }
 });
 
-// Invia un nuovo messaggio
+
 router.post('/messages', async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();

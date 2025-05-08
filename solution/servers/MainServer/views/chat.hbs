@@ -17,7 +17,7 @@
         <ul class="film-list">
             {{#each filmList}}
                 <li class="{{#if (eq this.filmId ../filmId)}}active{{/if}}">
-                    <a href="/chat?filmId={{this._id}}">
+                    <a href="/chat?filmCode={{this.code}}">
                     {{this.title}}
                     </a>
                 </li>
