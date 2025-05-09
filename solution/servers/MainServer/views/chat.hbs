@@ -6,6 +6,7 @@
     <title>Cineverse - Chat</title>
     <link rel="stylesheet" href="/stylesheets/ChatStyle.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="/javascripts/socketManager.js"></script>
     <script src="/javascripts/chat.js" defer></script>
 </head>
 <body>
@@ -16,7 +17,7 @@
         <h2>Film's Chat</h2>
         <ul class="film-list">
             {{#each filmList}}
-                <li class="{{#if (eq this.filmId ../filmId)}}active{{/if}}">
+                <li class="{{#if (eq this.code ../filmCode)}}active{{/if}}">
                     <a href="/chat?filmCode={{this.code}}">
                     {{this.title}}
                     </a>
@@ -56,13 +57,25 @@
     </div>
 </div>
 
+<div id="status-notification" style="display: none; position: fixed; top: 20px; right: 20px; padding: 15px; border-radius: 5px; z-index: 1000; color: white;">
+    <span id="notification-message"></span>
+    <button id="close-notification" style="margin-left: 10px; background: transparent; border: none; color: white; cursor: pointer;">✕</button>
+</div>
+
 <script>
     window.chatData = {
-        filmId: '{{filmId}}',
+        filmId: '{{currentFilm._id}}',
+        filmCode: '{{filmCode}}',
         userId: '{{userId}}',
         username: '{{username}}',
+        role: '{{role}}',
+        requestStatus: '{{requestStatus}}',
         dataServerUrl: '{{dataServerUrl}}'
     };
+
+    document.getElementById('close-notification').addEventListener('click', function() {
+        document.getElementById('status-notification').style.display = 'none';
+    });
 </script>
 </body>
 </html>

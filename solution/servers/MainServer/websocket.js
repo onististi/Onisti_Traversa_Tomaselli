@@ -37,9 +37,7 @@ const setupWebSockets = (server) => {
                     token,
                     process.env.JWT_SECRET || 'default-secret-key'
                 );
-                //console.log('Token decodificato (WebSocket):', decoded);
 
-                // Calcolo tempo rimanente della sessione
                 const timeRemaining = (decoded.exp * 1000) - Date.now();
                 console.log(`Tempo rimanente della sessione (ms): ${timeRemaining}`);
 
@@ -58,18 +56,15 @@ const setupWebSockets = (server) => {
         const userId = socket.userId;
         console.log(`User ${userId} connected via WebSocket`);
 
-        //Entra in una stanza specifica con questo user
         socket.join(userId.toString());
 
-        //Invia lo status corrente
         socket.emit('status-update', {
             userId,
             requestStatus: socket.request.session.user.requestStatus || 'none',
             timestamp: Date.now()
         });
 
-        // Calcolo dei timer per gli eventi session-expiring e session-expired
-        const timeToWarn = socket.sessionExpiresAt - Date.now() - 60000; // 1 minuto prima della scadenza
+        const timeToWarn = socket.sessionExpiresAt - Date.now() - 60000;
         const timeToExpire = socket.sessionExpiresAt - Date.now();
 
         if (timeToWarn > 0) {
@@ -90,6 +85,37 @@ const setupWebSockets = (server) => {
         } else {
             console.warn('TimeToExpire negativo, session-expired non emesso');
         }
+
+
+        socket.on('join-film-room', (filmId) => {
+            console.log(`User ${userId} joining film room: ${filmId}`);
+            socket.join(`film:${filmId}`);
+        });
+
+        socket.on('chat-message', async (data) => {
+            console.log(`Chat message received from user ${data.userId} for film ${data.filmId}`);
+
+
+            const timestamp = new Date();
+            const messageData = {
+                ...data,
+                time: timestamp.toLocaleTimeString(),
+                timestamp: timestamp,
+                sender: {
+                    userId: data.userId,
+                    username: data.username
+                }
+            };
+
+            try {
+                await saveMessageToDatabase(messageData);
+
+                io.to(`film:${data.filmId}`).emit('new-chat-message', messageData);
+            } catch (error) {
+                console.error('Error processing chat message:', error);
+                socket.emit('chat-error', { message: 'Errore nell\'invio del messaggio' });
+            }
+        });
 
         socket.on('error', (error) => {
             if (error.message === 'Token expired') {
@@ -113,7 +139,6 @@ const notifyUser = (userId, requestStatus) => {
             timestamp: Date.now()
         });
 
-        // Forza la sincronizzazione della sessione includendo il token
         const axiosInstance = require('axios');
         axiosInstance.get(`${process.env.DATA_SERVER_URL}/api/users/${userId}`, {
             headers: {
@@ -130,6 +155,23 @@ const notifyUser = (userId, requestStatus) => {
     }
 };
 
+const saveMessageToDatabase = async (messageData) => {
+    try {
+        const axios = require('axios');
+        const response = await axios.post(
+            `${process.env.DATA_SERVER_URL}/chat/messages`,
+            messageData,
+            {
+                headers: {
+                    'Authorization': `Bearer ${process.env.JWT_SECRET || 'default-secret-key'}`
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error saving message to database:', error);
+        throw error;
+    }
+};
 
-
-module.exports = { setupWebSockets, notifyUser };
+module.exports = { setupWebSockets, notifyUser, saveMessageToDatabase };

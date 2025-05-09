@@ -1,35 +1,72 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const { filmId, userId, username, dataServerUrl } = window.chatData;
-    const socket = io(dataServerUrl);
+    const { filmId, filmCode, userId, username, dataServerUrl } = window.chatData;
     const messageInput = document.getElementById('message-input');
     const sendButton = document.getElementById('send-button');
     const chatMessages = document.getElementById('chat-messages');
     const connectionStatus = document.getElementById('connection-status');
 
- //gestione socket, ricezione, invio
+    if (!window.SocketManager || !window.SocketManager.socket) {
+        if (window.SocketManager) {
+            window.SocketManager.init({
+                userId: userId,
+                role: window.chatData.role || 'user',
+                requestStatus: window.chatData.requestStatus || 'none'
+            });
+        } else {
+
+            console.warn('SocketManager non trovato, creazione socket diretto');
+            window.socket = io(dataServerUrl, { withCredentials: true });
+        }
+    }
+
+
+    const socket = window.SocketManager ? window.SocketManager.socket : window.socket;
+
+
+    function updateConnectionStatus() {
+        if (socket.connected) {
+            connectionStatus.textContent = 'Connesso';
+            connectionStatus.className = 'connection-status connected';
+        } else {
+            connectionStatus.textContent = 'Disconnesso';
+            connectionStatus.className = 'connection-status disconnected';
+        }
+    }
+
+
+    updateConnectionStatus();
+
+
     socket.on('connect', () => {
-        connectionStatus.textContent = 'Connesso';
-        connectionStatus.className = 'connection-status connected';
+        updateConnectionStatus();
 
         if (filmId) {
+            console.log(`Entrando nella room del film: ${filmId}`);
             socket.emit('join-film-room', filmId);
         }
     });
 
     socket.on('disconnect', () => {
-        connectionStatus.textContent = 'Disconnesso';
-        connectionStatus.className = 'connection-status disconnected';
+        updateConnectionStatus();
     });
 
+
     socket.on('new-chat-message', (message) => {
-        if (message.filmId._id === filmId) {
+        console.log('Nuovo messaggio ricevuto:', message);
+
+
+        if (message.filmId === filmId || message.filmId._id === filmId) {
             const messageElement = document.createElement('div');
             messageElement.className = 'message';
+
+            const username = message.username || (message.sender ? message.sender.username : 'Utente');
+
             messageElement.innerHTML = `
-                <div class="message-username">${message.username}</div>
+                <div class="message-username">${username}</div>
                 <div class="message-text">${message.content}</div>
-                <div class="message-time">${message.time}</div>
+                <div class="message-time">${message.time || new Date().toLocaleTimeString()}</div>
             `;
+
             chatMessages.appendChild(messageElement);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
@@ -38,18 +75,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function sendMessage() {
         const content = messageInput.value.trim();
         if (content && filmId && userId) {
+            console.log('Invio messaggio:', content);
+
             socket.emit('chat-message', {
                 filmId,
+                filmCode,
                 userId,
                 username,
                 content
             });
+
             messageInput.value = '';
         }
     }
 
-    sendButton.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
+    if (sendButton) {
+        sendButton.addEventListener('click', sendMessage);
+    }
+
+    if (messageInput) {
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    }
 });
