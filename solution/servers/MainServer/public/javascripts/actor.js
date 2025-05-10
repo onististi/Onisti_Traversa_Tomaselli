@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
-
     setupSearchButton();
+    setTimeout(() => {
+        console.log("Bottone trovato?", document.getElementById('loadMoreBtn'));
+    }, 2000);
 
     const loadBtn = document.getElementById('loadMoreBtn');
     let currentPage = 0;
-    const actorName = document.querySelector('h1').textContent.trim(); // Ottieni il nome dell'attore dal titolo
+    const pathSegments = window.location.pathname.split('/');
+    // Correzione: decodifica una sola volta e codifica per l'URL
+    const actorNameEncoded = pathSegments[2];
+    const actorName = decodeURIComponent(actorNameEncoded);
 
     if (loadBtn) {
         loadBtn.addEventListener('click', function() {
@@ -13,27 +18,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadMoreMovies() {
-        currentPage++; // Incrementa la pagina
-        fetch(`http://localhost:8080/api/actors/${actorName}/movies?page=${currentPage}&size=8`)
+        currentPage++;
+        // Codifica il nome per l'URL
+        const encodedName = encodeURIComponent(actorName);
+        fetch(`http://localhost:8080/api/actors/${encodedName}/movies?page=${currentPage}&size=8`)
             .then(response => {
                 if (!response.ok) {
+                    loadBtn.style.display = 'none';
                     throw new Error('Errore nella risposta del server');
                 }
                 return response.json();
             })
             .then(newMovies => {
-                if (newMovies && newMovies.length > 0) {
+                if (newMovies.length > 0) {
                     renderMovies(newMovies);
-                    // Se ci sono meno di 8 film, nasconde il pulsante
-                    if (newMovies.length < 8) {
-                        loadBtn.style.display = 'none';
-                    }
+                    loadBtn.style.display = newMovies.length < 8 ? 'none' : 'block';
                 } else {
-                    loadBtn.style.display = 'none'; // Nasconde il pulsante se non ci sono più film
+                    loadBtn.style.display = 'none';
                 }
             })
-            .catch(error => console.error("Errore nel caricamento dei film:", error));
+            .catch(() => loadBtn.style.display = 'none');
     }
+
 
     function renderMovies(movies) {
         const filmographyGrid = document.getElementById('filmographyGrid');
