@@ -1,31 +1,26 @@
 const mongoose = require('mongoose');
 
 const chatSchema = new mongoose.Schema({
-    type: {
-        type: String,
-        enum: ['movie', 'actor'],
-        required: true
-    },
+
     title: {
         type: String,
-        required: function () {
+        required: function() {
             return this.type === 'movie';
         }
     },
     name: {
         type: String,
-        required: function () {
-            return this.type === 'person';
+        required: function() {
+            return this.type === 'actor';
         }
     },
     code: {
         type: Number,
-        required: true
+        required: true,
     },
     last_message: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Message',
-        default: null
+        ref: 'Message'
     },
     last_updated: {
         type: Date,
@@ -33,11 +28,11 @@ const chatSchema = new mongoose.Schema({
     }
 });
 
-chatSchema.pre('save', function (next) {
-    this.last_updated = Date.now(); // Corretto anche il campo
+chatSchema.pre('save', function(next) {
+    this.last_updated = Date.now();
     next();
 });
 
-const Chat = mongoose.model('Chat', chatSchema);
+const Chat = mongoose.model('chats', chatSchema);
 
 module.exports = Chat;

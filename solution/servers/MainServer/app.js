@@ -49,6 +49,10 @@ app.use('/chat', chatRouter);
 app.use('/requests', requestsRouter);
 app.use('/admin', adminRouter);
 
+app.use((req, res, next) => {
+  return res.render('NotFound', { title: 'Page not Found', message: 'Return to the homepage.' });
+});
+
 // Gestione errori
 app.use((err, req, res, next) => {
   console.error('Global error:', err);

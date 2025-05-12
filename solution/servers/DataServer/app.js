@@ -7,6 +7,8 @@ var logger = require('morgan');
 const http = require('http');
 const socketIo = require('socket.io');
 const axios = require('axios');
+const cors = require('cors');  // Importa il pacchetto CORS
+
 require('dotenv').config();
 require('./config/db'); // Importa la connessione al database
 
@@ -18,14 +20,14 @@ const userRoutes = require('./routes/user');
 
 var app = express();
 const server = http.createServer(app);
+
+// CORS middleware per permettere connessioni WebSocket dal MainServer
 const io = socketIo(server, {
   cors: {
     origin: process.env.MAIN_SERVER_URL || 'http://localhost:3000',
     methods: ["GET", "POST"]
   }
 });
-
-// CORS middleware per permettere connessioni WebSocket dal MainServer
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', process.env.MAIN_SERVER_URL || 'http://localhost:3000');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-User-Id, X-Admin-Id');

@@ -5,26 +5,6 @@ const axios = require('axios');
 // Mostra pagina chat
 router.get('/', async function (req, res, next) {
     try {
-        const chatsResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/chats`); //popola sidebar con chats
-        const chatList = chatsResponse.data;
-
-        const chatCode = req.query.Code;
-        const chatType = req.query.Type;
-        let currentChat = null;
-        let messages = [];
-
-        if (chatCode &&chatType) {
-            try {
-                const messagesResponse = await axios.get(
-                    `${process.env.DATA_SERVER_URL}/chat/messages/${chatCode}?Type=${chatType}`
-                );
-                messages = messagesResponse.data.messages;
-                currentChat = chatList.find(chat => chat.code == chatCode);
-            } catch (err) {
-                console.error("Errore nel recupero dei messaggi:", err);
-                messages = [];
-            }
-        }
 
         let userData = {
             userId: null,
@@ -41,13 +21,53 @@ router.get('/', async function (req, res, next) {
                 requestStatus: req.session.user.requestStatus || 'none'
             };
         }
-console.log(currentChat)
+
+        const chatsResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/chats`);
+        const chatList = chatsResponse.data;
+
+        const chatCode = req.query.Code;
+        const chatType = req.query.Type;
+        let currentChat={type:chatType};
+        let messages = [];
+
+        if (chatCode && chatType) {
+            try {
+                let targetExists = false;
+
+                try {
+                    if (chatType === "movie") {
+                        let responseMovie = await axios.get(`http://localhost:8080/api/movies/${chatCode}`);
+                        targetExists = responseMovie.data && Object.keys(responseMovie.data).length > 0;
+
+                        currentChat.title= responseMovie.data.name;
+                    } else if (chatType === "actor") {
+                        let responseActor = await axios.get(`http://localhost:8080/api/actors/actor/${chatCode}`);
+                        targetExists = responseActor.data && Object.keys(responseActor.data).length > 0;
+
+                        currentChat.name= responseActor.data.name;
+                    }
+                }catch (targetErr) {targetExists = false;}
+
+                if (!targetExists)
+                    return res.redirect('/chat');
+
+                const messagesResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/messages/${chatCode}?Type=${chatType}`);
+                if(messagesResponse) {
+                    messages = messagesResponse.data.messages;
+                    currentChat.id = messagesResponse.data.id;
+                }
+
+            } catch (err) {console.error("Errore nel recupero dei messaggi:", err);}
+        }
+
+        currentChat.code= chatCode;
+
         res.render('chat', {
             title: 'Cineverse - Chat',
             chatList,
             currentChat,
             messages,
-            chatCode: chatCode,
+
             userId: userData.userId,
             username: userData.username,
             role: userData.role,
@@ -60,43 +80,6 @@ console.log(currentChat)
             message: "Errore nel caricamento della chat",
             error: req.app.get('env') === 'development' ? error : {}
         });
-    }
-});
-
-// Invia un nuovo messaggio
-router.post('/message', async function (req, res) {
-    try {
-        if (!req.session || !req.session.user) {
-            return res.status(401).json({ error: 'Non autorizzato' });
-        }
-
-        const { chatId, content } = req.body;
-
-        if (!chatId || !content) {
-            return res.status(400).json({ error: 'Dati mancanti' });
-        }
-
-        const messageData = {
-            chatId,
-            userId: req.session.user.id,
-            content,
-            timestamp: new Date()
-        };
-
-        const response = await axios.post(
-            `${process.env.DATA_SERVER_URL}/chat/messages`,
-            messageData,
-            {
-                headers: {
-                    'Authorization': `Bearer ${req.session.token}`
-                }
-            }
-        );
-
-        res.status(201).json(response.data);
-    } catch (error) {
-        console.error("Errore nel salvataggio del messaggio:", error);
-        res.status(500).json({ error: 'Errore nel salvataggio del messaggio' });
     }
 });
 

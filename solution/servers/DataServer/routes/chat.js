@@ -5,7 +5,7 @@ const Chat = require('../models/chats');
 const User = require('../models/users');
 const mongoose = require('mongoose');
 
-//popola sidebar coi film
+//popola sidebar con chat esistenti
 router.get('/chats', async (req, res) => {
     try {
         const chats = await Chat.find({ last_message: { $exists: true, $ne: null } })
@@ -20,103 +20,122 @@ router.get('/chats', async (req, res) => {
             .sort({ last_updated: -1 });
         res.json(chats);
     } catch (error) {
-        console.error("Errore nel recupero delle chat:", error);
-        res.status(500).json({ error: 'Errore nel recupero delle chat' });
+        console.error("Error retrieving chats:", error);
+        res.status(500).json({ error: 'Error retrieving chats' });
     }
 });
 
 
+//messaggi per chat specifica
 router.get('/messages/:code', async (req, res) => {
     try {
-        const code = req.params.code.replace(":", "");
+        const code = req.params.code;
         const type = req.query.Type;
 
-        if (type === 'actor')
-            chat = await Chat.findOne({ code: code, name: { $exists: true, $ne: null } });
-        else if (type === 'movie')
-            chat = await Chat.findOne({ code: code, title: { $exists: true, $ne: null } });
-        if (!chat) return res.status(404).json({ error: 'Chat non trovata' });
+        if (!type || !['movie', 'actor'].includes(type))
+            return res.status(400).json({ error: 'Invalid chat type' });
+
+        if (type == 'movie')
+            chat = await Chat.findOne({code: code})
+        else if (type == 'actor')
+            chat = await Chat.findOne({ code: code, name: { $exists: true } });
+
+        if (!chat) {
+            return res.json({
+                id: null,
+                target: null,
+                messages: [],
+            });
+        }
 
         const messages = await Message.find({ chat_id: chat._id })
             .sort({ created_at: 1 })
             .populate('sender_id', 'username');
 
+        const target = type === 'movie' ? chat.title : chat.name;
         res.json({
-            target: chat.type === 'movie' ? chat.title : chat.name,
+            id: chat._id,
+            target: target,
             messages: messages.map(msg => ({
-                _id: msg._id,
                 sender: {
                     id: msg.sender_id._id,
                     username: msg.sender_id.username
                 },
                 content: msg.content,
-                created_at: msg.created_at
-            }))
+                created_at: msg.created_at,
+                time: msg.created_at.toLocaleTimeString('it-IT')
+            })),
         });
     } catch (error) {
-        console.error("Errore nel recupero dei messaggi:", error);
-        res.status(500).json({ error: 'Errore nel recupero dei messaggi' });
+        console.error("Error retrieving messages:", error);
+        res.status(500).json({ error: 'Error retrieving messages' });
     }
 });
 
 
+//invio di messaggi(salvataggio nel db)
 router.post('/messages', async (req, res) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     try {
-        const { chatId, userId, content } = req.body;
+        const { chatId, chatCode, userId, username, content, ChatTitle, ChatName } = req.body;
+        console.log("Received message data:", req.body);
 
-        if (!mongoose.Types.ObjectId.isValid(chatId)) {
-            return res.status(400).json({ error: 'ID chat non valido' });
+        if (!chatCode || !userId || !username || !content) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user)
+            return res.status(404).json({ error: 'User not found' });
+
+        let chat
+        if(chatId)
+             chat = await Chat.findById(chatId);
+
+        if (!chatId || !chat) {
+            chat = new Chat({
+                code: chatCode,
+                last_updated: new Date(),
+            });
+
+            if(req.body.chatTitle)
+                chat.title = req.body.chatTitle;
+            else if(req.body.chatName)
+                chat.name = req.body.chatName;
+
+            await chat.save();
         }
 
         const newMessage = new Message({
-            chat_id: chatId,
+            chat_id: chat._id,
             sender_id: userId,
-            content
+            content: content,
+            created_at: new Date()
         });
 
-        await newMessage.save({ session });
+        const savedMessage = await newMessage.save();
 
         await Chat.findByIdAndUpdate(
-            chatId,
+            chat._id,
             {
-                last_message: newMessage._id,
+                last_message: savedMessage._id,
                 last_updated: new Date()
-            },
-            { session }
+            }
         );
 
-        await session.commitTransaction();
-
-        const populatedMsg = await Message.findById(newMessage._id)
-            .populate('sender_id', 'username');
-
-        const io = req.app.get('io');
-        if (io) {
-            io.to(`chat-${chatId}`).emit('new-chat-message', {
-                _id: populatedMsg._id,
-                sender: populatedMsg.sender_id,
-                content: populatedMsg.content,
-                time: populatedMsg.created_at.toLocaleTimeString('it-IT')
-            });
-        }
-
         res.status(201).json({
-            _id: populatedMsg._id,
-            sender: populatedMsg.sender_id,
-            content: populatedMsg.content,
-            time: populatedMsg.created_at.toLocaleTimeString('it-IT')
+            _id: savedMessage._id,
+            chatId: chat._id,
+            chatCode: chat.code,
+            sender: {
+                id: userId,
+                username: username
+            },
+            content: savedMessage.content,
+            time: savedMessage.created_at.toLocaleTimeString('it-IT')
         });
     } catch (error) {
-        await session.abortTransaction();
-        console.error("Errore nel salvataggio del messaggio:", error);
-        res.status(500).json({ error: 'Errore nel salvataggio del messaggio' });
-    } finally {
-        session.endSession();
+        console.error("Error saving message:", error);
+        res.status(500).json({ error: 'Error saving message' });
     }
 });
-
-
 module.exports = router;

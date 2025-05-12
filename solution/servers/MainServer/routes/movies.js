@@ -33,7 +33,7 @@ router.get('/:id', async function(req, res) {
 
         } catch (error) {
         if (error.response && error.response.status === 404)
-            return res.render('NotFound', { title: 'Film non trovato', message: 'Film non trovato! Torna alla home page.' });
+            return res.render('NotFound', { title: 'Movie Not found', message: 'Movie not found! Return to home page.' });
         res.status(500).json({ message: "Errore nel recupero del film" })
         }
 });

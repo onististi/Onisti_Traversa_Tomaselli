@@ -57,7 +57,7 @@ router.get("/:name", async function(req, res, next) {
         });
     } catch (error) {
         if (error.response && error.response.status === 404)
-            return res.render('NotFound', { title: 'Attore non trovato', message: 'Attore non trovato! Torna alla home page.'});
+            return res.render('NotFound', { title: 'Actor not found', message: 'Actor not found! Return to home page.'});
         res.status(500).json({ message: "Errore nel recupero dell'attore" })
     }
 });

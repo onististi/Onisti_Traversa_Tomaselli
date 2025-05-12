@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/stylesheets/ChatStyle.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
     <script src="/javascripts/socketManager.js"></script>
-    <script src="/javascripts/chat.js" defer></script>
 </head>
 <body>
 {{> header}}
@@ -17,7 +16,7 @@
         <h2>Chats</h2>
         <ul class="film-list">
             {{#each chatList}}
-                <li class="{{#if (eq this.code ../filmCode)}}active{{/if}}">
+                <li class   ="{{#if (eq this.code ../filmCode)}}active{{/if}}">
                     <a href="/chat?Code={{this.code}}&Type={{#if this.name}}actor{{else}}movie{{/if}}"> <!--nel db mongo se è una chat su actor ha un campo name se movie ha title, il type serve da specificare per il dataserver -->
                     {{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
                     </a>
@@ -27,20 +26,26 @@
     </div>
 
     <div class="chat-container">
-        {{#if currentChat}}
+        {{#if currentChat.code}} <!-- se esiste una chat -->
             <div class="chat-header">
-                <h2> {{#if currentChat.title}}{{currentChat.title}}{{else}}{{currentChat.name}}{{/if}}'s chat</h2>
+                <h2>{{#if currentChat.title}}{{currentChat.title}}{{else}}{{currentChat.name}}{{/if}}'s chat</h2>
                 <div id="connection-status" class="connection-status disconnected">Disconnesso</div>
             </div>
 
             <div class="chat-messages" id="chat-messages">
-                {{#each messages}}
-                    <div class="message">
-                        <div class="message-username">{{this.sender.username}}</div>
-                        <div class="message-text">{{this.content}}</div>
-                        <div class="message-time">{{this.time}}</div>
+                {{#if messages}}  <!-- se esistono messaggi per gestire chat nuove-->
+                    {{#each messages}}
+                        <div class="message">
+                            <div class="message-username">{{this.sender.username}}</div>
+                            <div class="message-text">{{this.content}}</div>
+                            <div class="message-time">{{this.time}}</div>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <div class="no-film-selected">
+                        <p>Start the conversation!</p>
                     </div>
-                {{/each}}
+                {{/if}}
             </div>
 
             <div class="chat-input">
@@ -51,7 +56,7 @@
             </div>
         {{else}}
             <div class="no-film-selected">
-                <p>select a chat from the sidebar to join it</p>
+                <p>Seleziona una chat dalla sidebar per unirti</p>
             </div>
         {{/if}}
     </div>
@@ -64,18 +69,25 @@
 
 <script>
     window.chatData = {
-        filmId: '{{currentFilm._id}}',
-        chatCode: '{{chatCode}}',
+        chatId: '{{currentChat.id}}',
+        chatCode: '{{currentChat.code}}',
+
+        {{#if currentChat.title}}
+            chatTitle: '{{currentChat.title}}',
+        {{else}}
+            chatName: '{{currentChat.name}}',
+        {{/if}}
+
         userId: '{{userId}}',
         username: '{{username}}',
         role: '{{role}}',
         requestStatus: '{{requestStatus}}',
-        dataServerUrl: '{{dataServerUrl}}'
     };
 
     document.getElementById('close-notification').addEventListener('click', function() {
         document.getElementById('status-notification').style.display = 'none';
     });
 </script>
+<script src="/javascripts/chat.js" defer></script>
 </body>
 </html>

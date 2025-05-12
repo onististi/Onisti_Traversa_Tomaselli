@@ -1,29 +1,25 @@
 const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
-    film_id: {
+    chat_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Movie',
+        ref: 'Chat',
         required: true
-    },
-    content: {
-        type: String,
-        required: true
-    },
-    created_at: {
-        type: Date,
-        default: Date.now
     },
     sender_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-});
-
-messageSchema.pre('save', function(next) {
-    this.updated_at = Date.now();
-    next();
+    content: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    created_at: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 const Message = mongoose.model('Message', messageSchema);
