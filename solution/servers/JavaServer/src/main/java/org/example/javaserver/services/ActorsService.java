@@ -58,6 +58,43 @@ public class ActorsService {
         }
     }
 
+
+    @Transactional
+    public Optional<Actor> findActor(Integer id_actor) {
+        String sql = """
+            SELECT
+                actor_name AS name,
+                movies_count,
+                average_rating as avg_rating,
+                id
+            FROM actor_summaries
+            WHERE id = ?
+            """;
+
+        try {
+            List<Object[]> results = entityManager.createNativeQuery(sql)
+                    .setParameter(1, id_actor)
+                    .getResultList();
+
+            if (!results.isEmpty()) {
+                Object[] row = results.get(0);
+                Actor actor = new Actor();
+                actor.setName((String) row[0]);
+                actor.setMovies_count(((Number) row[1]).intValue());
+                actor.setAvg_rating((BigDecimal) row[2]);
+                actor.setId( ((Number) row[3]).intValue());
+                System.out.println(actor.getName());
+                return Optional.of(actor);
+            }
+
+            return Optional.empty();
+        } catch (Exception e) {
+            // Gestione delle eccezioni (opzionale)
+            return Optional.empty();
+        }
+    }
+
+
     @Transactional
     public List<Actor> getAllActorsWithGenresAndCount() {
         String sql = """
