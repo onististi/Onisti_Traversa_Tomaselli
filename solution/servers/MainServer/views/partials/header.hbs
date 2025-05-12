@@ -35,10 +35,11 @@
         <button id="close-notification" style="display: none;" onclick="hideNotification()">✖</button>
     </div>
     <nav>
-        <h1 class="page-title">CINEVERSE</h1>
-        <a href="/" id="home-icon" class="home-icon">🏠</a>
+        <h1 class="page-title">
+            <a href="/" class="site-title-link">CINEVERSE</a>
+        </h1>
         <div class="search-container">
-            <input type="text" placeholder="Search">
+            <input type="text" placeholder="Search Movies, Actors..">
             <button>X</button>
         </div>
         <div class="nav-links">
@@ -52,6 +53,5 @@
             {{/if}}
         </div>
     </nav>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="module" src="/javascripts/adminRequests.js"></script>
 </header>
