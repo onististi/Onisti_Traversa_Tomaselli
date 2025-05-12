@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Message = require('../models/message');
-const Movie = require('../models/movies');
+const Chat = require('../models/chats');
 const User = require('../models/users');
 const mongoose = require('mongoose');
 
 //popola sidebar coi film
-router.get('/films', async (req, res) => {
+router.get('/chats', async (req, res) => {
     try {
-        const filmsWithMessages = await Movie.find({ last_message: { $exists: true, $ne: null } })
+        const chats = await Chat.find({ last_message: { $exists: true, $ne: null } })
             .populate({
                 path: 'last_message',
                 model: 'Message',
@@ -17,39 +17,41 @@ router.get('/films', async (req, res) => {
                     select: 'username'
                 }
             })
-            .sort({ updated_at: -1 });
-        console.log(filmsWithMessages)
-        res.json(filmsWithMessages);
+            .sort({ last_updated: -1 });
+        res.json(chats);
     } catch (error) {
-        console.error("Errore nel recupero dei film con chat:", error);
-        res.status(500).json({ error: 'Errore nel recupero dei film con chat' });
+        console.error("Errore nel recupero delle chat:", error);
+        res.status(500).json({ error: 'Errore nel recupero delle chat' });
     }
 });
 
 
-router.get('/messages/:filmCode', async (req, res) => {
+router.get('/messages/:code', async (req, res) => {
     try {
-        const filmCode = req.params.filmCode.replace(":", "");
+        const code = req.params.code.replace(":", "");
+        const type = req.query.Type;
 
-         movie = await Movie.findOne({ code: filmCode });
+        if (type === 'actor')
+            chat = await Chat.findOne({ code: code, name: { $exists: true, $ne: null } });
+        else if (type === 'movie')
+            chat = await Chat.findOne({ code: code, title: { $exists: true, $ne: null } });
+        if (!chat) return res.status(404).json({ error: 'Chat non trovata' });
 
-        const messages = await Message.find({ film_id: movie._id })
-            .sort({ created_at: -1 })
-            .populate('sender_id', 'username')  //"join" per aggiugere nome utente
+        const messages = await Message.find({ chat_id: chat._id })
+            .sort({ created_at: 1 })
+            .populate('sender_id', 'username');
 
         res.json({
-            messages: messages.map(msg => ({ //necessario per semplificare i dati
+            target: chat.type === 'movie' ? chat.title : chat.name,
+            messages: messages.map(msg => ({
                 _id: msg._id,
                 sender: {
                     id: msg.sender_id._id,
                     username: msg.sender_id.username
                 },
-                film: {
-                    id: msg.film_id._id,
-                    title: msg.film_id.title
-                },
                 content: msg.content,
-            })),
+                created_at: msg.created_at
+            }))
         });
     } catch (error) {
         console.error("Errore nel recupero dei messaggi:", error);
@@ -63,42 +65,39 @@ router.post('/messages', async (req, res) => {
     session.startTransaction();
 
     try {
-        const { filmId, userId, username, content } = req.body;
+        const { chatId, userId, content } = req.body;
 
-        if (!mongoose.Types.ObjectId.isValid(filmId)) {
-            return res.status(400).json({ error: 'ID film non valido' });
+        if (!mongoose.Types.ObjectId.isValid(chatId)) {
+            return res.status(400).json({ error: 'ID chat non valido' });
         }
 
         const newMessage = new Message({
-            filmId,
-            userId: userId || null,
-            username,
+            chat_id: chatId,
+            sender_id: userId,
             content
         });
 
         await newMessage.save({ session });
 
-        // Aggiorna l'ultimo messaggio nel film
-        await Movie.findByIdAndUpdate(
-            filmId,
-            { last_message_id: newMessage._id, updated_at: Date.now() },
+        await Chat.findByIdAndUpdate(
+            chatId,
+            {
+                last_message: newMessage._id,
+                last_updated: new Date()
+            },
             { session }
         );
 
         await session.commitTransaction();
 
-        // Popola i dati per il socket
         const populatedMsg = await Message.findById(newMessage._id)
-            .populate('filmId', 'title')
-            .populate('userId', 'username');
+            .populate('sender_id', 'username');
 
         const io = req.app.get('io');
         if (io) {
-            io.to(`film-${filmId}`).emit('new-chat-message', {
+            io.to(`chat-${chatId}`).emit('new-chat-message', {
                 _id: populatedMsg._id,
-                filmId: populatedMsg.filmId,
-                userId: populatedMsg.userId,
-                username: populatedMsg.username,
+                sender: populatedMsg.sender_id,
                 content: populatedMsg.content,
                 time: populatedMsg.created_at.toLocaleTimeString('it-IT')
             });
@@ -106,9 +105,7 @@ router.post('/messages', async (req, res) => {
 
         res.status(201).json({
             _id: populatedMsg._id,
-            filmId: populatedMsg.filmId,
-            userId: populatedMsg.userId,
-            username: populatedMsg.username,
+            sender: populatedMsg.sender_id,
             content: populatedMsg.content,
             time: populatedMsg.created_at.toLocaleTimeString('it-IT')
         });
@@ -120,5 +117,6 @@ router.post('/messages', async (req, res) => {
         session.endSession();
     }
 });
+
 
 module.exports = router;

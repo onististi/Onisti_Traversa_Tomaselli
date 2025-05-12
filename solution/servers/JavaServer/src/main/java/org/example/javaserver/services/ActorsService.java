@@ -26,12 +26,36 @@ public class ActorsService {
 
     @Transactional
     public Optional<Actor> findActor(String actor_name) {
-        String jpql = "SELECT a FROM Actor a WHERE LOWER(a.name) = LOWER(:name)";
-        TypedQuery<Actor> query = entityManager.createQuery(jpql, Actor.class);
-        query.setParameter("name", actor_name);
+        String sql = """
+            SELECT
+                actor_name AS name,
+                movies_count,
+                average_rating as avg_rating,
+                id
+            FROM actor_summaries
+            WHERE actor_name = ?
+            """;
 
-        List<Actor> actors = query.getResultList();
-        return actors.isEmpty() ? Optional.empty() : Optional.of(actors.get(0));
+        try {
+            List<Object[]> results = entityManager.createNativeQuery(sql)
+                    .setParameter(1, actor_name)
+                    .getResultList();
+
+            if (!results.isEmpty()) {
+                Object[] row = results.get(0);
+                Actor actor = new Actor();
+                actor.setName((String) row[0]);
+                actor.setMovies_count(((Number) row[1]).intValue());
+                actor.setAvg_rating((BigDecimal) row[2]);
+                actor.setId( ((Number) row[3]).intValue());
+                return Optional.of(actor);
+            }
+
+            return Optional.empty();
+        } catch (Exception e) {
+            // Gestione delle eccezioni (opzionale)
+            return Optional.empty();
+        }
     }
 
     @Transactional

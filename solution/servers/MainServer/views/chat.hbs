@@ -14,12 +14,12 @@
 
 <div class="content-container">
     <div class="sidebar">
-        <h2>Film's Chat</h2>
+        <h2>Chats</h2>
         <ul class="film-list">
-            {{#each filmList}}
+            {{#each chatList}}
                 <li class="{{#if (eq this.code ../filmCode)}}active{{/if}}">
-                    <a href="/chat?filmCode={{this.code}}">
-                    {{this.title}}
+                    <a href="/chat?Code={{this.code}}&Type={{#if this.name}}actor{{else}}movie{{/if}}"> <!--nel db mongo se è una chat su actor ha un campo name se movie ha title, il type serve da specificare per il dataserver -->
+                    {{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
                     </a>
                 </li>
             {{/each}}
@@ -27,9 +27,9 @@
     </div>
 
     <div class="chat-container">
-        {{#if currentFilm}}
+        {{#if currentChat}}
             <div class="chat-header">
-                <h2>{{currentFilm.title}}'s chat</h2>
+                <h2> {{#if currentChat.title}}{{currentChat.title}}{{else}}{{currentChat.name}}{{/if}}'s chat</h2>
                 <div id="connection-status" class="connection-status disconnected">Disconnesso</div>
             </div>
 
@@ -51,7 +51,7 @@
             </div>
         {{else}}
             <div class="no-film-selected">
-                <p>Seleziona un film dalla sidebar per partecipare alla chat</p>
+                <p>select a chat from the sidebar to join it</p>
             </div>
         {{/if}}
     </div>
@@ -65,7 +65,7 @@
 <script>
     window.chatData = {
         filmId: '{{currentFilm._id}}',
-        filmCode: '{{filmCode}}',
+        chatCode: '{{chatCode}}',
         userId: '{{userId}}',
         username: '{{username}}',
         role: '{{role}}',

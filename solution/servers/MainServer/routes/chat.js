@@ -2,21 +2,24 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
-router.get('/', async function(req, res, next) {
+// Mostra pagina chat
+router.get('/', async function (req, res, next) {
     try {
-        const filmsResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/films`);
-        const filmList = filmsResponse.data;
+        const chatsResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/chats`); //popola sidebar con chats
+        const chatList = chatsResponse.data;
 
-        const filmCode = req.query.filmCode;
-        let currentFilm = null;
+        const chatCode = req.query.Code;
+        const chatType = req.query.Type;
+        let currentChat = null;
         let messages = [];
-        if (filmCode) {
+
+        if (chatCode &&chatType) {
             try {
                 const messagesResponse = await axios.get(
-                    `${process.env.DATA_SERVER_URL}/chat/messages/${filmCode}`
+                    `${process.env.DATA_SERVER_URL}/chat/messages/${chatCode}?Type=${chatType}`
                 );
                 messages = messagesResponse.data.messages;
-                currentFilm = filmList.find(film => film.code == filmCode);
+                currentChat = chatList.find(chat => chat.code == chatCode);
             } catch (err) {
                 console.error("Errore nel recupero dei messaggi:", err);
                 messages = [];
@@ -38,13 +41,13 @@ router.get('/', async function(req, res, next) {
                 requestStatus: req.session.user.requestStatus || 'none'
             };
         }
-
+console.log(currentChat)
         res.render('chat', {
             title: 'Cineverse - Chat',
-            filmList,
-            currentFilm,
+            chatList,
+            currentChat,
             messages,
-            filmCode,
+            chatCode: chatCode,
             userId: userData.userId,
             username: userData.username,
             role: userData.role,
@@ -60,28 +63,25 @@ router.get('/', async function(req, res, next) {
     }
 });
 
-router.post('/message', async function(req, res) {
+// Invia un nuovo messaggio
+router.post('/message', async function (req, res) {
     try {
-        // Verifica autenticazione
         if (!req.session || !req.session.user) {
             return res.status(401).json({ error: 'Non autorizzato' });
         }
 
-        const { filmId, content } = req.body;
+        const { chatId, content } = req.body;
 
-        if (!filmId || !content) {
+        if (!chatId || !content) {
             return res.status(400).json({ error: 'Dati mancanti' });
         }
 
-
         const messageData = {
-            filmId,
+            chatId,
             userId: req.session.user.id,
-            username: req.session.user.username,
             content,
             timestamp: new Date()
         };
-
 
         const response = await axios.post(
             `${process.env.DATA_SERVER_URL}/chat/messages`,
@@ -92,7 +92,6 @@ router.post('/message', async function(req, res) {
                 }
             }
         );
-
 
         res.status(201).json(response.data);
     } catch (error) {

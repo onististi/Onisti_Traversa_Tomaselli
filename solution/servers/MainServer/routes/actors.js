@@ -20,7 +20,7 @@ router.get("/:name", async function(req, res, next) {
     const size = req.query.size || 8;
 
     try {
-        //responseActor = await axios.get("http://localhost:8080/api/actors/"+actorName);
+        responseActor = await axios.get("http://localhost:8080/api/actors/"+actorName);
         responseMovies = await axios.get("http://localhost:8080/api/actors/"+encodeURIComponent(actorName)+"/movies");
 
         let highestRated = 0;
@@ -44,14 +44,16 @@ router.get("/:name", async function(req, res, next) {
 
         let actor = {
             name : actorName,
+            id : responseActor.data.id,
             highestRated : highestRated,
-            lowestRated : lowestRated
+            lowestRated : lowestRated,
+            movies_count : responseActor.data.movies_count
         }
 
         res.render('actor', {
             actor : actor,
             movies: initialMovies,
-            hasMoreMovies: hasMoreMovies
+            hasMoreMovies: hasMoreMovies,
         });
     } catch (error) {
         if (error.response && error.response.status === 404)

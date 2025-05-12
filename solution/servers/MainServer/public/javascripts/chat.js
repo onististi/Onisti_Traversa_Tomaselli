@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const { filmId, filmCode, userId, username, dataServerUrl } = window.chatData;
+    const { filmId, chatCode, userId, username, dataServerUrl } = window.chatData;
     const messageInput = document.getElementById('message-input');
     const sendButton = document.getElementById('send-button');
     const chatMessages = document.getElementById('chat-messages');
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             socket.emit('chat-message', {
                 filmId,
-                filmCode,
+                chatCode,
                 userId,
                 username,
                 content
