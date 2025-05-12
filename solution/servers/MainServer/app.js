@@ -40,6 +40,23 @@ hbs.registerHelper('json', context => JSON.stringify(context || []));
 hbs.registerHelper('eq', (a, b) => a === b);
 hbs.registerHelper('formatDate', date => new Date(date).toLocaleDateString('it-IT'));
 hbs.registerHelper('capitalize', str => typeof str === 'string' ? str.charAt(0).toUpperCase() + str.slice(1) : '');
+hbs.registerHelper('times', function(n, block) {
+  let accum = '';
+  for (let i = 0; i < n; i++) {
+    accum += block.fn(i);
+  }
+  return accum;
+});
+
+hbs.registerHelper('subtract', function(a, b) {
+  return a - b;
+});
+
+// Helper for equality check (for role-based styling)
+hbs.registerHelper('eq', function(a, b) {
+  return a === b;
+});
+
 
 // Routes definition
 app.use('/', indexRouter);

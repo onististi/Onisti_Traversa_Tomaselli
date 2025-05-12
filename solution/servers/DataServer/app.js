@@ -15,6 +15,7 @@ const movieRouter = require('./routes/movies');
 
 const requestsRouter = require('./routes/journalistRequests');
 const userRoutes = require('./routes/user');
+const reviewsRoutes = require('./routes/reviews');
 
 var app = express();
 const server = http.createServer(app);
@@ -40,11 +41,6 @@ io.on('connection', (socket) => {
   });
 });
 
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -56,6 +52,7 @@ app.use('/api/movies', movieRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/requests', requestsRouter);
 app.use('/api/users', userRoutes);
+app.use('/api/reviews', reviewsRoutes);
 
 //middleware per bloccare richieste che non sono API
 app.use((req, res, next) => {
@@ -72,13 +69,11 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(err.status || 500).json({
+    message: err.message,
+    error: req.app.get('env') === 'development' ? err : {}
+  });
 });
+
 
 module.exports = { app, server };
