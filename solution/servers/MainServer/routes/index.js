@@ -115,4 +115,43 @@ router.get('/refresh-user-status', (req, res, next) => {
     }
 });
 
+router.get('/search', syncUserSession, async function(req, res, next) {
+    try {
+        const searchTerm = req.query.q;
+
+        if (!searchTerm || searchTerm.trim() === '') {
+            return res.redirect('/');
+        }
+
+        const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:8080';
+
+
+        const response = await axios.get(`${DATA_SERVER_URL}/api/search`, {
+            params: { term: searchTerm }
+        });
+
+        if (!response.data || !response.data.success) {
+            throw new Error('Errore durante la ricerca');
+        }
+
+        res.render('search', {
+            title: `Risultati di ricerca per: ${searchTerm}`,
+            searchTerm,
+            movies: response.data.results.movies,
+            actors: response.data.results.actors,
+            hasResults: response.data.results.movies.length > 0 || response.data.results.actors.length > 0,
+            user: req.session.user // Passa i dati utente per l'header
+        });
+    } catch (error) {
+        console.error('Errore nella ricerca:', error);
+        res.status(500).render('error', {
+            message: 'Si è verificato un errore durante la ricerca',
+            error: {
+                status: 500,
+                stack: process.env.NODE_ENV === 'development' ? error.stack : ''
+            }
+        });
+    }
+});
+
 module.exports = router;

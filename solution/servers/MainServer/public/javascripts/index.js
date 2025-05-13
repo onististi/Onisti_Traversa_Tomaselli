@@ -46,7 +46,6 @@ function initializeSliders() {
 }
 
 function setupNavButtons(navSelector, sliderSelector) {
-    // Configura i pulsanti di navigazione
     const prevBtn = document.querySelector(`${navSelector} .prev-arrow`);
     const nextBtn = document.querySelector(`${navSelector} .next-arrow`);
 
@@ -81,27 +80,28 @@ function setupSearchButton() {
 function performSearch(searchTerm) {
     if (searchTerm.trim() !== '') {
         console.log(`Ricerca per: ${searchTerm}`);
+        window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
     }
 }
 
 function handleMissingImages() {
-    // Gestisci immagini mancanti o non caricate
+
     const posterImages = document.querySelectorAll('.poster img');
 
     posterImages.forEach(img => {
         img.addEventListener('error', function() {
-            // Aggiungi una classe per applicare stili alternativi
+
             this.parentElement.classList.add('missing-image');
             this.style.display = 'none';
 
-            // Crea un elemento di fallback
+
             const fallback = document.createElement('div');
             fallback.className = 'image-fallback';
             fallback.textContent = 'No Image';
             this.parentElement.appendChild(fallback);
         });
 
-        // Verifica anche le immagini già non caricate
+
         if (!img.complete || img.naturalHeight === 0 || !img.src || img.src === 'null' || img.src === 'undefined') {
             img.dispatchEvent(new Event('error'));
         }

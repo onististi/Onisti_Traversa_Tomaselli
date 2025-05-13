@@ -150,6 +150,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     applyFilters();
 
+
+    function performSearch(searchTerm) {
+        if (searchTerm.trim() !== '') {
+            window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+        }
+    }
+
+
     function setupSearchButton() {
         const searchButton = document.querySelector('.search-container button');
         const searchInput = document.querySelector('.search-container input');

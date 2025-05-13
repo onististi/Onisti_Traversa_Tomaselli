@@ -53,6 +53,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/requests', requestsRouter);
 app.use('/api/users', userRoutes);
 app.use('/api/reviews', reviewsRoutes);
+app.use('/', indexRouter);
 
 //middleware per bloccare richieste che non sono API
 app.use((req, res, next) => {
