@@ -27,6 +27,13 @@ function setupSearchInput() {
                 performSearch(searchInput.value);
             }
         });
+
+        searchInput.addEventListener('input', function () {
+            const value = searchInput.value;
+            if (value.length >= 4) {
+                fetchSearchResults(value);
+            }
+        });
     }
 }
 
@@ -60,3 +67,4 @@ function handleMissingImages() {
         }
     });
 }
+

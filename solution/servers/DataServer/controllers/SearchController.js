@@ -1,11 +1,10 @@
 const pg = require('../config/pg');
-const db = require('../config/db');
 
 exports.search = async (req, res) => {
     try {
         const searchTerm = req.query.term;
-        if (!searchTerm || searchTerm.trim() === '') {
-            return res.status(400).json({ success: false, message: 'Termine di ricerca mancante' });
+        if (!searchTerm || searchTerm.trim() === '' || searchTerm.length < 4) {
+            return res.status(400).json({ success: false, message: 'Inserisci almeno 4 lettere per cercare' });
         }
 
         const likePattern = `%${searchTerm}%`;
@@ -16,14 +15,14 @@ exports.search = async (req, res) => {
             LEFT JOIN posters p ON m.id = p.id_movie
             WHERE m.name ILIKE $1
             ORDER BY m.rating IS NULL, m.rating DESC
-            LIMIT 100
+            LIMIT 50
         `;
 
         const actorsQuery = `
             SELECT DISTINCT ON (name) id, name
             FROM actors
             WHERE name ILIKE $1
-            LIMIT 100
+            LIMIT 50
         `;
 
         const [moviesResults, actorsResults] = await Promise.all([
@@ -42,7 +41,6 @@ exports.search = async (req, res) => {
         const formattedActors = actorsResults.rows.map(actor => ({
             id: actor.id,
             name: actor.name,
-            movieId: actor.id_movie,
             type: 'actor'
         }));
 

@@ -116,8 +116,9 @@ router.get('/refresh-user-status', (req, res, next) => {
 });
 
 router.get('/search', syncUserSession, async function(req, res, next) {
+    const searchTerm = req.query.term || req.query.q;
+
     try {
-        const searchTerm = req.query.q;
 
         if (!searchTerm || searchTerm.trim() === '') {
             return res.redirect('/');
@@ -130,6 +131,11 @@ router.get('/search', syncUserSession, async function(req, res, next) {
             params: { term: searchTerm }
         });
 
+        const results = response.data;
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            return res.json({ results });
+        }
+
         if (!response.data || !response.data.success) {
             throw new Error('Errore durante la ricerca');
         }
@@ -140,9 +146,12 @@ router.get('/search', syncUserSession, async function(req, res, next) {
             movies: response.data.results.movies,
             actors: response.data.results.actors,
             hasResults: response.data.results.movies.length > 0 || response.data.results.actors.length > 0,
-            user: req.session.user // Passa i dati utente per l'header
+            user: req.session.user
         });
     } catch (error) {
+        if (error.response && error.response.status === 400) {
+            return res.status(400).json({ message: 'Inserisci almeno 4 lettere per la ricerca.' });
+        }
         console.error('Errore nella ricerca:', error);
         res.status(500).render('error', {
             message: 'Si è verificato un errore durante la ricerca',
