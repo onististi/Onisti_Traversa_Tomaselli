@@ -39,32 +39,43 @@ document.addEventListener('DOMContentLoaded', function() {
             chatCode: window.chatData.chatCode,
             userId: window.chatData.userId,
             username: window.chatData.username,
+            role: window.chatData.role,
             content: content,
             chatTitle: window.chatData.chatTitle,
             chatName: window.chatData.chatName,
         };
 
-        const response  = await fetch('http://localhost:3001/api/chat/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(messageData)
-        })
+        // Mostra il messaggio localmente con ruolo esplicito
+        addMessageToChat({
+            username: window.chatData.username,
+            role: window.chatData.role, // Questo è corretto ma non veniva visualizzato correttamente
+            content: content,
+            time: new Date().toLocaleTimeString('it-IT')
+        });
 
-        addMessageToChat(messageData);
         scrollToBottom();
         messageInput.value = '';
 
-        if(!messageData.chatId)
-            SocketManager.joinChatRoom(response.json()._id);
-        await SocketManager.sendChatMessage(messageData); //da avere dopo la fetch dato che serve la connessione alla stanza con l'id nuovo appena creato
+        // Invia il messaggio tramite WebSocket
+        await SocketManager.sendChatMessage(messageData);
     }
 
     SocketManager.onNewMessage(function(message) {
+        // Mostra i messaggi dalla stessa chat, evitando duplicati se è l'utente corrente
         if (window.chatData.chatCode === message.chatCode) {
-            addMessageToChat(message);
-            scrollToBottom();
+            console.log('Nuovo messaggio ricevuto via socket:', message);
+
+            // Se NON è un messaggio dell'utente corrente, mostralo
+            // (i messaggi dell'utente corrente sono già mostrati localmente)
+            if (message.userId !== window.chatData.userId) {
+                addMessageToChat({
+                    username: message.username,
+                    role: message.role || 'user', // Assicurati che ci sia sempre un ruolo
+                    content: message.content,
+                    time: message.time || new Date().toLocaleTimeString('it-IT')
+                });
+                scrollToBottom();
+            }
         }
     });
 
@@ -78,9 +89,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageElement = document.createElement('div');
         messageElement.className = 'message';
 
-        const usernameElement = document.createElement('div');
+        // Create combined username and role element
+        const userHeaderElement = document.createElement('div');
+        userHeaderElement.className = 'message-header';
+
+        // Create username element
+        const usernameElement = document.createElement('span');
         usernameElement.className = 'message-username';
         usernameElement.textContent = message.username;
+
+        // Aggiungi il ruolo tra parentesi accanto al nome utente
+        const role = message.role || 'user';
+        usernameElement.textContent += ` (${role})`;
+
+        userHeaderElement.appendChild(usernameElement);
 
         const textElement = document.createElement('div');
         textElement.className = 'message-text';
@@ -90,7 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
         timeElement.className = 'message-time';
         timeElement.textContent = message.time || new Date().toLocaleTimeString('it-IT');
 
-        messageElement.appendChild(usernameElement);
+        // Append all elements in correct order
+        messageElement.appendChild(userHeaderElement);
         messageElement.appendChild(textElement);
         messageElement.appendChild(timeElement);
         chatMessagesContainer.appendChild(messageElement);

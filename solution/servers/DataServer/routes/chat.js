@@ -14,16 +14,20 @@ router.get('/chats', async (req, res) => {
                 model: 'Message',
                 populate: {
                     path: 'sender_id',
-                    select: 'username'
+                    select: 'username role'
                 }
             })
             .sort({ last_updated: -1 });
+
+        console.log("🔍 Dati recuperati per la chat:", JSON.stringify(chats, null, 2)); // 🔹 Debug
+
         res.json(chats);
     } catch (error) {
-        console.error("Error retrieving chats:", error);
-        res.status(500).json({ error: 'Error retrieving chats' });
+        console.error("❌ Errore nel recupero delle chat:", error);
+        res.status(500).json({ error: 'Errore nel recupero delle chat' });
     }
 });
+
 
 
 //messaggi per chat specifica
@@ -50,7 +54,7 @@ router.get('/messages/:code', async (req, res) => {
 
         const messages = await Message.find({ chat_id: chat._id })
             .sort({ created_at: 1 })
-            .populate('sender_id', 'username');
+            .populate('sender_id', 'username role'); // Add role to populated fields
 
         const target = type === 'movie' ? chat.title : chat.name;
         res.json({
@@ -59,7 +63,8 @@ router.get('/messages/:code', async (req, res) => {
             messages: messages.map(msg => ({
                 sender: {
                     id: msg.sender_id._id,
-                    username: msg.sender_id.username
+                    username: msg.sender_id.username,
+                    role:msg.sender_role || msg.sender_id.role || 'user'
                 },
                 content: msg.content,
                 created_at: msg.created_at,
@@ -76,7 +81,7 @@ router.get('/messages/:code', async (req, res) => {
 //invio di messaggi(salvataggio nel db)
 router.post('/messages', async (req, res) => {
     try {
-        const { chatId, chatCode, userId, username, content, ChatTitle, ChatName } = req.body;
+        const { chatId, chatCode, userId, username, role, content, chatTitle, chatName } = req.body;
         console.log("Received message data:", req.body);
 
         if (!chatCode || !userId || !username || !content) {
@@ -89,7 +94,7 @@ router.post('/messages', async (req, res) => {
 
         let chat
         if(chatId)
-             chat = await Chat.findById(chatId);
+            chat = await Chat.findById(chatId);
 
         if (!chatId || !chat) {
             chat = new Chat({
@@ -109,6 +114,7 @@ router.post('/messages', async (req, res) => {
             chat_id: chat._id,
             sender_id: userId,
             content: content,
+            sender_role: role,
             created_at: new Date()
         });
 
@@ -130,6 +136,7 @@ router.post('/messages', async (req, res) => {
                 id: userId,
                 username: username
             },
+            role: role,
             content: savedMessage.content,
             time: savedMessage.created_at.toLocaleTimeString('it-IT')
         });
