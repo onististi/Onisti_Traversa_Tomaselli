@@ -52,8 +52,9 @@
             <button class="add-filter-btn" title="Aggiungi filtro">+</button>
         </div>
     </section>
-
-<h1 class="title">TOP 500 ACTORS</h1>
+    {{#unless searchType}}
+        <h1 class="title">TOP 500 ACTORS</h1>
+    {{/unless}}
     <section class="actors-grid" id="actors-container">
         {{#each actors}}
             <div class="actor-card" data-actor-name="{{name}}">

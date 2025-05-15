@@ -92,15 +92,12 @@ function handleMissingImages() {
         img.addEventListener('error', function() {
 
             this.parentElement.classList.add('missing-image');
-            this.style.display = 'none';
-
 
             const fallback = document.createElement('div');
             fallback.className = 'image-fallback';
             fallback.textContent = 'No Image';
             this.parentElement.appendChild(fallback);
         });
-
 
         if (!img.complete || img.naturalHeight === 0 || !img.src || img.src === 'null' || img.src === 'undefined') {
             img.dispatchEvent(new Event('error'));

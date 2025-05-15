@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/', async function(req, res) {
     const query = req.query.q || req.query.term || '';
-    const type = req.query.type || 'all';
+    const type = req.query.type;
 
     if (!query) {
         return res.render('search', {
@@ -24,7 +24,7 @@ router.get('/', async function(req, res) {
 
         const promises = [];
 
-        if (type === 'movies' || type === 'all') {
+        if (type === 'movies' ) {
             promises.push(
                 axios.get(`http://localhost:8080/api/movies/search?query=${encodeURIComponent(query)}`)
                     .then(response => {
@@ -35,9 +35,17 @@ router.get('/', async function(req, res) {
                         movies = [];
                     })
             );
+
+            await Promise.all(promises);
+            res.render('movies', {
+                searchTerm: query,
+                movies: movies,
+                searchType: type,
+                user: req.session.user
+            });
         }
 
-        if (type === 'actors' || type === 'all') {
+        if (type === 'actors' ) {
             promises.push(
                 axios.get(`http://localhost:8080/api/actors/search?query=${encodeURIComponent(query)}`)
                     .then(response => {
@@ -48,21 +56,15 @@ router.get('/', async function(req, res) {
                         actors = [];
                     })
             );
+
+            await Promise.all(promises);
+            res.render('actors', {
+                searchTerm: query,
+                actors: actors,
+                searchType: type,
+                user: req.session.user
+            });
         }
-
-        await Promise.all(promises);
-
-        const hasResults = movies.length > 0 || actors.length > 0;
-
-        res.render('search', {
-            title: `Risultati per "${query}"`,
-            searchTerm: query,
-            movies: movies,
-            actors: actors,
-            searchType: type,
-            hasResults: hasResults,
-            user: req.session.user
-        });
     } catch (error) {
         console.error("Error performing search:", error.message);
         res.status(500).render('error', {
@@ -71,44 +73,4 @@ router.get('/', async function(req, res) {
         });
     }
 });
-
-router.get('/api/search', async function(req, res) {
-    const query = req.query.term || req.query.q || '';
-    const type = req.query.type || 'all';
-
-    try {
-        let movies = [];
-        let actors = [];
-
-        if (type === 'movies' || type === 'all') {
-            const moviesResponse = await axios.get(`http://localhost:8080/api/movies/search?query=${encodeURIComponent(query)}`)
-                .catch(error => {
-                    console.warn("Error searching movies:", error.message);
-                    return { data: [] };
-                });
-            movies = moviesResponse.data || [];
-        }
-
-        if (type === 'actors' || type === 'all') {
-            const actorsResponse = await axios.get(`http://localhost:8080/api/actors/search?query=${encodeURIComponent(query)}`)
-                .catch(error => {
-                    console.warn("Error searching actors:", error.message);
-                    return { data: [] };
-                });
-            actors = actorsResponse.data || [];
-        }
-
-        res.json({
-            movies: movies,
-            actors: actors
-        });
-    } catch (error) {
-        console.error("Error in API search:", error.message);
-        res.status(500).json({
-            message: "Errore durante la ricerca",
-            error: { status: 500 }
-        });
-    }
-});
-
 module.exports = router;

@@ -2,6 +2,7 @@ package org.example.javaserver.services;
 import jakarta.transaction.Transactional;
 import org.example.javaserver.models.Actor;
 import org.example.javaserver.models.ActorMovie;
+import org.example.javaserver.models.MovieOscar;
 import org.example.javaserver.models.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,13 +95,24 @@ public class ActorsService {
     }
 
     @Transactional
+    public List<MovieOscar> getOscarsByActor(String actorName) {
+        String jpql = """
+        SELECT o FROM MovieOscar o
+        WHERE LOWER(o.personName) = LOWER(:actorName)
+        ORDER BY o.yearCeremony DESC
+    """;
+        TypedQuery<MovieOscar> query = entityManager.createQuery(jpql, MovieOscar.class);
+        query.setParameter("actorName", actorName);
+        return query.getResultList();
+    }
+
+    @Transactional
     public List<Actor> searchActors(String query) {
         String sql = """
         SELECT actor_name AS name, movies_count, genres, average_rating
         FROM actor_summaries
         WHERE LOWER(actor_name) LIKE LOWER(:query)
-        LIMIT 100
-    """;
+         ORDER BY name DESC LIMIT 100""";
 
         List<Object[]> results = entityManager.createNativeQuery(sql).setParameter("query", "%" + query + "%").getResultList();
 
@@ -109,18 +121,7 @@ public class ActorsService {
                     Actor actor = new Actor();
                     actor.setName((String) result[0]);
                     actor.setMovies_count(((Number) result[1]).intValue());
-
-                    if (result[2] instanceof java.sql.Array sqlArray) {
-                        try {
-                            String[] genres = (String[]) sqlArray.getArray();
-                            actor.setGenres(Arrays.asList(genres));
-                        } catch (Exception e) {
-                            actor.setGenres(List.of());
-                        }
-                    } else {
-                        actor.setGenres(List.of());
-                    }
-
+                    actor.setGenres(Arrays.asList(((String[]) result[2])));
                     actor.setAvg_rating((BigDecimal) result[3]);
                     return actor;
                 }).toList();

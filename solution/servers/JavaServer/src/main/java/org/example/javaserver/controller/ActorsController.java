@@ -2,6 +2,7 @@ package org.example.javaserver.controller;
 import org.example.javaserver.models.Actor;
 import org.example.javaserver.models.ActorMovie;
 import org.example.javaserver.models.Movie;
+import org.example.javaserver.models.MovieOscar;
 import org.example.javaserver.services.ActorsService;
 import org.example.javaserver.services.MoviesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,12 @@ public class ActorsController {
 
         Optional<List<ActorMovie>> moviesWithRole = actorsService.findMoviesByActor(name, page, size);
         return moviesWithRole.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{name}/oscars")
+    public ResponseEntity<List<MovieOscar>> getOscarsByActor(@PathVariable String name) {
+        List<MovieOscar> oscars = actorsService.getOscarsByActor(name);
+        return ResponseEntity.ok(oscars);
     }
 
     @GetMapping("/search")

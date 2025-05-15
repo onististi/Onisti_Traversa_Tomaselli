@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const paginatedActors = filteredActors.slice(0, ITEMS_PER_PAGE);
         renderActors(paginatedActors, false);
 
-        if (filteredMovies.length > ITEMS_PER_PAGE) {
+        if (filteredActors.length > ITEMS_PER_PAGE) {
 
             if (getComputedStyle(loadMoreBtn).display !== 'none')
                 loadMoreBtn.dataset.currentPage = '1';

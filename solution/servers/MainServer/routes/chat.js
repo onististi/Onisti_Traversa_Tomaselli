@@ -13,25 +13,6 @@ router.get('/', async function(req, res, next) {
 
         const currentFilm = filmList.length > 0 ? filmList[0] : { id: 0, title: 'Nessun film disponibile' };
 
-        // Messaggi di esempio (qui potresti fare una chiamata API per messaggi reali)
-        const messages = [
-            {
-                username: 'MovieFan01',
-                text: 'Qualcuno ha visto questo film?',
-                time: '14:30'
-            },
-            {
-                username: 'CinemaLover',
-                text: 'Sì, è fantastico! La regia è eccellente.',
-                time: '14:35'
-            },
-            {
-                username: 'FilmCritic',
-                text: 'La colonna sonora mi ha colpito particolarmente.',
-                time: '14:42'
-            }
-        ];
-
         res.render('chat', {
             title: 'Cineverse - Chat',
             filmList,

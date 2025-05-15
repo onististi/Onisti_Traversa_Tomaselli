@@ -3,15 +3,15 @@ package org.example.javaserver.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "movie_oscars")
+@Table(name = "oscar_awards") // ✅ Nome corretto della tabella
 public class MovieOscar {
 
     @Id
-    @Column(name = "movie_id")
-    private Integer movieId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column(name = "movie_title")
-    private String movieTitle;
+    @Column(name = "year_film")
+    private Integer yearFilm;
 
     @Column(name = "year_ceremony")
     private Integer yearCeremony;
@@ -19,21 +19,40 @@ public class MovieOscar {
     @Column(name = "category")
     private String category;
 
-    @Column(name = "person_name")
+    @Column(name = "name")
     private String personName;
+
+    @Column(name = "film")
+    private String film;
 
     @Column(name = "winner")
     private Boolean winner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", insertable = false, updatable = false)
-    private Movie movie;
+    public Integer getId() {
+        return id;
+    }
 
-    public boolean getWinner() {
-        return winner;
+    public Integer getYearFilm() {
+        return yearFilm;
     }
 
     public Integer getYearCeremony() {
         return yearCeremony;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public String getFilm() {
+        return film;
+    }
+
+    public Boolean getWinner() {
+        return winner;
     }
 }

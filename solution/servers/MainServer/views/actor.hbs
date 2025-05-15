@@ -15,12 +15,36 @@
             <div class="actor-image" style="background-image: url('{{actor.photoLink}}');"></div>
             <div class="actor-info">
                 <h1 class="actor-name" id="actorName">{{actor.name}}</h1>
-                <div class="actor-ratings">
-                    <div><strong>Highest Rated:</strong> <span id="highestRated">{{actor.highestRated}}/5</span></div>
-                    <div><strong>Lowest Rated:</strong> <span id="lowestRated">{{actor.lowestRated}}/5</span></div>
+                <div class="actor-stats-row">
+                    <div class="actor-ratings">
+                        <div><strong>Highest Rated:</strong> <span id="highestRated">{{actor.highestRated}}/5</span></div>
+                        <div><strong>Lowest Rated:</strong> <span id="lowestRated">{{actor.lowestRated}}/5</span></div>
+                        <div class="thread-button-container">
+                            <a href="../chat/actor/{{actor.name}}" id="threadButton" class="thread-button">Actor's Thread</a>
+                        </div>
+                    </div>
 
-                    <div class="thread-button-container">
-                        <a href = "../chat/actor/{{actor.name}}" id="threadButton" class="thread-button">Actor's Thread</a>
+                    <div class="actor-oscars">
+                        <h3>Oscar</h3>
+                        {{#if actor.oscars.length}}
+                            <table class="oscars-table">
+                                <thead>
+                                <tr><th>Year</th><th>Category</th><th>Film</th><th>Status</th></tr>
+                                </thead>
+                                <tbody>
+                                {{#each actor.oscars}}
+                                    <tr>
+                                        <td>{{yearCeremony}}</td>
+                                        <td>{{category}}</td>
+                                        <td>{{film}}</td>
+                                        <td>{{#if winner}}🏆 Won{{else}}Nominated{{/if}}</td>
+                                    </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                        {{else}}
+                            <p>No Oscar nominations or wins.</p>
+                        {{/if}}
                     </div>
                 </div>
             </div>

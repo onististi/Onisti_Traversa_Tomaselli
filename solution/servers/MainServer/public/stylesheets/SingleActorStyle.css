@@ -87,12 +87,11 @@ nav {
 }
 
 .actor-image {
-    float: left;
     width: 150px;
     height: 200px;
-    margin-right: 20px;
     background-size: cover;
     background-position: center;
+    margin-top: 20px; /* Aggiunto per spostare l'immagine verso il basso */
 }
 
 .actor-profile .actor-info h1.actor-name,
@@ -101,9 +100,10 @@ nav {
     font-weight: bold;
     margin-top: -20px;
     margin-bottom: 15px;
-    margin-left: 16px;
     line-height: 1.2;
     white-space: nowrap;
+    text-align: center;
+    margin-right: 16%;
 }
 
 .actor-ratings {
@@ -179,7 +179,7 @@ nav {
 }
 
 .load-more {
-    display: inline-block;
+    display: inline-block !important;
     padding: 10px 30px;
     background-color: #333;
     color: white;
@@ -212,6 +212,58 @@ nav {
 
 .thread-button:hover {
     background-color: #555;
+}
+.actor-stats-row {
+    display: flex;
+    flex-direction: row;
+    gap: 260px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.actor-ratings {
+    flex: 1;
+}
+
+.actor-oscars {
+    flex: 20;
+    font-size: 14px;
+}
+
+.actor-oscars h3 {
+    margin-bottom: 10px;
+}
+
+.oscars-table {
+    width: 120%;
+    border-collapse: collapse;
+}
+.oscars-table th,
+.oscars-table td {
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.oscars-table tr:not(:last-child) {
+    border-bottom: 1px solid #ccc;
+}
+
+.oscars-table th:nth-child(2),
+.oscars-table td:nth-child(2) {
+    width: 45%;
+}
+
+.oscars-table th:nth-child(3),
+.oscars-table td:nth-child(3) {
+    width: 35%;
+}
+
+.oscars-table th:nth-child(1),
+.oscars-table td:nth-child(1),
+.oscars-table th:nth-child(4),
+.oscars-table td:nth-child(4) {
+    width: 10%;
+    white-space: nowrap;
 }
 
 @media (max-width: 992px) {

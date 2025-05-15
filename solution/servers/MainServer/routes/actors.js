@@ -20,7 +20,10 @@ router.get("/:name", async function(req, res, next) {
     const size = parseInt(req.query.size) || 8;
 
     try {
+       // responseActor =  await axios.get(`http://localhost:8080/api/actors/${encodeURIComponent(actorName)}`); //check se l'attore esiste non c'è bisogno dell if manda direttamente a 404
+
         const responseMovies = await axios.get(`http://localhost:8080/api/actors/${encodeURIComponent(actorName)}/movies?page=${page}&size=${size}`);
+        let responseOscars = await axios.get(`http://localhost:8080/api/actors/${encodeURIComponent(actorName)}/oscars`);
 
         let highestRated = 0;
         let lowestRated = 0;
@@ -35,8 +38,8 @@ router.get("/:name", async function(req, res, next) {
         }
 
         const hasMoreMovies = responseMovies.data.length === size; // Controlla se ci sono altri film
-        let actor = { name: actorName, highestRated, lowestRated };
-
+        let actor = { name: actorName, highestRated, lowestRated, oscars: responseOscars.data };
+        console.log(responseOscars.data)
         res.render('actor', {
             actor,
             movies: responseMovies.data,

@@ -31,7 +31,7 @@ public class Movie {
     @Column(name = "rating", precision = 4, scale = 2)
     private BigDecimal rating;
 
-    @OneToMany(mappedBy = "movie")
+    @Transient
     private List<MovieOscar> movieOscars;
 
     //i transient non sono presenti nella tabella movies direttamente

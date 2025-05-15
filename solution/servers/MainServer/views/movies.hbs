@@ -52,7 +52,9 @@
         </div>
     </section>
 
+{{#unless searchType}}
     <h1 class="title">TOP MOVIES</h1>
+{{/unless}}
     <section class="movies-grid" id="movies-container">
         {{#each movies}}
             <div class="movie-card" data-movie-id="{{id}}">
