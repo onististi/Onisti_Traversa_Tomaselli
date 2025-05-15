@@ -3,42 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cineverse</title>
-    <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
+    <title>Cineverse - Chat</title>
     <link rel="stylesheet" href="/stylesheets/ChatStyle.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="/javascripts/socketManager.js"></script>
 </head>
 <body>
-    {{> header}}
+{{> header}}
+
+<div class="content-container">
     <div class="sidebar">
-        <h2>Film in Chat</h2>
+        <h2>Chats</h2>
         <ul class="film-list">
-            {{#each filmList}}
-            <li>{{this.title}}</li>
+            {{#each chatList}}
+                <li class   ="{{#if (eq this.code ../filmCode)}}active{{/if}}">
+                    <a href="/chat?Code={{this.code}}&Type={{#if this.name}}actor{{else}}movie{{/if}}"> <!--nel db mongo se è una chat su actor ha un campo name se movie ha title, il type serve da specificare per il dataserver -->
+                    {{#if this.title}}{{this.title}}{{else}}{{this.name}}{{/if}}
+                    </a>
+                </li>
             {{/each}}
         </ul>
     </div>
 
     <div class="chat-container">
-        <div class="chat-header">
-            <h2>Chat su: {{currentFilm.title}}</h2>
-        </div>
-
-        <div class="chat-messages">
-            {{#each messages}}
-            <div class="message">
-                <div class="message-username">{{this.username}}</div>
-                <div class="message-text">{{this.text}}</div>
-                <div class="message-time">{{this.time}}</div>
+        {{#if currentChat.code}} <!-- se esiste una chat -->
+            <div class="chat-header">
+                <h2>{{#if currentChat.title}}{{currentChat.title}}{{else}}{{currentChat.name}}{{/if}}'s chat</h2>
+                <div id="connection-status" class="connection-status disconnected">Disconnesso</div>
             </div>
-            {{/each}}
-        </div>
 
-        <div class="chat-input">
-            <input type="text" placeholder="Scrivi un messaggio..." id="message-input">
-            <button id="send-button">Invia</button>
-        </div>
+            <div class="chat-messages" id="chat-messages">
+                {{#if messages}}  <!-- se esistono messaggi per gestire chat nuove-->
+                    {{#each messages}}
+                        <div class="message">
+                            <div class="message-username">{{this.sender.username}}</div>
+                            <div class="message-text">{{this.content}}</div>
+                            <div class="message-time">{{this.time}}</div>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <div class="no-film-selected">
+                        <p>Start the conversation!</p>
+                    </div>
+                {{/if}}
+            </div>
+
+            <div class="chat-input">
+                <input type="text" id="message-input"
+                       placeholder="{{#if userId}}Scrivi un messaggio...{{else}}Accedi per partecipare{{/if}}"
+                       {{#unless userId}}disabled{{/unless}}>
+                <button id="send-button" {{#unless userId}}disabled{{/unless}}>Invia</button>
+            </div>
+        {{else}}
+            <div class="no-film-selected">
+                <p>Seleziona una chat dalla sidebar per unirti</p>
+            </div>
+        {{/if}}
     </div>
+</div>
+
+<div id="status-notification" style="display: none; position: fixed; top: 20px; right: 20px; padding: 15px; border-radius: 5px; z-index: 1000; color: white;">
+    <span id="notification-message"></span>
+    <button id="close-notification" style="margin-left: 10px; background: transparent; border: none; color: white; cursor: pointer;">✕</button>
+</div>
+
+<script>
+    window.chatData = {
+        chatId: '{{currentChat.id}}',
+        chatCode: '{{currentChat.code}}',
+
+        {{#if currentChat.title}}
+            chatTitle: '{{currentChat.title}}',
+        {{else}}
+            chatName: '{{currentChat.name}}',
+        {{/if}}
+
+        userId: '{{userId}}',
+        username: '{{username}}',
+        role: '{{role}}',
+        requestStatus: '{{requestStatus}}',
+    };
+
+    document.getElementById('close-notification').addEventListener('click', function() {
+        document.getElementById('status-notification').style.display = 'none';
+    });
+</script>
+<script src="/javascripts/chat.js" defer></script>
 </body>
 </html>

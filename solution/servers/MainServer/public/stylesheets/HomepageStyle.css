@@ -151,8 +151,6 @@ nav a{
     background-color: #2196F3;
 }
 
-
-
 @keyframes slideInRight {
     from {
         right: -300px;
@@ -227,30 +225,6 @@ nav a{
 .request-journalist-btn:hover {
     background: #1976D2;
     transform: translateY(-2px);
-}
-
-.search-container {
-    position: absolute;
-    top: 60px;
-    left: 70px;
-    display: flex;
-}
-
-.search-container input {
-    padding: 10px;
-    border-radius: 5px 0 0 5px;
-    border: none;
-    font-size: 16px;
-    width: 300px;
-}
-
-.search-container button {
-    background: white;
-    border: none;
-    color: black;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 0 5px 5px 0;
 }
 
 .nav-links {
@@ -484,40 +458,24 @@ section {
         align-items: center;
     }
 
-    .home-icon {
-        font-size: 20px;
-        text-decoration: none;
-        color: black;
-        padding: 12px;
-        border-radius: 5px;
-        background: #ffffff;
-        position: absolute;
-        top: 50px;
-        left: 0;
-    }
 
     .search-container {
         position: absolute;
-        top: 50px;
-        left: 60px;
+        top: 60px;
+        left: 70px;
         display: flex;
     }
 
     .search-container input {
-        padding: 10px;
-        border-radius: 5px 0 0 5px;
+        position: absolute;
+        background-color:#ffffff;
         border: none;
-        font-size: 16px;
+        padding: 10px;
+        border-radius: 5px;
+        top: -48px;
+        left: -770px;
+        height: 20px;
         width: 300px;
-    }
-
-    .search-container button {
-        background: white;
-        border: none;
-        color: black;
-        font-size: 16px;
-        padding: 10px;
-        border-radius: 0 5px 5px 0;
     }
 
     .nav-links {
@@ -557,7 +515,6 @@ section {
         margin-bottom: 20px;
     }
 
-    /* Card styles */
     .card-container {
         padding: 10px;
         box-sizing: border-box;
@@ -645,7 +602,6 @@ section {
         margin-top: 5px;
     }
 
-    /* Slider container styles */
     .section-container {
         margin-bottom: 40px;
         padding: 0 20px;
@@ -655,7 +611,6 @@ section {
         position: relative;
     }
 
-    /* Slick slider custom styles */
     .slick-slider {
         margin-bottom: 30px;
     }
@@ -669,7 +624,6 @@ section {
         padding: 20px 0;
     }
 
-    /* Slider navigation styles */
     .slider-nav {
         text-align: right;
         display: flex;
@@ -690,118 +644,5 @@ section {
         line-height: 30px;
         border-radius: 50%;
         font-size: 18px;
-    }
-
-    .search-results-modal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80%;
-        max-width: 800px;
-        max-height: 80%;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        z-index: 1000;
-        overflow: auto;
-        padding: 20px;
-    }
-
-    .search-results-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-    }
-
-    .close-results {
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-    }
-
-    .result-section {
-        margin-bottom: 20px;
-    }
-
-    .result-items {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 15px;
-    }
-
-    .result-item {
-        border: 1px solid #eee;
-        border-radius: 8px;
-        overflow: hidden;
-        transition: transform 0.3s ease;
-    }
-
-    .result-item img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-    }
-
-    .result-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .result-item-info {
-        padding: 15px;
-    }
-
-    .result-item-info h4 {
-        margin: 0 0 10px 0;
-        font-size: 1.1rem;
-        color: #333;
-    }
-
-    .result-item-info p {
-        margin: 0 0 5px 0;
-        font-size: 0.9rem;
-        color: #666;
-    }
-
-    .result-item-info small {
-        color: #999;
-        font-size: 0.8rem;
-    }
-
-    /* Media queries per responsive */
-    @media (max-width: 768px) {
-        header {
-            padding: 15px;
-            height: auto;
-        }
-
-        .page-title {
-            font-size: 24px;
-        }
-
-        .search-container input {
-            width: 200px;
-        }
-
-        .nav-links {
-            flex-wrap: wrap;
-        }
-
-        .card {
-            height: 160px;
-        }
-
-        .film-title {
-            font-size: 1rem;
-        }
-
-        .film-description {
-            -webkit-line-clamp: 2;
-        }
     }
 }

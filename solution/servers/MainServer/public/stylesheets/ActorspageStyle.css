@@ -1,17 +1,15 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     font-family: Arial, sans-serif;
     text-decoration: none;
 }
-
 header {
     background-color: #7e2b2b;
     color: white;
     padding: 20px 50px;
     position: relative;
-    height: 150px;
+    height: 110px;
 }
 
 .page-title {
@@ -39,30 +37,6 @@ nav {
     padding: 5px 10px;
     border-radius: 5px;
     z-index: 10;
-}
-
-.search-container {
-    position: absolute;
-    top: 60px;
-    left: 70px;
-    display: flex;
-}
-
-.search-container input {
-    padding: 10px;
-    border-radius: 5px 0 0 5px;
-    border: none;
-    font-size: 16px;
-    width: 300px;
-}
-
-.search-container button {
-    background: white;
-    border: none;
-    color: black;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 0 5px 5px 0;
 }
 
 .nav-links {
@@ -223,7 +197,7 @@ nav {
 
 .actors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     padding: 0 20px;
     max-width: 1200px;

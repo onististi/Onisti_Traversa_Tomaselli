@@ -18,6 +18,7 @@ const chatRouter = require('./routes/chat');
 const adminRouter = require('./routes/admin');
 const requestsRouter = require('./routes/requests');
 const userRouter = require('./routes/user')
+const searchRouter = require('./routes/search');
 
 // Configurazione view engine
 hbs.registerPartials(path.join(__dirname, 'views/partials'));
@@ -67,6 +68,7 @@ app.use('/chat', chatRouter);
 app.use('/requests', requestsRouter);
 app.use('/admin', adminRouter);
 app.use('/user', userRouter);
+app.use('/search', searchRouter);
 
 // Gestione errori
 app.use((err, req, res, next) => {

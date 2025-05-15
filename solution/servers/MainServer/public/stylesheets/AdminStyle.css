@@ -41,30 +41,6 @@ nav {
     z-index: 10;
 }
 
-.search-container {
-    position: absolute;
-    top: 40px;
-    left: 70px;
-    display: flex;
-}
-
-.search-container input {
-    padding: 10px;
-    border-radius: 5px 0 0 5px;
-    border: none;
-    font-size: 16px;
-    width: 300px;
-}
-
-.search-container button {
-    background: white;
-    border: none;
-    color: black;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 0 5px 5px 0;
-}
-
 .nav-links {
     position: absolute;
     top: 40px;

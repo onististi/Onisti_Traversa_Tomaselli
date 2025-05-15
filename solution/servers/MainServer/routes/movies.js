@@ -4,16 +4,16 @@ const router = express.Router();
 
 // Route pagina film
 router.get('/', async function(req, res) {
-    try {
-        const responseMovie = await axios.get("http://localhost:8080/api/movies");
-        res.render('movies', {
-            movies: responseMovie.data,
-            user: req.session.user // Pass user for UI customization
-        });
-    } catch (error) {
-        console.error("Error retrieving movies:", error.message);
-        return res.status(500).json({ message: "Error retrieving movies" });
-    }
+        try {
+            const responseMovie = await axios.get("http://localhost:8080/api/movies");
+            res.render('movies', {
+                movies: responseMovie.data,
+                user: req.session.user
+            });
+        } catch (error) {
+            console.error("Error retrieving movies:", error.message);
+            return res.status(500).json({message: "Error retrieving movies"});
+        }
 });
 
 // Route film singolo

@@ -59,4 +59,10 @@ public class ActorsController {
         return moviesWithRole.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Actor>> searchActors(@RequestParam String query) {
+        List<Actor> actors = actorsService.searchActors(query);
+        return ResponseEntity.ok(actors);
+    }
+
 }

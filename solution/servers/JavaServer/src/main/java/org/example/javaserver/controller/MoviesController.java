@@ -49,4 +49,10 @@ public class MoviesController {
         return ResponseEntity.ok(movies);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Movie>> searchMovies(@RequestParam String query) {
+        List<Movie> movies = moviesService.searchMovies(query);
+        return ResponseEntity.ok(movies);
+    }
+
 }

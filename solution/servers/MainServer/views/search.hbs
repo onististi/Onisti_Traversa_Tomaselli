@@ -18,56 +18,105 @@
 {{> header}}
 
 <main class="search-results-container">
-    <div class="search-header">
-        <h1>Risultati di ricerca per: "{{searchTerm}}"</h1>
-    </div>
+    {{#if searchTerm}}
+        {{#if hasResults}}
 
-    {{#unless hasResults}}
-        <div class="no-results">
-            <p>Nessun risultato trovato per "{{searchTerm}}"</p>
+            <div class="search-results">
+                {{#if (eq searchType 'all')}}
+                    {{#if movies.length}}
+                        <section class="movie-results">
+                            <h2>Movies ({{movies.length}})</h2>
+                            <div class="movie-grid">
+                                {{#each movies}}
+                                    <div class="movie-card" data-movie-id="{{id}}">
+                                        <a href="/movies/:{{id}}">
+                                            <div class="movie-poster">
+                                                <img class="posterlink" src="{{posterLink}}" alt="{{name}}" onerror="this.style.display='none'">
+                                            </div>
+                                            <h3 class="movie-name">{{name}}</h3>
+                                            <div class="movie-meta">
+                                                <div class="rating">average rating: {{rating}}</div>
+                                                <div class="genres">{{genres}}</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {{/each}}
+                            </div>
+                        </section>
+                    {{/if}}
+
+                    {{#if actors.length}}
+                        <section class="actor-results">
+                            <h2>Actors ({{actors.length}})</h2>
+                            <div class="actor-grid">
+                                {{#each actors}}
+                                    <div class="actor-card" data-actor-name="{{name}}">
+                                        <a href="/actors/{{name}}">
+                                            <div class="actor-image">
+                                                <img onerror="this.style.display='none'" src="/images/default-actor.jpg">
+                                            </div>
+                                            <h3 class="actor-name">{{name}}</h3>
+                                            <div class="actor-meta">
+                                                <div class="avg_rating">average rating: {{avg_rating}}</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {{/each}}
+                            </div>
+                        </section>
+                    {{/if}}
+                {{else if (eq searchType 'movies')}}
+                    <section class="movie-results">
+                        <h2>Movies ({{movies.length}})</h2>
+                        <div class="movie-grid">
+                            {{#each movies}}
+                                <div class="movie-card" data-movie-id="{{id}}">
+                                    <a href="/movies/:{{id}}">
+                                        <div class="movie-poster">
+                                            <img class="posterlink" src="{{posterLink}}" alt="{{name}}" onerror="this.style.display='none'">
+                                        </div>
+                                        <h3 class="movie-name">{{name}}</h3>
+                                        <div class="movie-meta">
+                                            <div class="rating">average rating: {{rating}}</div>
+                                            <div class="genres">{{genres}}</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {{/each}}
+                        </div>
+                    </section>
+                {{else if (eq searchType 'actors')}}
+                    <section class="actor-results">
+                        <h2>Actors ({{actors.length}})</h2>
+                        <div class="actor-grid">
+                            {{#each actors}}
+                                <div class="actor-card" data-actor-name="{{name}}">
+                                    <a href="/actors/{{name}}">
+                                        <div class="actor-image">
+                                            <img onerror="this.style.display='none'" src="/images/default-actor.jpg">
+                                        </div>
+                                        <h3 class="actor-name">{{name}}</h3>
+                                        <div class="actor-meta">
+                                            <div class="avg_rating">average rating: {{avg_rating}}</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {{/each}}
+                        </div>
+                    </section>
+                {{/if}}
+            </div>
+        {{else}}
+            <div class="no-results">
+                <p>Nessun risultato trovato per "{{searchTerm}}"</p>
+            </div>
+        {{/if}}
+    {{else}}
+        <div class="search-instructions">
+            <p>Inserisci un termine di ricerca per trovare film e attori</p>
         </div>
-    {{/unless}}
-
-    {{#if movies}}
-            <h2>Movies</h2>
-            <section class="movies-grid" id="movies-container">
-                {{#each movies}}
-                    <div class="movie-card" data-movie-id="{{id}}">
-                        <a href="/movies/:{{id}}">
-                            <div class="movie-poster">
-                                <img class="posterlink" src="{{posterLink}}" alt="{{name}}" onerror="this.style.display='none'">
-                            </div>
-                            <h3 class="movie-name">{{name}}</h3>
-                            <div class="movie-meta">
-                                <span class="rating">{{rating}}</span>
-                            </div>
-                        </a>
-                    </div>
-                {{/each}}
-            </section>
-    {{/if}}
-
-    {{#if actors}}
-        <h2>Actors</h2>
-        <section class="actors-grid" id="actors-container">
-            {{#each actors}}
-                <div class="actor-card" data-actor-name="{{name}}">
-                    <a href="/actors/{{name}}">
-                        <div class="actor-image">
-                            <img onerror="this.style.display='none'" src="/images/default-actor.jpg">
-                        </div>
-                        <h3 class="actor-name">{{name}}</h3>
-                        <div class="actor-meta">
-                            <span class="actor-role">{{role}}</span>
-
-                        </div>
-                    </a>
-                </div>
-            {{/each}}
-        </section>
     {{/if}}
 </main>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="/javascripts/search.js"></script>
 </body>

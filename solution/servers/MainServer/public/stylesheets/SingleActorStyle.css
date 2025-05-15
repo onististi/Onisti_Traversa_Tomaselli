@@ -1,7 +1,6 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     font-family: Arial, sans-serif;
     text-decoration: none;
 }
@@ -12,13 +11,12 @@
     padding: 20px;
 }
 
-
 header {
     background-color: #7e2b2b;
     color: white;
     padding: 20px 50px;
     position: relative;
-    height: 150px;
+    height: 110px;
 }
 
 .page-title {
@@ -46,30 +44,6 @@ nav {
     padding: 5px 10px;
     border-radius: 5px;
     z-index: 10;
-}
-
-.search-container {
-    position: absolute;
-    top: 60px;
-    left: 70px;
-    display: flex;
-}
-
-.search-container input {
-    padding: 10px;
-    border-radius: 5px 0 0 5px;
-    border: none;
-    font-size: 16px;
-    width: 300px;
-}
-
-.search-container button {
-    background: white;
-    border: none;
-    color: black;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 0 5px 5px 0;
 }
 
 .nav-links {
@@ -101,27 +75,51 @@ nav {
 }
 
 .actor-profile {
+    display: grid;
+    grid-template-columns: 150px auto;
+    gap: 20px;
+}
+
+.actor-info {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    padding-top: 10px;
 }
 
 .actor-image {
-    width: 200px;
+    float: left;
+    width: 150px;
     height: 200px;
+    margin-right: 20px;
+    background-size: cover;
     background-position: center;
-    margin-right: 30px;
-    background-color: #ddd;
 }
 
-.actor-name {
-    font-size: 35px;
+.actor-profile .actor-info h1.actor-name,
+#actorName {
+    font-size: 28px !important;
+    font-weight: bold;
+    margin-top: -20px;
     margin-bottom: 15px;
+    margin-left: 16px;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 
 .actor-ratings {
-    margin-top: 10px;
-    margin: 5px 0;
+    margin-left: 25px;
+    margin-bottom: 20px;
     font-size: larger;
+}
+
+.actor-ratings div {
+    display: flex;
+    margin-bottom: 10px;
+    white-space: nowrap;
+}
+
+.actor-ratings strong {
+    margin-right: 5px;
 }
 
 .actor-filmography h2 {

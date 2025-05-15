@@ -254,4 +254,23 @@ public class MoviesService {
         return movies;
     }
 
+    @Transactional
+    public List<Movie> searchMovies(String query) {
+        String movieQuery = "SELECT m FROM Movie m WHERE LOWER(m.name) LIKE LOWER(:query) AND m.rating IS NOT NULL ORDER BY m.rating DESC";
+        List<Movie> movies = entityManager.createQuery(movieQuery, Movie.class)
+                .setParameter("query", "%" + query + "%")
+                .setMaxResults(100)
+                .getResultList();
+
+        List<Movie> enrichedMovies = new ArrayList<>();
+        for (Movie movie : movies) {
+            Optional<Movie> enrichedMovie = findMovieById(movie.getId());
+            if (enrichedMovie.isPresent()) {
+                enrichedMovies.add(enrichedMovie.get());
+            }
+        }
+
+        return enrichedMovies;
+    }
+
 }

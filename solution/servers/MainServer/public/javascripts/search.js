@@ -1,70 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
-    setupSearchInput();
-    handleMissingImages();
-});
+    const searchInput = document.getElementById('search-input');
+    const searchForm = document.getElementById('search-form');
+    const searchType = document.getElementById('search-type');
 
-function setupSearchInput() {
-    const searchButton = document.querySelector('.search-container button');
-    const searchInput = document.querySelector('.search-container input');
+    if (!searchInput || !searchForm) return;
 
-    if (searchButton && searchInput) {
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchTerm = urlParams.get('q');
-        if (searchTerm) {
-            searchInput.value = searchTerm;
-        }
-
-
-        searchButton.addEventListener('click', function() {
-            searchInput.value = '';
-            searchInput.focus();
-        });
-
-
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch(searchInput.value);
-            }
-        });
-
-        searchInput.addEventListener('input', function () {
-            const value = searchInput.value;
-            if (value.length >= 4) {
-                fetchSearchResults(value);
-            }
-        });
-    }
-}
-
-
-function performSearch(searchTerm) {
-    if (searchTerm.trim() !== '') {
-        window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-    }
-}
-
-function handleMissingImages() {
-
-    const posterImages = document.querySelectorAll('.poster img');
-
-    posterImages.forEach(img => {
-        img.addEventListener('error', function() {
-
-            this.parentElement.classList.add('missing-image');
-            this.style.display = 'none';
-
-
-            const fallback = document.createElement('div');
-            fallback.className = 'image-fallback';
-            fallback.textContent = 'No Image';
-            this.parentElement.appendChild(fallback);
-        });
-
-
-        if (!img.complete || img.naturalHeight === 0 || !img.src || img.src === 'null' || img.src === 'undefined') {
-            img.dispatchEvent(new Event('error'));
+    searchForm.addEventListener('submit', function(event) {
+        if (searchInput.value.trim() === '') {
+            event.preventDefault();
         }
     });
-}
-
+});

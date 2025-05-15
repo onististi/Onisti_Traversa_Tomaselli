@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/stylesheets/SearchStyle.css">
 <header>
     <div class="user-role">
         <span class="role-text">
@@ -9,7 +10,7 @@
             <div class="user-status-container">
                 <span class="welcome-text">Welcome, {{user.username}}</span>
 
-                <div class="status-indicator" data-status="{{user.requestStatus}}">
+                <div class="status-indicator">
                     {{#if (eq user.role 'user')}}
                         {{#if (eq user.requestStatus 'none')}}
                             <a href="/requests/request" class="request-journalist-btn">
@@ -19,6 +20,13 @@
                             <div class="status-pending">
                                 <span class="icon">⏳</span> Request pending
                             </div>
+                        {{else if (eq user.requestStatus 'rejected')}}
+                            <div class="status-rejected">
+                                <span class="icon">❌</span> Request rejected
+                                <a href="/requests/request" class="request-journalist-btn">
+                                    <span class="icon">✉️</span> Request Again
+                                </a>
+                            </div>
                         {{/if}}
                     {{else if (eq user.role 'master')}}
                         <a href="/admin/requests" class="admin-requests-btn">
@@ -26,7 +34,6 @@
                         </a>
                     {{/if}}
                 </div>
-
             </div>
         </div>
     {{/if}}
@@ -36,11 +43,17 @@
     </div>
     <nav>
         <h1 class="page-title">
-            <a href="/" class="site-title-link">CINEVERSE</a>
+            <a href="/" style="text-decoration: none; color: inherit;">CINEVERSE</a>
         </h1>
         <div class="search-container">
-            <input type="text" placeholder="Search Movies, Actors..">
-            <button>X</button>
+            <form action="/search" method="GET" id="search-form">
+                <input type="text" name="q" placeholder="Search" id="search-input">
+                <select name="type" id="search-type">
+                    <option value="all">All</option>
+                    <option value="movies">Movies</option>
+                    <option value="actors">Actors</option>
+                </select>
+            </form>
         </div>
         <div class="nav-links">
             <a href="/movies">MOVIES</a>
@@ -49,9 +62,17 @@
             {{#if isLoggedIn}}
                 <a href="/auth/logout">LOGOUT</a>
             {{else}}
-                <a href="/auth/login" class="login-btn">LOGIN / SIGN UP</a>
+                <a class="login-btn" id="login-btn">LOGIN / SIGN UP</a> <!--per un redirect post login corretto-->
             {{/if}}
         </div>
     </nav>
-    <script type="module" src="/javascripts/adminRequests.js"></script>
 </header>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const loginLink = document.getElementById("login-btn");
+        if (loginLink) {
+            const redirectUrl = encodeURIComponent(window.location.pathname + window.location.search);
+            loginLink.href = `/auth/login?redirect=${redirectUrl}`;
+        }
+    });
+</script>
