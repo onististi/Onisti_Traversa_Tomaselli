@@ -19,11 +19,11 @@ router.get('/chats', async (req, res) => {
             })
             .sort({ last_updated: -1 });
 
-        console.log("🔍 Dati recuperati per la chat:", JSON.stringify(chats, null, 2)); // 🔹 Debug
+       // console.log("Dati della chat:", JSON.stringify(chats, null, 2)); // 🔹 Debug
 
         res.json(chats);
     } catch (error) {
-        console.error("❌ Errore nel recupero delle chat:", error);
+        console.error("Errore nel recupero delle chat:", error);
         res.status(500).json({ error: 'Errore nel recupero delle chat' });
     }
 });

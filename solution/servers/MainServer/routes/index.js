@@ -92,7 +92,7 @@ router.get('/refresh-user-status', (req, res, next) => {
         // Verifica che DATA_SERVER_URL sia definito
         const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:3001';
 
-        const response = await axios.get(`${DATA_SERVER_URL}/api/users/${req.session.user.id}?t=${Date.now()}`, {
+        const response = await axios.get(`${DATA_SERVER_URL}/users/${req.session.user.id}?t=${Date.now()}`, {
             headers: {
                 'Authorization': `Bearer ${req.session.token}`,
                 'X-User-Id': req.session.user.id

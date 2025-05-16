@@ -64,7 +64,7 @@
                                 <h3 class="movie-title">{{movie.name}}</h3>
                                 <p class="movie-role">{{role}}</p>
                                 <p class="movie-year">{{movie.year}}</p>
-                                <p class="movie-rated">{{movie.rating}}/5</p>
+                                <p class="movie-rated">{{#if movie.rating}}{{movie.rating}}{{else}}0{{/if}}/5</p>
                             </div>
                         </a>
                     </div>

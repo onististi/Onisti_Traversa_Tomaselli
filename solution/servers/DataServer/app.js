@@ -12,15 +12,16 @@ const cors = require('cors');  // Importa il pacchetto CORS
 require('dotenv').config();
 require('./config/db'); // Importa la connessione al database
 
-var indexRouter = require('./routes/index');
+const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const chatRouter = require('./routes/chat');
+const movieRouter = require('./routes/movies');
+const reviewsRouter = require('./routes/reviews');
 const requestsRouter = require('./routes/journalistRequests');
 const userRoutes = require('./routes/user');
 
-var app = express();
+let app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
 
 // CORS middleware per permettere connessioni WebSocket dal MainServer
 const io = socketIo(server, {
@@ -76,11 +77,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use('/api/movies', movieRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/requests', requestsRouter);
 app.use('/api/users', userRoutes);
+app.use('/api/chat', chatRouter);
+app.use('/api/reviews', reviewsRouter);
 
 //middleware per bloccare richieste che non sono API
 app.use((req, res, next) => {
@@ -90,10 +92,6 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/auth', authRouter);
-app.use('/api/requests', requestsRouter);
-app.use('/api/users', userRoutes);
-app.use('/api/chat', chatRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -106,11 +104,6 @@ app.use(function(err, req, res, next) {
     message: err.message,
     error: req.app.get('env') === 'development' ? err : {}
   });
-});
-
-  // render the error page
-  res.status(err.status || 500);
-  res.status(500).json({ error: err.message || 'Errore interno del server' });
 });
 
 module.exports = { app, server };

@@ -1,133 +1,188 @@
+// socketManager.js - Client-side socket manager
 class SocketManager {
-    static init({userId, role, requestStatus}) {
-        console.log('Esecuzione SocketManager.init()', {userId, role, requestStatus});
+    static socket = null;
+    static userId = null;
+    static role = null;
+    static requestStatus = null;
+    static dataServerUrl = null;
+    static connectionStatus = 'disconnected';
+    static connectionStatusListeners = [];
+    static newMessageListeners = [];
 
-        if (this.socket) {
-            console.log('Il socket è già stato inizializzato. Stato attuale:', {
-                userId: this.userId,
-                role: this.role,
-                requestStatus: this.requestStatus
-            });
-            return;
-        }
-
+    static init({ userId, role, requestStatus, dataServerUrl }) {
         this.userId = userId;
         this.role = role;
         this.requestStatus = requestStatus;
+        this.dataServerUrl = dataServerUrl || window.chatData?.dataServerUrl;
 
-        // Crea una connessione socket la logga
-        this.socket = io({withCredentials: true});
-        console.log('Socket creato:', this.socket);
+        console.log('Initializing SocketManager for user:', userId);
+
+        if (this.socket) {
+            console.log('Socket already initialized, reconnecting...');
+            this.socket.disconnect();
+        }
+
+        this.socket = io(this.dataServerUrl, {
+            withCredentials: true,
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 3000
+        });
 
         this.setupEventHandlers();
-
-        // Segnala che l'inizializzazione è completata
-        console.log('SocketManager inizializzato con successo.');
     }
-
 
     static setupEventHandlers() {
         this.socket.on('connect', () => {
-            console.log('Socket connected');
-        });
-
-        this.socket.on('status-update', (data) => {
-            console.log('Evento status-update ricevuto dal WebSocket:', data);
-            // Aggiorna sempre la UI, anche se lo stato è uguale a quello attuale
-            if (data.userId === this.userId) {
-                this.requestStatus = data.requestStatus;
-                this.updateStatusUI(data.requestStatus);
-                console.log(`Stato aggiornato per userId ${data.userId}: ${data.requestStatus}`);
-            } else {
-                console.warn(`Nessun aggiornamento per userId ${data.userId}. Stato corrente: ${this.requestStatus}`);
-            }
+            console.log('Socket connected:', this.socket.id);
+            this.setConnectionStatus('connected');
         });
 
         this.socket.on('disconnect', () => {
             console.log('Socket disconnected');
-        });
-
-        this.socket.on('token-expired', (data) => {
-            console.warn('Session expired:', data.message);
-            window.location.href = '/auth/login?error=Session_expired';
+            this.setConnectionStatus('disconnected');
         });
 
         this.socket.on('connect_error', (error) => {
             console.error('Connection error:', error);
+            this.setConnectionStatus('disconnected');
+        });
+
+        // Listen for new chat messages
+        this.socket.on('new-chat-message', (data) => {
+            console.log('New chat message received:', data);
+            this.notifyNewMessageListeners(data);
+        });
+
+        // Status notification handlers
+        this.socket.on('status-update', (data) => {
+            console.log('Status update received:', data);
+            if (data.userId === this.userId && data.requestStatus !== this.requestStatus) {
+                this.requestStatus = data.requestStatus;
+                this.showNotification(`Il tuo stato è cambiato a: ${data.requestStatus}`, '#28a745');
+
+                if (data.requestStatus === 'approved' ||
+                    (data.requestStatus === 'rejected' && window.location.pathname !== '/requests/request')) {
+                    console.log('Status changed to', data.requestStatus, '. Reloading page.');
+                    setTimeout(() => window.location.reload(), 2000);
+                }
+            }
+        });
+
+        this.socket.on('token-expired', (data) => {
+            console.warn('Session expired:', data.message);
+            this.showNotification('Sessione scaduta. Reindirizamento al login...', '#dc3545');
+            setTimeout(() => {
+                window.location.href = '/auth/login?error=Session_expired';
+            }, 2000);
         });
 
         this.socket.on('session-expiring', (data) => {
-            console.log('Event session-expiring ricevuto:', data.message);
-            this.showNotification(data.message, '#ffc107', true); // Mostra notifica con pulsante di chiusura
+            console.log('Session expiring:', data.message);
+            this.showNotification(data.message, '#ffc107', true);
         });
 
         this.socket.on('session-expired', (data) => {
-            console.warn('Event session-expired ricevuto:', data.message);
-            this.showNotification(data.message, '#dc3545', false); // Mostra notifica senza pulsante di chiusura
+            console.warn('Session expired:', data.message);
+            this.showNotification(data.message, '#dc3545');
             setTimeout(() => {
                 window.location.href = '/auth/login?error=Session_expired';
-            }, 3000); // Ritardo per il redirect
+            }, 3000);
         });
     }
 
-    static showNotification(message, backgroundColor, showCloseButton) {
+    // Join a chat room
+    static joinChatRoom(chatCode) {
+        if (this.socket && chatCode) {
+            console.log('Joining chat room:', chatCode);
+            this.socket.emit('join-chat-room', { chatCode, userId: this.userId });
+        } else {
+            console.error('Cannot join chat room: Socket not initialized or no chatCode');
+        }
+    }
+
+    // Send a chat message
+    static async sendChatMessage(messageData) {
+        if (!this.socket) {
+            console.error('Cannot send message: Socket not initialized');
+            return;
+        }
+
+        if (!messageData.chatCode || !messageData.userId || !messageData.content) {
+            console.log(messageData)
+            console.error('Cannot send message: Missing required data');
+            return;
+        }
+
+        console.log('Sending chat message:', messageData);
+        this.socket.emit('chat-message', messageData);
+    }
+
+    // Register listener for new messages
+    static onNewMessage(callback) {
+        if (typeof callback === 'function') {
+            this.newMessageListeners.push(callback);
+        }
+    }
+
+    // Notify all message listeners
+    static notifyNewMessageListeners(message) {
+        this.newMessageListeners.forEach(listener => {
+            try {
+                listener(message);
+            } catch (error) {
+                console.error('Error in message listener:', error);
+            }
+        });
+    }
+
+    // Set connection status and notify listeners
+    static setConnectionStatus(status) {
+        this.connectionStatus = status;
+        this.connectionStatusListeners.forEach(listener => {
+            try {
+                listener(status);
+            } catch (error) {
+                console.error('Error in connection status listener:', error);
+            }
+        });
+    }
+
+    // Register listener for connection status changes
+    static onConnectionStatusChange(callback) {
+        if (typeof callback === 'function') {
+            this.connectionStatusListeners.push(callback);
+            // Immediately trigger with current status
+            callback(this.connectionStatus);
+        }
+    }
+
+    // Show notification to user
+    static showNotification(message, backgroundColor, showCloseButton = false) {
         const notificationContainer = document.getElementById('status-notification');
         const notificationMessage = document.getElementById('notification-message');
         const closeButton = document.getElementById('close-notification');
 
-        if (notificationContainer) {
-            // Aggiorna contenitore con il messaggio e stile
+        if (notificationContainer && notificationMessage) {
+            // Update container with message and style
             notificationContainer.style.display = 'block';
             notificationContainer.style.backgroundColor = backgroundColor;
             notificationMessage.textContent = message;
 
-            // Mostra il pulsante di chiusura solo per session-expiring
-            closeButton.style.display = showCloseButton ? 'inline-block' : 'none';
+            // Show close button only for session-expiring
+            if (closeButton) {
+                closeButton.style.display = showCloseButton ? 'inline-block' : 'none';
+            }
 
-            // Nascondi la notifica automaticamente dopo 5 secondi
+            // Hide notification automatically after 5 seconds
             setTimeout(() => {
                 notificationContainer.style.display = 'none';
             }, 5000);
         } else {
-            console.warn('Elemento notifiche non trovato nel DOM');
-        }
-    }
-
-    static updateStatusUI(requestStatus) {
-        const statusIndicator = document.querySelector('.status-indicator');
-        console.log('Elemento status-indicator trovato?', !!statusIndicator);
-
-        if (statusIndicator) {
-            if (requestStatus === 'approved') {
-                // Mostra una notifica temporanea
-                statusIndicator.innerHTML = `
-                <div class="status-approved notification">
-                    <span class="icon">✅</span> Request approved
-                </div>`;
-                console.log('Aggiornamento dello stato in: approved (notifica temporanea)');
-
-                // Nascondi o rimuovi la notifica dopo 5 secondi (5000 ms)
-                setTimeout(() => {
-                    statusIndicator.innerHTML = '';
-                    console.log('Notifica approved rimossa automaticamente');
-                }, 5000);
-            } else if (requestStatus === 'rejected') {
-                // Mostra la notifica persistente per il rifiuto, con opzione per richiedere nuovamente
-                statusIndicator.innerHTML = `
-                <div class="status-rejected">
-                    <span class="icon">❌</span> Request rejected
-                    <a href="/requests/request" class="request-journalist-btn">
-                        <span class="icon">✉️</span> Request Again
-                    </a>
-                </div>`;
-                console.log('Aggiornamento dello stato in: rejected (notifica persistente)');
-            } else {
-                console.warn('Stato non gestito:', requestStatus);
-            }
-        } else {
-            console.error('Elemento status-indicator non trovato nel DOM.');
+            console.warn('Notification elements not found in DOM');
         }
     }
 }
 
+// Export for global use
 window.SocketManager = SocketManager;

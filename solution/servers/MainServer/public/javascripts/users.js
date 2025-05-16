@@ -9,7 +9,7 @@ const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:3001';
 router.get('/:id', ensureAuthenticated, async (req, res) => {
     try {
         const response = await axios.get(
-            `${DATA_SERVER_URL}/api/users/${req.params.id}`,
+            `${DATA_SERVER_URL}/users/${req.params.id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`,

@@ -77,7 +77,6 @@ public class ActorsService {
                 actor.setMovies_count(((Number) row[1]).intValue());
                 actor.setAvg_rating((BigDecimal) row[2]);
                 actor.setId( ((Number) row[3]).intValue());
-                System.out.println(actor.getName());
                 return Optional.of(actor);
             }
 

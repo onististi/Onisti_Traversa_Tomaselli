@@ -44,7 +44,7 @@ const syncUserSession = async (req, res, next) => {
 
     try {
         const response = await axios.get(
-            `${process.env.DATA_SERVER_URL}/api/users/${req.session.user.id}?t=${Date.now()}`,
+            `${process.env.DATA_SERVER_URL}/users/${req.session.user.id}?t=${Date.now()}`,
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`,
@@ -54,7 +54,7 @@ const syncUserSession = async (req, res, next) => {
         );
 
         const userFromDataServer = response.data.user;
-        console.log('Dati ricevuti dal DataServer:', userFromDataServer);
+        //console.log('Dati ricevuti dal DataServer:', userFromDataServer);
 
         // Aggiorna i dati della sessione solo se differiscono
         if (JSON.stringify(userFromDataServer) !== JSON.stringify(req.session.user)) {

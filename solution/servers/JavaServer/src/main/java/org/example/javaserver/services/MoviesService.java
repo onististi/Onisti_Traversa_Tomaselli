@@ -148,6 +148,7 @@ public class MoviesService {
         }
 
         movie.setReleaseInfo(String.join(", ", releaseInfos));
+
         return Optional.of(movie);
     }
 
