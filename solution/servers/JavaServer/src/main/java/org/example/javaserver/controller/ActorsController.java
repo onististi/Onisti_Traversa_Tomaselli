@@ -1,21 +1,14 @@
 package org.example.javaserver.controller;
 import org.example.javaserver.models.Actor;
 import org.example.javaserver.models.ActorMovie;
-import org.example.javaserver.models.Movie;
-import org.example.javaserver.models.MovieOscar;
+import org.example.javaserver.models.OscarAwards;
 import org.example.javaserver.services.ActorsService;
 import org.example.javaserver.services.MoviesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -61,8 +54,8 @@ public class ActorsController {
     }
 
     @GetMapping("/{name}/oscars")
-    public ResponseEntity<List<MovieOscar>> getOscarsByActor(@PathVariable String name) {
-        List<MovieOscar> oscars = actorsService.getOscarsByActor(name);
+    public ResponseEntity<List<OscarAwards>> getOscarsByActor(@PathVariable String name) {
+        List<OscarAwards> oscars = actorsService.getOscarsByActor(name);
         return ResponseEntity.ok(oscars);
     }
 

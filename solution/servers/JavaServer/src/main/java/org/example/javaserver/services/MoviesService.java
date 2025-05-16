@@ -4,11 +4,11 @@ import org.example.javaserver.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityManager;
-
+import java.text.SimpleDateFormat;
 import java.math.BigDecimal;
+import java.util.stream.Collectors;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MoviesService {
@@ -77,14 +77,44 @@ public class MoviesService {
             movie.setLanguage("Unknown");
         }
 
+        // Get the most recent Oscar ceremony year if the movie won any Oscar
         String ceremonyQuery = "SELECT MAX(mo.yearCeremony) FROM MovieOscar mo " +
-                "WHERE mo.film = :movieTitle AND mo.winner = true";
+                "WHERE mo.movieId = :movieId AND mo.winner = true";
 
         Integer ceremonyYear = entityManager.createQuery(ceremonyQuery, Integer.class)
-                .setParameter("movieTitle", movie.getName())
+                .setParameter("movieId", id)
                 .getSingleResult();
 
         movie.setYearCeremony(ceremonyYear);
+
+        // Check if the movie has won any Oscars and set a display string
+        String oscarQuery = "SELECT COUNT(mo) FROM MovieOscar mo " +
+                "WHERE mo.movieId = :movieId AND mo.winner = true";
+
+        Long oscarCount = entityManager.createQuery(oscarQuery, Long.class)
+                .setParameter("movieId", id)
+                .getSingleResult();
+
+        if (oscarCount > 0) {
+            movie.setMovieOscars("Yes - Won " + oscarCount + (oscarCount == 1 ? " Oscar" : " Oscars"));
+            if (ceremonyYear != null) {
+                movie.setMovieOscars(movie.getMovieOscars() + " (in " + ceremonyYear + ")");
+            }
+        } else {
+            // Check if movie was nominated but didn't win
+            String nominationQuery = "SELECT COUNT(mo) FROM MovieOscar mo " +
+                    "WHERE mo.movieId = :movieId";
+
+            Long nominationCount = entityManager.createQuery(nominationQuery, Long.class)
+                    .setParameter("movieId", id)
+                    .getSingleResult();
+
+            if (nominationCount > 0) {
+                movie.setMovieOscars("No - Only Nominated");
+            } else {
+                movie.setMovieOscars("None");
+            }
+        }
 
         List<Language> dubbedLanguageEntities = entityManager.createQuery(
                         "SELECT l FROM Language l WHERE l.id.idMovie = :movieId AND l.id.type = 'Spoken Language'", Language.class)
@@ -208,51 +238,48 @@ public class MoviesService {
         return enrichedMovies;
     }
 
+
     @Transactional
     public List<Movie> getOscarWinners(int limit) {
         List<Movie> movies = new ArrayList<>();
         int currentLimit = limit;
         int currentYear = 2024;
-        Set<String> uniqueMovieTitles = new HashSet<>();
+        Set<String> uniqueMovieTitles = new HashSet<>(); // Per evitare i film duplicati
 
         while (movies.size() < limit) {
-            String query = "SELECT DISTINCT mo.film FROM MovieOscar mo " +
+            String query = "SELECT DISTINCT m.id FROM Movie m " +
+                    "JOIN m.oscars mo " +
                     "WHERE mo.winner = true AND mo.yearCeremony = :year";
 
-            List<String> result = entityManager.createQuery(query, String.class)
+            List<Integer> result = entityManager.createQuery(query, Integer.class)
                     .setParameter("year", currentYear)
                     .setMaxResults(currentLimit)
                     .getResultList();
 
-            for (String filmTitle : result) {
-                List<Movie> matchedMovies = entityManager.createQuery(
-                                "SELECT m FROM Movie m WHERE LOWER(m.name) = LOWER(:name)", Movie.class)
-                        .setParameter("name", filmTitle)
-                        .getResultList();
+            for (Integer movieId : result) {
+                Optional<Movie> optionalMovie = findMovieById(movieId);
+                if (optionalMovie.isPresent()) {
+                    Movie movie = optionalMovie.get();
 
-                for (Movie movie : matchedMovies) {
                     if (!uniqueMovieTitles.contains(movie.getName())) {
-                        Optional<Movie> enriched = findMovieById(movie.getId());
-                        if (enriched.isPresent()) {
-                            movie = enriched.get();
-                            movie.setYearCeremony(currentYear);
-                            uniqueMovieTitles.add(movie.getName());
-                            movies.add(movie);
-                            if (movies.size() >= limit) break;
+                        uniqueMovieTitles.add(movie.getName());
+                        movies.add(movie);
+                        if (movies.size() >= limit) {
+                            break;
                         }
                     }
                 }
-                if (movies.size() >= limit) break;
             }
 
             currentLimit = limit - movies.size();
-            currentYear--;
-            if (currentYear < 1929) break;
+            currentYear--; // Passa all'anno precedente se non ha caricato limit film
+            if (currentYear < 1929) break; // Stoppa al primo anno degli Oscar
         }
 
+        // Ordinamento per anno di cerimonia più recente
         movies.sort(Comparator.comparing(
                 Movie::getYearCeremony,
-                Comparator.nullsLast(Comparator.reverseOrder())
+                Comparator.nullsLast(Comparator.reverseOrder()) // Gestione date nulle
         ));
 
         return movies;

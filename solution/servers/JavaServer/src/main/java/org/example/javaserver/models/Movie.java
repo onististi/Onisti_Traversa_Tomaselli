@@ -1,8 +1,6 @@
 package org.example.javaserver.models;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -31,8 +29,8 @@ public class Movie {
     @Column(name = "rating", precision = 4, scale = 2)
     private BigDecimal rating;
 
-    @Transient
-    private List<MovieOscar> movieOscars;
+    @OneToMany(mappedBy = "movie")
+    private List<MovieOscar> oscars;
 
     //i transient non sono presenti nella tabella movies direttamente
     @Transient
@@ -58,6 +56,9 @@ public class Movie {
 
     @Transient
     private Integer yearCeremony;
+
+    @Transient
+    private String movieOscars; // Display string for Oscar information
 
     public Integer getId() {return id;}
 
@@ -121,5 +122,13 @@ public class Movie {
 
     public void setYearCeremony(Integer integer) {
         this.yearCeremony = integer;
+    }
+
+    public String getMovieOscars() {
+        return movieOscars;
+    }
+
+    public void setMovieOscars(String movieOscars) {
+        this.movieOscars = movieOscars;
     }
 }

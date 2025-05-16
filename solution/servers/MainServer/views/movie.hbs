@@ -79,6 +79,10 @@
                         <td id="movieRating">{{movie.rating}} /5</td>
                     </tr>
                     <tr>
+                        <td>Oscar</td>
+                        <td id="movieOscar">{{movie.movieOscars}}</td>
+                    </tr>
+                    <tr>
                         <td>Studios</td>
                         <td id="movieStudios">{{#each movie.studios}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
                     </tr>

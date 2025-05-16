@@ -2,7 +2,7 @@ package org.example.javaserver.services;
 import jakarta.transaction.Transactional;
 import org.example.javaserver.models.Actor;
 import org.example.javaserver.models.ActorMovie;
-import org.example.javaserver.models.MovieOscar;
+import org.example.javaserver.models.OscarAwards;
 import org.example.javaserver.models.Movie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,13 +95,13 @@ public class ActorsService {
     }
 
     @Transactional
-    public List<MovieOscar> getOscarsByActor(String actorName) {
+    public List<OscarAwards> getOscarsByActor(String actorName) {
         String jpql = """
-        SELECT o FROM MovieOscar o
+        SELECT o FROM OscarAwards o
         WHERE LOWER(o.personName) = LOWER(:actorName)
         ORDER BY o.yearCeremony DESC
     """;
-        TypedQuery<MovieOscar> query = entityManager.createQuery(jpql, MovieOscar.class);
+        TypedQuery<OscarAwards> query = entityManager.createQuery(jpql, OscarAwards.class);
         query.setParameter("actorName", actorName);
         return query.getResultList();
     }
