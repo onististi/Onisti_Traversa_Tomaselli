@@ -36,7 +36,8 @@
                 {{#if messages}}  <!-- se esistono messaggi per gestire chat nuove-->
                     {{#each messages}}
                         <div class="message">
-                            <div class="message-username">{{this.sender.username}}</div>
+                            <div class="message-username">{{this.sender.username}} <span class="message-role">({{this.sender.role}})</span>
+                            </div>
                             <div class="message-text">{{this.content}}</div>
                             <div class="message-time">{{this.time}}</div>
                         </div>

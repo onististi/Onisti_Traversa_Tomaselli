@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 
 // Registrazione nuovo utente
@@ -53,7 +53,7 @@ exports.login = async (req, res) => {
             { expiresIn: '1h' }//token durata sessione
         );
 
-        console.log('Token generato (login):', token);
+      //  console.log('Token generato (login):', token);
 
         res.status(200).json({
             success: true,

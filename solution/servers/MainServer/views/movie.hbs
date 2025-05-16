@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
 
     <script>
-        var actorsData = {{{ json actors.data}}};
+        var actorsData = {{{ json actors.data}}}; //passaggio dei dati al js per la popolazione
         var crewData = {{{json crew.data}}};
     </script>
 </head>
@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="thread-button-container">
-                    <a href = "../chat/movie/{{movie.id}}" id="threadButton" class="thread-button">Film's Thread</a>
+                    <a href = "../chat/?Code={{movie.id}}&Type=movie" id="threadButton" class="thread-button">Film's Thread</a>
                 </div>
             </div>
         </div>
@@ -46,6 +46,7 @@
             <div class="actors-section">
                 <h2>ACTORS</h2>
                 <div class="actors-slider" id="actorsSlider">
+                    <!-- Slideshow fillato da js se ci sono, se no unknown -->
                 </div>
                 <div class="slider-nav actors-nav">
                     <div class="prev-arrow-actors">❮</div>
@@ -56,6 +57,7 @@
             <div class="crew-section">
                 <h2>CREW</h2>
                 <div class="crew-slider" id="crewSlider">
+                    <!-- Slideshow fillato da js se ci sono, se no unknown -->
                 </div>
                 <div class="slider-nav crew-nav">
                     <div class="prev-arrow-crew">❮</div>
@@ -79,15 +81,11 @@
                         <td id="movieRating">{{movie.rating}} /5</td>
                     </tr>
                     <tr>
-                        <td>Oscar</td>
-                        <td id="movieOscar">{{movie.movieOscars}}</td>
-                    </tr>
-                    <tr>
                         <td>Studios</td>
                         <td id="movieStudios">{{#each movie.studios}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
                     </tr>
                     <tr>
-                        <td>Themes</td>
+                        <td>Themes</td> <!--  per non fare uscire ultima virgola unless last  -->
                         <td id="movieThemes">{{#each movie.themes}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</td>
                     </tr>
                     <tr>
@@ -110,123 +108,61 @@
             <div class="reviews-container" id="reviewsContainer">
                 {{#if reviews.length}}
                     {{#each reviews}}
-                        <div class="review-item {{#if (eq this.role 'journalist')}}journalist-review{{else}}user-review{{/if}}"
-                             data-review-id="{{this._id}}"
-                             data-is-author="{{#if (eq this.author ../user.username)}}true{{else}}false{{/if}}"
-                             data-rating="{{this.rating}}"
-                             data-role="{{this.role}}">
+                        <div class="review-item">
                             <div class="review-header">
                                 <span class="review-author">{{this.author}}</span>
-                                <span class="review-role {{this.role}}">{{this.role}}</span>
                                 <div class="review-rating">
-                                    {{#times this.rating}}<span class="star">★</span>{{/times}}
-                                    {{#times (subtract 5 this.rating)}}<span class="star empty">☆</span>{{/times}}
+                                    {{#times this.rating}}
+                                        <span class="star">★</span>
+                                    {{/times}}
+                                    {{#times (subtract 5 this.rating)}}
+                                        <span class="star empty">☆</span>
+                                    {{/times}}
                                 </div>
                                 <span class="review-date">{{formatDate this.date}}</span>
                             </div>
                             <div class="review-content">
                                 <p>{{this.content}}</p>
                             </div>
-
-                            {{#if (eq this.author ../user.username)}}
-                                <div class="review-actions">
-                                    <button class="edit-review-btn"
-                                            onclick="openEditReview('{{this._id}}', `{{this.content}}`, '{{this.rating}}')">
-                                        Edit
-                                    </button>
-                                    <button class="delete-review-btn"
-                                            onclick="deleteReview('{{this._id}}')">
-                                        Delete
-                                    </button>
-                                </div>
-                            {{/if}}
                         </div>
                     {{/each}}
                 {{else}}
                     <div class="no-reviews">
-                        <p>No reviews yet. {{#if isLoggedIn}}Be the first to review this movie!{{else}}Login to add a review.{{/if}}</p>
+                        <p>No reviews yet. Be the first to review this movie!</p>
                     </div>
                 {{/if}}
             </div>
-
-            <div id="reviewPopup" class="popup">
-                <div class="popup-content">
-                    <span class="close" onclick="closeReviewPopup()">&times;</span>
-                    <h3 id="popupAuthor"></h3>
-                    <p id="popupContent"></p>
-                    <p id="popupDate"></p>
-
-                    <div id="popupActions" class="popup-actions" style="display: none;">
-                        <button id="popupEditBtn" class="edit-review-btn">Edit</button>
-                        <button id="popupDeleteBtn" class="delete-review-btn">Delete</button>
+            <div class="add-review-section">
+                <h3>Add Your Review</h3>
+                <form id="reviewForm" action="/movie/{{movie.id}}/review" method="POST">
+                    <div class="form-group">
+                        <label for="reviewRating">Rating:</label>
+                        <div class="rating-input">
+                            <input type="radio" id="star5" name="rating" value="5" required>
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1">★</label>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            {{#if isLoggedIn}}
-                <div class="add-review-section">
-                    <h3>Add Your Review as {{user.role}}</h3>
-                    <form id="reviewForm" action="/movies/{{movie.id}}/review" method="POST">
-                        <div class="form-group">
-                            <label for="reviewRating">Rating:</label>
-                            <div class="rating-input">
-                                <input type="radio" id="star5" name="rating" value="5" required>
-                                <label for="star5">★</label>
-                                <input type="radio" id="star4" name="rating" value="4">
-                                <label for="star4">★</label>
-                                <input type="radio" id="star3" name="rating" value="3">
-                                <label for="star3">★</label>
-                                <input type="radio" id="star2" name="rating" value="2">
-                                <label for="star2">★</label>
-                                <input type="radio" id="star1" name="rating" value="1">
-                                <label for="star1">★</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="reviewContent">Your Review:</label>
-                            <textarea id="reviewContent" name="content" rows="4" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-review-btn">Submit Review</button>
-                    </form>
-                </div>
-            {{else}}
-                <div class="login-to-review">
-                    <p>Please <a href="/auth/login">login</a> to add your review.</p>
-                </div>
-            {{/if}}
-
-            <div id="editReviewPopup" class="popup">
-                <div class="popup-content">
-                    <span class="close" onclick="closeEditPopup()">&times;</span>
-                    <h3>Edit Your Review</h3>
-                    <form id="editReviewForm">
-                        <input type="hidden" id="editReviewId">
-                        <div class="form-group">
-                            <label for="editReviewRating">Rating:</label>
-                            <select id="editReviewRating" name="rating">
-                                <option value="1">1 ★</option>
-                                <option value="2">2 ★★</option>
-                                <option value="3">3 ★★★</option>
-                                <option value="4">4 ★★★★</option>
-                                <option value="5">5 ★★★★★</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="editReviewContent">Your Review:</label>
-                            <textarea id="editReviewContent" name="content" rows="4"></textarea>
-                        </div>
-                        <button type="button" onclick="submitEditReview()">Update Review</button>
-                    </form>
-                </div>
+                    <div class="form-group">
+                        <label for="reviewContent">Your Review:</label>
+                        <textarea id="reviewContent" name="content" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-review-btn">Submit Review</button>
+                </form>
             </div>
         </div>
+    </div>
+</div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!--usato per il carosello -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script src="/javascripts/movie.js"></script>
-    <script src="/javascripts/review.js"></script>
 </body>
 </html>
-
-
-

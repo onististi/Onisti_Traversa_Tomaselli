@@ -1,4 +1,4 @@
-const socketIo = require('socket.io');
+/*const socketIo = require('socket.io');
 const jwt = require('jsonwebtoken');
 let io = null;
 
@@ -68,4 +68,4 @@ const handleConnection = (socket) => {
         socket.emit('token-invalid', { message: 'Token non valido o scaduto. Reimmettere il login.' });
         socket.disconnect(true); // Disconnette il socket
     }
-};
+};*/

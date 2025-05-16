@@ -31,9 +31,15 @@ public class ActorsController {
         return ResponseEntity.ok(actors);
     }
 
-    @GetMapping("/{name}")  //films dell attore
+    @GetMapping("/{name}")
     public ResponseEntity<Actor> searchActor(@PathVariable String name) {
         Optional<Actor> actor = actorsService.findActor(name);
+        return actor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/actor/{id}")
+    public ResponseEntity<Actor> searchActor(@PathVariable Integer id) {
+        Optional<Actor> actor = actorsService.findActor(id);
         return actor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 

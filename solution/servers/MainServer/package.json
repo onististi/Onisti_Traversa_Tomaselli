@@ -21,6 +21,8 @@
     "node-cache": "^5.1.2",
     "pug": "^3.0.3",
     "redis": "^4.7.0",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "socketio-jwt": "^4.6.2"
   }
 }
