@@ -1,7 +1,6 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     font-family: Arial, sans-serif;
     text-decoration: none;
 }
@@ -11,7 +10,7 @@ header {
     color: white;
     padding: 20px 50px;
     position: relative;
-    height: 140px;
+    height: 110px;
     z-index: 10;
 }
 
@@ -42,65 +41,6 @@ nav {
     z-index: 10;
 }
 
-.home-icon {
-    font-size: 16px;
-    text-decoration: none;
-    color: black;
-    padding: 10px;
-    border-radius: 5px;
-    background: #ffffff;
-    position: absolute;
-    top: 50px;
-    left: 10px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.search-container {
-    position: absolute;
-    top: 50px;
-    left: 70px;
-    display: flex;
-}
-
-.search-container input {
-    padding: 10px;
-    border-radius: 5px 0 0 5px;
-    border: none;
-    font-size: 16px;
-    width: 300px;
-}
-
-.search-container button {
-    background: white;
-    border: none;
-    color: black;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 0 5px 5px 0;
-}
-
-.nav-links {
-    position: absolute;
-    top: 50px;
-    right: 0;
-    display: flex;
-    gap: 10px;
-}
-
-.nav-links a {
-    color: black;
-    text-decoration: none;
-    font-size: 16px;
-    background: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    display: inline-block;
-}
-
 .login-btn {
     border: 1px solid white;
 }
@@ -121,7 +61,7 @@ body {
 }
 
 .sidebar {
-    width: 250px;
+    width: 230px;
     background-color: #ffffff;
     border-right: 2px solid #000000;
     padding: 10px;
