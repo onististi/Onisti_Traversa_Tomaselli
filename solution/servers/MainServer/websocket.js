@@ -1,4 +1,5 @@
 const socketIo = require('socket.io');
+const socketioJwt = require('socketio-jwt');
 const axios = require('axios');
 
 function setupWebSockets(server) {
