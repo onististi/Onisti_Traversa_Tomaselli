@@ -3,13 +3,16 @@ const router = express.Router();
 const axios = require('axios');
 const { ensureAuthenticated } = require('../middleware/auth');
 
-const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:3001';
+// Fix the DATA_SERVER_URL handling
+const baseUrl = process.env.DATA_SERVER_URL || 'http://localhost:3001';
+// Check if DATA_SERVER_URL already contains /api
+const apiPath = baseUrl.endsWith('/api') ? '' : '/api';
 
 // Ottieni i dati di un utente
 router.get('/:id', ensureAuthenticated, async (req, res) => {
     try {
         const response = await axios.get(
-            `${DATA_SERVER_URL}/users/${req.params.id}`,
+            `${baseUrl}${apiPath}/users/${req.params.id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`,
@@ -29,9 +32,15 @@ router.get('/:id', ensureAuthenticated, async (req, res) => {
 // Endpoint per aggiornare la sessione dell'utente
 router.post('/refresh-session', ensureAuthenticated, async (req, res) => {
     try {
-        const response = await axiosInstance.get(`/api/users/${req.session.user.id}`, {
-            session: req.session
-        });
+        const response = await axios.get(
+            `${baseUrl}${apiPath}/users/${req.session.user.id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${req.session.token}`,
+                    'X-User-Id': req.session.user.id
+                }
+            }
+        );
 
         req.session.user = { ...req.session.user, ...response.data.user };
 
@@ -47,6 +56,5 @@ router.post('/refresh-session', ensureAuthenticated, async (req, res) => {
         res.status(500).json({ success: false, message: 'Error refreshing user data' });
     }
 });
-
 
 module.exports = router;

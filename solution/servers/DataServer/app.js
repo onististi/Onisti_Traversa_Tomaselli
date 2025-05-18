@@ -18,7 +18,7 @@ const chatRouter = require('./routes/chat');
 const movieRouter = require('./routes/movies');
 const reviewsRouter = require('./routes/reviews');
 const requestsRouter = require('./routes/journalistRequests');
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/users');
 
 let app = express();
 const server = http.createServer(app);

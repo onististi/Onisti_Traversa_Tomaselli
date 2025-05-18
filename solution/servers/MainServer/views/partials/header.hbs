@@ -10,7 +10,7 @@
             <div class="user-status-container">
                 <span class="welcome-text">Welcome, {{user.username}}</span>
 
-                <div class="status-indicator">
+                <div class="status-indicator" id="dynamic-status-indicator">
                     {{#if (eq user.role 'user')}}
                         {{#if (eq user.requestStatus 'none')}}
                             <a href="/requests/request" class="request-journalist-btn">
@@ -28,10 +28,6 @@
                                 </a>
                             </div>
                         {{/if}}
-                    {{else if (eq user.role 'master')}}
-                        <a href="/admin/requests" class="admin-requests-btn">
-                            <span class="icon">⚙️</span> Manage Requests
-                        </a>
                     {{/if}}
                 </div>
             </div>
@@ -61,7 +57,7 @@
             {{#if isLoggedIn}}
                 <a href="/auth/logout">LOGOUT</a>
             {{else}}
-                <a class="login-btn" id="login-btn">LOGIN / SIGN UP</a> <!--per un redirect post login corretto-->
+                <a class="login-btn" id="login-btn">LOGIN / SIGN UP</a>
             {{/if}}
         </div>
     </nav>
@@ -73,5 +69,14 @@
             const redirectUrl = encodeURIComponent(window.location.pathname + window.location.search);
             loginLink.href = `/auth/login?redirect=${redirectUrl}`;
         }
+
+        {{#if user}}
+            SocketManager.init({
+                userId: '{{user.id}}',
+                role: '{{user.role}}',
+                requestStatus: '{{user.requestStatus}}',
+                dataServerUrl: '{{process.env.DATA_SERVER_URL}}'
+            });
+        {{/if}}
     });
 </script>

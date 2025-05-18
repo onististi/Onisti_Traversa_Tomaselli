@@ -81,6 +81,7 @@ router.get('/', syncUserSession, async function(req, res, next) {
 });
 
 
+// Route handler in index.js
 router.get('/refresh-user-status', (req, res, next) => {
     // Verifica che l'utente sia autenticato
     if (!req.session.isLoggedIn || !req.session.user) {
@@ -89,10 +90,12 @@ router.get('/refresh-user-status', (req, res, next) => {
     next();
 }, syncUserSession, async (req, res) => {
     try {
-        // Verifica che DATA_SERVER_URL sia definito
-        const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:3001';
+        // Fix the URL construction
+        const baseUrl = process.env.DATA_SERVER_URL || 'http://localhost:3001';
+        // Check if DATA_SERVER_URL already contains /api
+        const apiPath = baseUrl.endsWith('/api') ? '' : '/api';
 
-        const response = await axios.get(`${DATA_SERVER_URL}/users/${req.session.user.id}?t=${Date.now()}`, {
+        const response = await axios.get(`${baseUrl}${apiPath}/users/${req.session.user.id}?t=${Date.now()}`, {
             headers: {
                 'Authorization': `Bearer ${req.session.token}`,
                 'X-User-Id': req.session.user.id

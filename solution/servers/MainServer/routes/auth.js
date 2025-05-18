@@ -2,42 +2,41 @@ const express = require('express');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
+const { notifyUser } = require('../websocket');
 
-// Rotte GET per login e registrazione
 router.get('/login', (req, res) => {
     res.render('login', {
         title: 'Login',
         error: req.query.error,
-        success: req.query.success,
-        redirect: req.query.redirect || '/' //se non è specificato(ovvero accedede direttamente cercando il login) porta alla home se no alla pag precendete
+        success: req.query.success
     });
 });
 
-
 router.get('/register', (req, res) => {
-        res.render('register', {
-            title: 'Registrazione',
-            error: req.query.error,
-            username: req.query.username,
-            email: req.query.email
-        });
+    res.render('register', {
+        title: 'Registrazione',
+        error: req.query.error,
+        username: req.query.username,
+        email: req.query.email
+    });
 });
 
-// Login
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const response = await axios.post(process.env.DATA_SERVER_URL+'/auth/login', {
+
+        // Effettua la richiesta di login
+        const response = await axios.post(`${process.env.DATA_SERVER_URL}/auth/login`, {
             username,
             password
         });
 
         const { token, id, email, role, requestStatus } = response.data;
-        //console.log('Token ricevuto dal DataServer:', token);
+        console.log('Token ricevuto dal DataServer:', token);
 
+        // Verifica il token
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key');
-         //   console.log('Token verificato:', decoded);
+            jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key');
         } catch (error) {
             console.error('Errore nella verifica del token:', error.message);
             return res.render('login', {
@@ -46,21 +45,34 @@ router.post('/login', async (req, res) => {
             });
         }
 
+        // Aggiorna la sessione
         req.session.isLoggedIn = true;
         req.session.user = { id, username, email, role, requestStatus };
-
-        // Qui deve essere assegnato il token ricevuto, NON process.env.JWT_SECRET
         req.session.token = token;
-        console.log('Token salvato nella sessione:', req.session.token);
 
+        // Salva la sessione
         await new Promise((resolve, reject) => {
-            req.session.save(err => {
-                if (err) reject(err);
-                else resolve();
-            });
+            req.session.save(err => err ? reject(err) : resolve());
         });
-    console.log("aaaa"+req.body.redirect)
-        res.redirect(req.body.redirect || '/');
+
+        // Richiedi dati freschi dall'API
+        const userResponse = await axios.get(
+            `${process.env.DATA_SERVER_URL}/users/${id}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+
+        // Aggiorna la sessione con i dati più recenti
+        req.session.user = userResponse.data.user;
+        await req.session.save();
+
+        // Notifica via WebSocket
+        notifyUser(id, userResponse.data.user.requestStatus, userResponse.data.user.role);
+
+        res.redirect('/');
     } catch (error) {
         res.render('login', {
             title: 'Login',
@@ -70,8 +82,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
-// Registrazione
 router.post('/register', async (req, res) => {
     try {
         const { username, email, password, confirmPassword } = req.body;
@@ -85,24 +95,17 @@ router.post('/register', async (req, res) => {
             });
         }
 
-        const response = await axios.post(process.env.DATA_SERVER_URL+'/auth/register', {
+        const response = await axios.post(`${process.env.DATA_SERVER_URL}/auth/register`, {
             username,
             email,
             password
         });
 
         if (response.data.success) {
-            // Reindirizza al login con messaggio di successo
             return res.redirect('/auth/login?success=Registrazione completata! Ora puoi fare il login');
         }
 
     } catch (error) {
-        console.error('Errore durante la registrazione:', {
-            message: error.message,
-            responseData: error.response?.data,
-            status: error.response?.status
-        });
-
         res.render('register', {
             title: 'Registrazione',
             error: error.response?.data?.message || 'Errore durante la registrazione',
@@ -112,7 +115,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Logout
 router.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.clearCookie('connect.sid');
@@ -120,18 +122,14 @@ router.get('/logout', (req, res) => {
     });
 });
 
-
 router.get('/check', async (req, res) => {
     try {
         if (!req.session?.token) {
-            console.error('Token mancante nella sessione');
             return res.status(401).json({ authenticated: false, message: 'Token mancante' });
         }
 
-        //console.log('Token salvato nella sessione:', req.session.token);
-
         const response = await axios.get(
-            process.env.DATA_SERVER_URL+'/users/${req.session.user.id}',
+            `${process.env.DATA_SERVER_URL}/users/${req.session.user.id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`
@@ -139,13 +137,10 @@ router.get('/check', async (req, res) => {
             }
         );
 
-        console.log('Risposta dal DataServer:', response.data);
         return res.status(200).json({ authenticated: true });
     } catch (error) {
-        console.error('Errore durante la verifica dell\'autenticazione:', error.message);
         res.status(401).json({ authenticated: false });
     }
 });
-
 
 module.exports = router;

@@ -43,8 +43,11 @@ const syncUserSession = async (req, res, next) => {
     }
 
     try {
+        const baseUrl = process.env.DATA_SERVER_URL || 'http://localhost:3001';
+        const apiPath = baseUrl.endsWith('/api') ? '' : '/api';
+
         const response = await axios.get(
-            `${process.env.DATA_SERVER_URL}/users/${req.session.user.id}?t=${Date.now()}`,
+            `${baseUrl}${apiPath}/users/${req.session.user.id}?t=${Date.now()}`,
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`,
@@ -54,16 +57,11 @@ const syncUserSession = async (req, res, next) => {
         );
 
         const userFromDataServer = response.data.user;
-        //console.log('Dati ricevuti dal DataServer:', userFromDataServer);
 
-        // Aggiorna i dati della sessione solo se differiscono
         if (JSON.stringify(userFromDataServer) !== JSON.stringify(req.session.user)) {
-            console.log(
-                `Aggiornamento dati nella sessione: da ${JSON.stringify(req.session.user)} a ${JSON.stringify(userFromDataServer)}`
-            );
+            console.log(`Aggiornamento dati sessione`);
             req.session.user = userFromDataServer;
 
-            // Rigenera il token basandosi sui nuovi dati
             req.session.token = jwt.sign(
                 {
                     id: req.session.user.id,
@@ -74,10 +72,17 @@ const syncUserSession = async (req, res, next) => {
                 { expiresIn: '1h' }
             );
 
-            console.log('Nuovo token generato nella sessione:', req.session.token);
+            // Invia notifica WebSocket
+            if (req.app.get('io') && userFromDataServer.requestStatus) {
+                req.app.get('io').to(userFromDataServer.id.toString()).emit('status-update', {
+                    userId: userFromDataServer.id,
+                    requestStatus: userFromDataServer.requestStatus,
+                    role: userFromDataServer.role,
+                    timestamp: Date.now()
+                });
+            }
+
             await req.session.save();
-        } else {
-            console.log('I dati ricevuti sono identici a quelli in sessione. Nessun aggiornamento necessario.');
         }
 
         next();
@@ -86,10 +91,6 @@ const syncUserSession = async (req, res, next) => {
         next();
     }
 };
-
-
-
-
 
 
 const injectAuthVariables = (req, res, next) => {
