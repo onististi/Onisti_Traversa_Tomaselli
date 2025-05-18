@@ -46,10 +46,17 @@
         {{/if}}
     {{/if}}
     <nav>
-        <h1 class="page-title">CINEVERSE</h1>
+        <h1 class="page-title">
+            <a href="/" style="text-decoration: none; color: inherit;">CINEVERSE</a>
+        </h1>
         <div class="search-container">
-            <input type="text" placeholder="Search">
-            <button>X</button>
+            <form action="/search" method="GET" id="search-form">
+                <input type="text" name="q" placeholder="Search" id="search-input">
+                <select name="type" id="search-type">
+                    <option value="movies">Movies</option>
+                    <option value="actors">Actors</option>
+                </select>
+            </form>
         </div>
         <div class="nav-links">
             <a href="/movies">MOVIES</a>

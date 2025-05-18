@@ -1,7 +1,6 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     font-family: Arial, sans-serif;
     text-decoration: none;
 }
@@ -11,15 +10,52 @@ header {
     color: white;
     padding: 20px 50px;
     position: relative;
-    height: 150px;
+    height: 110px;
 }
 
 .page-title {
+    position: absolute;
     font-size: 32px;
     font-weight: bold;
     color: white;
     text-align: center;
     margin: 0 0 10px 0;
+    top: -22px;
+}
+
+.search-container {
+    position: relative;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+#search-input {
+    position: absolute;
+    background-color:#ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    top: 34px;
+    left: -700px;
+    height: 20px;
+    width: 300px;
+}
+
+#search-type {
+    position: absolute;
+    top: 34px;
+    left: -370px;
+    height: 40px;
+    width: 70px;
+    background-color:#ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right -1px center;
 }
 
 nav {
