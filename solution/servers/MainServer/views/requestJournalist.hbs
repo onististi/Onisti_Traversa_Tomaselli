@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Become a Journalist - Cineverse</title>
+    <title>Cineverse</title>
     <link rel="stylesheet" href="/stylesheets/HomepageStyle.css">
     <link rel="stylesheet" href="/stylesheets/requestJournalistStyle.css">
+
+    <!-- User meta data for JavaScript -->
+    <meta name="user-id" content="{{user.id}}">
+    <meta name="user-role" content="{{user.role}}">
+    <meta name="request-status" content="{{user.requestStatus}}">
 </head>
 {{> header}}
 <body>
@@ -13,35 +18,26 @@
     <div class="request-container">
         <h2>Richiedi di diventare Journalist</h2>
 
-        <div class="dynamic-status">
-            {{#if (eq user.requestStatus "pending")}}
-                <div class="status-pending">
-                    ⏳ Richiesta in attesa di approvazione
-                </div>
-            {{else if (eq user.requestStatus "rejected")}}
-                <div class="status-rejected">
-                    ❌ Richiesta rifiutata
-                </div>
-            {{/if}}
+        <div id="status-notification" style="display: none;">
+            <span id="notification-message"></span>
+            <button id="close-notification">×</button>
         </div>
 
-
-        {{#unless (eq user.requestStatus "pending")}}
-            <form action="/requests/request" method="POST">
-                <div class="form-group">
-                    <label for="motivation">Motivazione:</label>
-                    <textarea id="motivation" name="motivation" required></textarea>
-                </div>
-                <div class="form-controls">
-                    <button type="submit" class="submit-request-btn">Invia Richiesta</button>
-                    <a href="/" class="cancel-btn">Annulla</a>
-                </div>
-            </form>
-        {{/unless}}
+        <form action="/requests/request" method="POST">
+            <div class="form-group">
+                <label for="motivation">Motivazione:</label>
+                <textarea id="motivation" name="motivation" required></textarea>
+            </div>
+            <div class="form-controls">
+                <button type="submit" class="submit-request-btn">Invia Richiesta</button>
+                <a href="/" class="cancel-btn">Annulla</a>
+            </div>
+        </form>
     </div>
 </main>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/javascripts/adminRequests.js"></script>
+<script src="/javascripts/socketManager.js"></script>
+<script src="/javascripts/requestJournalist.js"></script>
 </body>
 </html>

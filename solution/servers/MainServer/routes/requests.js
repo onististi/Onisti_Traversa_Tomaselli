@@ -25,9 +25,8 @@ router.post('/request', ensureAuthenticated, async (req, res) => {
 
         const { motivation } = req.body;
 
-        // Invia richiesta al DataServer
         await axios.post(
-            `${DATA_SERVER_URL}/api/requests/request`,
+            `${DATA_SERVER_URL}/requests/request`,
             { motivation },
             {
                 headers: {
@@ -39,7 +38,7 @@ router.post('/request', ensureAuthenticated, async (req, res) => {
 
         // Aggiorna i dati utente
         const response = await axios.get(
-            `${DATA_SERVER_URL}/api/users/${userId}`,
+            `${DATA_SERVER_URL}/users/${userId}`,
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`,
@@ -72,7 +71,7 @@ router.get('/status', ensureAuthenticated, async (req, res) => {
         }
 
         const response = await axios.get(
-            `${DATA_SERVER_URL}/api/users/${userId}`,
+            `${DATA_SERVER_URL}/users/${userId}`,
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`,

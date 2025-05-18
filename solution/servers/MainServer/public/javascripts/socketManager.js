@@ -7,6 +7,8 @@ class SocketManager {
     static connectionStatus = 'disconnected';
     static connectionStatusListeners = [];
     static newMessageListeners = [];
+    static lastNotifiedStatus = null; // Track the last notified status
+    static notificationsShown = {}; // Track notifications by status
 
     static init({ userId, role, requestStatus, dataServerUrl }) {
         console.log('Esecuzione SocketManager.init()', { userId, role, requestStatus });
@@ -15,12 +17,17 @@ class SocketManager {
             console.log('User changed, forcing reconnection');
             this.socket?.disconnect();
             this.socket = null;
+            // Reset notification tracking on user change
+            this.lastNotifiedStatus = null;
+            this.notificationsShown = {};
         }
 
         this.userId = userId;
         this.role = role;
         this.requestStatus = requestStatus;
         this.dataServerUrl = dataServerUrl || window.chatData?.dataServerUrl;
+
+        console.log('SocketManager role set to:', this.role);
 
         if (this.socket) {
             this.socket.disconnect();
@@ -71,12 +78,23 @@ class SocketManager {
         this.socket.on('status-update', (data) => {
             console.log('Evento status-update ricevuto:', data);
             if (data.userId === this.userId) {
+                // Only show notification if the status has actually changed and hasn't been shown yet
+                const statusKey = `${data.requestStatus}-${data.role || ''}`;
+
+                if (data.requestStatus !== this.requestStatus && !this.notificationsShown[statusKey]) {
+                    this.showNotification(`Stato aggiornato: ${data.requestStatus}`, '#28a745');
+                    this.notificationsShown[statusKey] = true;
+                }
+
                 this.requestStatus = data.requestStatus;
-                this.showNotification(`Stato aggiornato: ${data.requestStatus}`, '#28a745');
-                this.updateStatusUI(data.requestStatus);
-                if (data.requestStatus === 'approved' && data.role) {
+
+                // Update the role if it has changed
+                if (data.role) {
+                    console.log(`Role updated from ${this.role} to ${data.role}`);
                     this.role = data.role;
                 }
+
+                this.updateStatusUI(data.requestStatus);
             }
         });
 
@@ -141,26 +159,38 @@ class SocketManager {
         const statusIndicator = document.getElementById('dynamic-status-indicator');
         if (!statusIndicator) return;
 
-        statusIndicator.innerHTML = '';
-        let newContent = '';
+        console.log('Updating UI with role:', this.role, 'and status:', requestStatus);
 
+        // Handling master role specifically
+        if (this.role === 'master') {
+            console.log('Master role detected, showing admin controls');
+            statusIndicator.style.display = 'block';
+            statusIndicator.innerHTML = '<a href="/admin/requests" class="admin-requests-btn"><span class="icon">⚙️</span> Manage Requests</a>';
+            return;
+        }
+
+        // For non-master roles
+        statusIndicator.style.display = 'block';
+        statusIndicator.innerHTML = '';
+
+        let newContent = '';
         switch(requestStatus) {
             case 'approved':
                 newContent = `<div class="status-approved notification"><span class="icon">✅</span> Request approved</div>`;
                 break;
             case 'rejected':
                 newContent = `<div class="status-rejected">
-                    <span class="icon">❌</span> Request rejected
-                    <a href="/requests/request" class="request-journalist-btn">
-                        <span class="icon">✉️</span> Request Again
-                    </a></div>`;
+                <span class="icon">❌</span> Request rejected
+                <a href="/requests/request" class="request-journalist-btn">
+                    <span class="icon">✉️</span> Request Again
+                </a></div>`;
                 break;
             case 'pending':
                 newContent = `<div class="status-pending"><span class="icon">⏳</span> Request pending</div>`;
                 break;
             default:
                 newContent = `<a href="/requests/request" class="request-journalist-btn">
-                    <span class="icon">📝</span> Become a Journalist</a>`;
+                <span class="icon">📝</span> Become a Journalist</a>`;
         }
 
         statusIndicator.innerHTML = newContent;

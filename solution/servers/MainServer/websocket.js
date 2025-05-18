@@ -63,7 +63,7 @@ const setupWebSockets = (server) => {
 
         // Recupera lo stato corrente della richiesta e il ruolo dall'oggetto sessione
         try {
-            const userStatus = socket.request.session.user.requestStatus || 'none';
+            const userStatus = socket.request.session.user?.requestStatus || 'none';
             const userRole = socket.userRole;
 
             console.log(`Inviando stato iniziale all'utente ${userId}: status=${userStatus}, role=${userRole}`);
@@ -85,7 +85,8 @@ const setupWebSockets = (server) => {
                 const requestUserId = data.userId;
                 // Controllo di sicurezza - l'utente può richiedere solo il proprio stato
                 if (requestUserId && requestUserId === userId) {
-                    const userStatus = socket.request.session.user.requestStatus || 'none';
+                    // Aggiungiamo un controllo per garantire che socket.request.session.user esista
+                    const userStatus = socket.request.session.user?.requestStatus || 'none';
                     const userRole = socket.userRole;
 
                     console.log(`Richiesta aggiornamento stato ricevuta da ${userId}: status=${userStatus}, role=${userRole}`);

@@ -11,7 +11,11 @@
                 <span class="welcome-text">Welcome, {{user.username}}</span>
 
                 <div class="status-indicator" id="dynamic-status-indicator">
-                    {{#if (eq user.role 'user')}}
+                    {{#if (eq user.role 'master')}}
+                        <a href="/admin/requests" class="admin-requests-btn">
+                            <span class="icon">⚙️</span> Manage Requests
+                        </a>
+                    {{else if (eq user.role 'user')}}
                         {{#if (eq user.requestStatus 'none')}}
                             <a href="/requests/request" class="request-journalist-btn">
                                 <span class="icon">📝</span> Become a Journalist
@@ -77,6 +81,15 @@
                 requestStatus: '{{user.requestStatus}}',
                 dataServerUrl: '{{process.env.DATA_SERVER_URL}}'
             });
+
+            console.log('Initializing SocketManager with role: {{user.role}}');
         {{/if}}
     });
+
+    function hideNotification() {
+        const notification = document.getElementById('status-notification');
+        if (notification) {
+            notification.style.display = 'none';
+        }
+    }
 </script>

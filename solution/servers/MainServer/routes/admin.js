@@ -9,8 +9,12 @@ const DATA_SERVER_URL = process.env.DATA_SERVER_URL || 'http://localhost:3001';
 router.get('/requests', ensureMaster, async (req, res) => {
     console.log('DEBUG: Entrato nella route /admin/requests');
     try {
+        // Check if the URL should include /api
+        const baseUrl = DATA_SERVER_URL;
+        const apiPath = baseUrl.endsWith('/api') ? '' : '/api';
+
         const response = await axios.get(
-            `${DATA_SERVER_URL}/api/requests/pending`,
+            `${baseUrl}${apiPath}/requests/pending`,
             {
                 headers: {
                     'Authorization': `Bearer ${req.session.token}`,
@@ -18,6 +22,7 @@ router.get('/requests', ensureMaster, async (req, res) => {
                 }
             }
         );
+
         console.log('DEBUG: Richieste recuperate:', response.data.requests);
         res.render('admin/requests', {
             title: 'Gestione Richieste',
@@ -27,9 +32,18 @@ router.get('/requests', ensureMaster, async (req, res) => {
         });
     } catch (error) {
         console.error('Errore nel recupero delle richieste:', error.message);
+        // Provide more detailed error information
+        const errorDetails = {
+            message: 'Errore nel recupero delle richieste pendenti',
+            status: error.response ? error.response.status : 'unknown',
+            details: error.response ? error.response.data : error.message
+        };
+
+        console.error('Dettagli errore:', errorDetails);
+
         res.render('error', {
             message: 'Errore nel recupero delle richieste pendenti',
-            error
+            error: errorDetails
         });
     }
 });
@@ -40,10 +54,12 @@ router.post('/handle', ensureMaster, async (req, res) => {
 
     try {
         const { userId, action, reason } = req.body;
+        const baseUrl = DATA_SERVER_URL;
+        const apiPath = baseUrl.endsWith('/api') ? '' : '/api';
 
         // Inoltra la richiesta al DataServer
         const response = await axios.post(
-            `${DATA_SERVER_URL}/api/requests/handle`,
+            `${baseUrl}${apiPath}/requests/handle`,
             { userId, action, reason },
             {
                 headers: {
@@ -75,7 +91,7 @@ router.post('/handle', ensureMaster, async (req, res) => {
         }
 
         console.log('Token DOPO la gestione:', req.session.token);
-        return res.redirect('/');
+        return res.redirect('/admin/requests?success=Richiesta gestita con successo');
     } catch (error) {
         console.error('Errore gestione richiesta:', error.message);
         return res.redirect('/admin/requests?error=Errore durante l\'elaborazione della richiesta');

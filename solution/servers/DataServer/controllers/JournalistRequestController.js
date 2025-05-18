@@ -2,9 +2,12 @@ const User = require('../models/users');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 
+// Configurazione per la notifica via frontend server
+const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL || 'http://localhost:3000';
+
 exports.requestJournalist = async (req, res) => {
     try {
-        const { motivation } = req.body
+        const { motivation } = req.body;
         const user = await User.findById(req.user.id);
 
         if (!user) return res.status(404).json({ message: 'Utente non trovato' });
@@ -36,9 +39,14 @@ exports.requestJournalist = async (req, res) => {
 
 exports.getPendingRequests = async (req, res) => {
     try {
+        // Log information for debugging
+        console.log('getPendingRequests called by user:', req.user?.id);
+        console.log('Role of requester:', req.user?.role);
+
         const masterUser = await User.findById(req.user.id);
 
         if (!masterUser || masterUser.role !== 'master') {
+            console.warn('Unauthorized attempt to access pending requests by user:', req.user?.id);
             return res.status(403).json({
                 success: false,
                 message: 'Accesso negato'
@@ -46,7 +54,9 @@ exports.getPendingRequests = async (req, res) => {
         }
 
         const pendingRequests = await User.find({ requestStatus: 'pending' })
-            .select('username email requestStatus created_at motivation');
+            .select('username email requestStatus created_at motivation _id');
+
+        console.log('Found pending requests:', pendingRequests.length);
 
         res.status(200).json({
             success: true,
@@ -62,12 +72,12 @@ exports.getPendingRequests = async (req, res) => {
     }
 };
 
-
 exports.handleRequest = async (req, res) => {
     console.log('Token ricevuto da Authorization:', req.headers.authorization);
 
     try {
         const { userId, action, reason } = req.body;
+        console.log('Processing request for user:', userId, 'Action:', action);
 
         // Aggiorna l'utente nel database
         const user = await User.findByIdAndUpdate(
@@ -81,12 +91,14 @@ exports.handleRequest = async (req, res) => {
         );
 
         if (!user) {
+            console.warn('User not found when handling request:', userId);
             return res.status(404).json({ message: 'Utente non trovato' });
         }
 
-        console.log('Prima della chiamata a notifyUserViaHTTP');
-        await notifyUserViaHTTP(userId, user.requestStatus);
-        console.log('Dopo la chiamata a notifyUserViaHTTP');
+        console.log('User updated successfully:', user.username, 'New status:', user.requestStatus);
+
+        // Notifica l'utente del cambiamento di stato
+        await notifyUserViaHTTP(userId, user.requestStatus, user.role);
 
         // Genera un nuovo token JWT solo se l'azione è "approve"
         let newToken = null;
@@ -101,6 +113,7 @@ exports.handleRequest = async (req, res) => {
                 { expiresIn: '1h' }
             );
         }
+
         console.log('User restituito dal DataServer:', user);
         res.json({
             success: true,
@@ -113,13 +126,16 @@ exports.handleRequest = async (req, res) => {
     }
 };
 
-
-const notifyUserViaHTTP = async (userId, requestStatus) => {
+const notifyUserViaHTTP = async (userId, requestStatus, role) => {
     try {
-        const response = await axios.post('http://localhost:3000/user/api/notify-user', {
+        console.log(`Tentativo di notifica HTTP per userId ${userId}, status: ${requestStatus}, role: ${role}`);
+
+        const response = await axios.post(`${FRONTEND_SERVER_URL}/user/api/notify-user`, {
             userId,
-            requestStatus
+            requestStatus,
+            role
         });
+
         console.log('Notifica HTTP inviata con successo:', response.data);
         return response.data.success;
     } catch (error) {
