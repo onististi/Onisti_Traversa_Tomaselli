@@ -52,7 +52,7 @@
             <button class="add-filter-btn" title="Aggiungi filtro">+</button>
         </div>
     </section>
-    {{#unless searchType}}
+    {{#unless searchType}}  <!-- se non ha cercato tramite searchbar, passato dalla route  -->
         <h1 class="title">TOP 500 ACTORS</h1>
     {{/unless}}
     <section class="actors-grid" id="actors-container">

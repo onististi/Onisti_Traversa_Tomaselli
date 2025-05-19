@@ -1,4 +1,5 @@
 const socketIo = require('socket.io');
+const axios = require('axios');
 const { sessionMiddleware } = require('./middleware/auth');
 const jwt = require('jsonwebtoken');
 
@@ -113,11 +114,21 @@ const setupWebSockets = (server) => {
 
         socket.on('chat-message', async (messageData) => {
             try {
-                console.log('Messaggio ricevuto:', messageData);
+                //  Salva il messaggio nel DataServer
+                const savedMessage = await axios.post(`${process.env.DATA_SERVER_URL}/chat/messages`, messageData);
+
+                const enrichedMessage = {
+                    ...messageData,
+                    chatId: savedMessage.data.chatId,
+                    role: messageData.role || 'user',
+                    time: savedMessage.data.time
+                };
+
+                    console.log('Messaggio ricevuto:', enrichedMessage);
                 // Invia il messaggio a tutti nella stanza
                 const roomId = messageData.chatId || messageData.chatCode;
                 io.to(roomId).emit('new-chat-message', {
-                    ...messageData,
+                    ...enrichedMessage,
                     timestamp: Date.now()
                 });
             } catch (error) {

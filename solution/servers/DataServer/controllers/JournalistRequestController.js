@@ -4,7 +4,7 @@ const axios = require('axios');
 
 // Configurazione per la notifica via frontend server
 const FRONTEND_SERVER_URL = process.env.FRONTEND_SERVER_URL || 'http://localhost:3000';
-
+//handler implementato dalla route
 exports.requestJournalist = async (req, res) => {
     try {
         const { motivation } = req.body;
@@ -12,14 +12,14 @@ exports.requestJournalist = async (req, res) => {
 
         if (!user) return res.status(404).json({ message: 'Utente non trovato' });
 
-        if (user.role !== 'user') {
+        if (user.role !== 'user') {       //se l'utente non esiste o non ha come ruolo quello base quindi gia giornalista o master restituisce errore
             return res.status(400).json({
                 success: false,
                 message: 'You are already a journalist or master'
             });
         }
 
-        user.requestStatus = 'pending';
+        user.requestStatus = 'pending';  //se no salva la request nel document mongo dell user
         user.motivation = motivation;
         await user.save();
 
@@ -39,13 +39,12 @@ exports.requestJournalist = async (req, res) => {
 
 exports.getPendingRequests = async (req, res) => {
     try {
-        // Log information for debugging
         console.log('getPendingRequests called by user:', req.user?.id);
         console.log('Role of requester:', req.user?.role);
 
         const masterUser = await User.findById(req.user.id);
 
-        if (!masterUser || masterUser.role !== 'master') {
+        if (!masterUser || masterUser.role !== 'master') { //solo il master può vedere le richieste
             console.warn('Unauthorized attempt to access pending requests by user:', req.user?.id);
             return res.status(403).json({
                 success: false,
@@ -53,7 +52,7 @@ exports.getPendingRequests = async (req, res) => {
             });
         }
 
-        const pendingRequests = await User.find({ requestStatus: 'pending' })
+        const pendingRequests = await User.find({ requestStatus: 'pending' }) //richieste da accettare
             .select('username email requestStatus created_at motivation _id');
 
         console.log('Found pending requests:', pendingRequests.length);
@@ -71,7 +70,7 @@ exports.getPendingRequests = async (req, res) => {
         });
     }
 };
-
+ //handler per approvare o rifiutare richieste
 exports.handleRequest = async (req, res) => {
     console.log('Token ricevuto da Authorization:', req.headers.authorization);
 
@@ -79,7 +78,7 @@ exports.handleRequest = async (req, res) => {
         const { userId, action, reason } = req.body;
         console.log('Processing request for user:', userId, 'Action:', action);
 
-        // Aggiorna l'utente nel database
+        // Aggiorna l'utente nel database in base all azione e al suo id estratti dalla request
         const user = await User.findByIdAndUpdate(
             userId,
             {

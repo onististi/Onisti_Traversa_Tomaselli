@@ -174,7 +174,6 @@ router.delete('/reviews/:reviewId', async function(req, res) {
     } catch (error) {
         console.error("Error deleting review:", error.response?.data || error.message);
 
-        // Provide better error feedback from DataServer
         if (error.response?.status === 403) {
             return res.status(403).json({ message: "You don't have permission to delete this review" });
         }

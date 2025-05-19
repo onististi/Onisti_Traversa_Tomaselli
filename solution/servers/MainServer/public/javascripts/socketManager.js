@@ -27,7 +27,7 @@ class SocketManager {
         this.requestStatus = requestStatus;
         this.dataServerUrl = dataServerUrl || window.chatData?.dataServerUrl;
 
-        console.log('SocketManager role set to:', this.role);
+       // console.log('SocketManager role set to:', this.role);
 
         if (this.socket) {
             this.socket.disconnect();

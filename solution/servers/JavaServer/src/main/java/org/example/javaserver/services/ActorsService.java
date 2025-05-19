@@ -18,7 +18,7 @@ public class ActorsService {
     @Autowired
     private EntityManager entityManager;
 
-    @Transactional
+    @Transactional  //ricerca per nome in actor_summaries per prendere informazioni su n movies e avg
     public Optional<Actor> findActor(String actor_name) {
         String sql = """
             SELECT
@@ -53,7 +53,7 @@ public class ActorsService {
     }
 
 
-    @Transactional
+    @Transactional //ricerca per id in actor summaries per la chat dedicata all'attore
     public Optional<Actor> findActor(Integer id_actor) {
         String sql = """
             SELECT
@@ -88,7 +88,7 @@ public class ActorsService {
     }
 
 
-    @Transactional
+    @Transactional  //popolazione pagina actors secondo ordinamenti parziali di "top"
     public List<Actor> getAllActorsWithGenresAndCount() {
         String sql = """
                 SELECT
@@ -114,7 +114,7 @@ public class ActorsService {
                 }).toList();
     } //non puo essere null
 
-    @Transactional
+    @Transactional //popolazione attori della pagina movie
     public Optional<List<Actor>> findActorsByMovie(Integer movie_id) {
         String jpql = "SELECT a FROM Actor a WHERE a.id_movie = :film_id";
 
@@ -166,7 +166,7 @@ public class ActorsService {
         return query.getResultList();
     }
 
-    @Transactional
+    @Transactional //ricerca tramite searchbar tramite nome non completo per attore, differente da name dove è sicuro in quanto non è scritto/cercato dall utente ma scritto tramite link dalla view dei dati
     public List<Actor> searchActors(String query) {
         String sql = """
         SELECT actor_name AS name, movies_count, genres, average_rating

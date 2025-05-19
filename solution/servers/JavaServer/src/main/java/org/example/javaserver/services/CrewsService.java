@@ -18,7 +18,7 @@ public class CrewsService {
     public Optional<List<Crew>> findCrewByMovie(Integer movie_id) {
         String jpql = "SELECT c FROM Crew c WHERE c.id.idMovie = :film_id";
 
-        TypedQuery<Crew> query = entityManager.createQuery(jpql, Crew.class);
+        TypedQuery<Crew> query = entityManager.createQuery(jpql, Crew.class); //restituisce n istanze del model crew gia popolati o optional usato per returnare 404 dal controlelr
         query.setParameter("film_id",movie_id );
         List<Crew> crew = query.getResultList();
 

@@ -30,7 +30,7 @@ router.get('/', async function (req, res, next) {
         let currentChat={type:chatType};
         let messages = [];
 
-        if (chatCode && chatType) {
+        if (chatCode && chatType) { //in base al code cambia l api del dataaserver al quale richiedere in quanto i code di actors sono "da actor_summaries" e potrebbero essercene uguali a movie da movies
             try {
                 let targetExists = false;
 
@@ -47,11 +47,11 @@ router.get('/', async function (req, res, next) {
                         currentChat.name= responseActor.data.name;
                     }
                 }catch (targetErr) {targetExists = false;}
-
+                                    //controlli sul coddice prima di cercare i messaggi con quel code
                 if (!targetExists)
                     return res.redirect('/chat');
 
-                const messagesResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/messages/${chatCode}?Type=${chatType}`);
+                const messagesResponse = await axios.get(`${process.env.DATA_SERVER_URL}/chat/messages/${chatCode}?Type=${chatType}`);  //ricehista dei messaggi di quella chat
                 if(messagesResponse) {
                     messages = messagesResponse.data.messages;
                     currentChat.id = messagesResponse.data.id;

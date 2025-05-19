@@ -90,9 +90,7 @@ router.get('/refresh-user-status', (req, res, next) => {
     next();
 }, syncUserSession, async (req, res) => {
     try {
-        // Fix the URL construction
         const baseUrl = process.env.DATA_SERVER_URL || 'http://localhost:3001';
-        // Check if DATA_SERVER_URL already contains /api
         const apiPath = baseUrl.endsWith('/api') ? '' : '/api';
 
         const response = await axios.get(`${baseUrl}${apiPath}/users/${req.session.user.id}?t=${Date.now()}`, {

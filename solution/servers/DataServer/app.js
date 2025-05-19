@@ -7,7 +7,7 @@ var logger = require('morgan');
 const http = require('http');
 const socketIo = require('socket.io');
 const axios = require('axios');
-const cors = require('cors');  // Importa il pacchetto CORS
+const cors = require('cors');
 
 require('dotenv').config();
 require('./config/db'); // Importa la connessione al database
@@ -15,7 +15,6 @@ require('./config/db'); // Importa la connessione al database
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const chatRouter = require('./routes/chat');
-const movieRouter = require('./routes/movies');
 const reviewsRouter = require('./routes/reviews');
 const requestsRouter = require('./routes/journalistRequests');
 const userRoutes = require('./routes/users');
@@ -37,36 +36,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rendi disponibile io per i controller
-app.set('io', io);
-
-// WebSocket del DataServer
-io.on('connection', (socket) => {
-  console.log('DataServer: Client connected to WebSocket', socket.id);
-
-  socket.on('join-film-room', (filmId) => {
-    socket.join(`film-${filmId}`);
-    console.log(`Client ${socket.id} joined room film-${filmId}`);
-  });
-
-  socket.on('chat-message', async (messageData) => {
-    try {
-      const response = await axios.post('http://localhost:' + (process.env.PORT || '3001') + '/api/chat/messages', messageData);
-      const savedMessage = response.data;
-
-      io.to(`film-${messageData.filmId}`).emit('new-chat-message', savedMessage);
-    } catch (error) {
-      console.error('Errore nella gestione del messaggio:', error);
-      socket.emit('error', { message: 'Errore nel processare il messaggio' });
-    }
-  });
-
-  socket.on('disconnect', () => {
-    console.log('DataServer: Client disconnected');
-  });
-});
-
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -77,7 +46,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/movies', movieRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/requests', requestsRouter);
 app.use('/api/users', userRoutes);
@@ -91,7 +59,6 @@ app.use((req, res, next) => {
   else
     next();
 });
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

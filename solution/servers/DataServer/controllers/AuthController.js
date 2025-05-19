@@ -20,7 +20,7 @@ exports.register = async (req, res) => {
         const newUser = new User({ username, email, password });
         await newUser.save();
 
-        return res.status(201).json({
+        return res.status(201).json({//return delle informazioni richieste per controlli della pagina per chat o per recensioni e popolazione headbar
             success: true,
             id: newUser._id,
             username: newUser.username,
@@ -53,9 +53,7 @@ exports.login = async (req, res) => {
             { expiresIn: '1h' }//token durata sessione
         );
 
-      //  console.log('Token generato (login):', token);
-
-        res.status(200).json({
+        res.status(200).json({//return delle informazioni richieste per controlli della pagina per chat o per recensioni e popolazione headbar
             success: true,
             token,
             id: user._id,
@@ -85,7 +83,7 @@ exports.refreshToken = async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        return res.status(200).json({ success: true, token: newToken });
+        return res.status(200).json({ success: true, token: newToken }); //return delle informazioni richieste per controlli della pagina per chat o per recensioni e popolazione headbar
     } catch (error) {
         console.error('Error refreshing token:', error.message);
         return res.status(401).json({ success: false, message: 'Invalid refresh token' });

@@ -5,8 +5,6 @@ const { ensureAuthenticated } = require('../middleware/auth');
 
 // Fix the DATA_SERVER_URL handling
 const baseUrl = process.env.DATA_SERVER_URL || 'http://localhost:3001';
-// Check if DATA_SERVER_URL already contains /api
-const apiPath = baseUrl.endsWith('/api') ? '' : '/api';
 
 // Ottieni i dati di un utente
 router.get('/:id', ensureAuthenticated, async (req, res) => {

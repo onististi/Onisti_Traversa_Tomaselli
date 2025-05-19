@@ -67,7 +67,7 @@ app.use('/actors', actorRouter);
 app.use('/chat', chatRouter);
 app.use('/requests', requestsRouter);
 app.use('/admin', adminRouter);
-app.use('/user', userRouter);
+//app.use('/user', userRouter);
 app.use('/search', searchRouter);
 
 app.use((req, res, next) => {

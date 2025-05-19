@@ -27,7 +27,7 @@
         <div class="filter-group">
             <label>FILTER BY GENRES:</label>
             <select class="genre-select" multiple="multiple">
-                <option value="all">ALL GENRES</option>
+                <option value="all" {{#unless selectedGenre}}selected{{/unless}}>ALL GENRES</option>
                 <option value="Action">Action</option>
                 <option value="Adventure">Adventure</option>
                 <option value="Animation">Animation</option>

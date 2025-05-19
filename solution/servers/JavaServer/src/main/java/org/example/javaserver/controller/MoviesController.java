@@ -19,7 +19,7 @@ public class MoviesController {
         this.moviesService = moviesService;
     }
 
-    @GetMapping("") //pagina movies
+    @GetMapping("") //pagina movies iniziale
     public ResponseEntity<List<Movie>> getMovies() {
         List<Movie> movies = moviesService.getMovies();
         return ResponseEntity.ok(movies);
@@ -30,7 +30,7 @@ public class MoviesController {
         Optional<Movie> movie = moviesService.findMovieById(id);
         return movie.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build()); //404 se non presente
     }
-
+//popolazione home 3 query 3 sezioni
     @GetMapping("/latest")
     public ResponseEntity<List<Movie>> getLatestMovies() {
         List<Movie> movies = moviesService.findLatestMovies(20);
@@ -48,7 +48,7 @@ public class MoviesController {
         List<Movie> movies = moviesService.getOscarWinners(20);
         return ResponseEntity.ok(movies);
     }
-
+//per ricerca tramite searchbar nome simile
     @GetMapping("/search")
     public ResponseEntity<List<Movie>> searchMovies(@RequestParam String query) {
         List<Movie> movies = moviesService.searchMovies(query);

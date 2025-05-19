@@ -96,7 +96,7 @@ router.post('/messages', async (req, res) => {
         if(chatId)
             chat = await Chat.findById(chatId);
 
-        if (!chatId || !chat) {
+        if (!chatId || !chat) {  //se la chat non esiste la crea
             chat = new Chat({
                 code: chatCode,
                 last_updated: new Date(),
@@ -107,7 +107,7 @@ router.post('/messages', async (req, res) => {
             else if(req.body.chatName)
                 chat.name = req.body.chatName;
 
-            await chat.save();
+            await chat.save(); //aggiorna il last_updated del document
         }
 
         const newMessage = new Message({

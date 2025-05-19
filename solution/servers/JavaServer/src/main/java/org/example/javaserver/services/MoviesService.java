@@ -200,7 +200,7 @@ public class MoviesService {
 
         return movies;
     }
-
+    //3 query per popolazione pagina home
     @Transactional
     public List<Movie> findLatestMovies(int limit) {
         String query = "SELECT m FROM Movie m WHERE m.year IS NOT NULL ORDER BY m.year DESC";
@@ -286,7 +286,7 @@ public class MoviesService {
     }
 
 
-    @Transactional
+    @Transactional //ricerca da searchbar per movies con titolo simile cercato
     public List<Movie> searchMovies(String query) {
         String movieQuery = "SELECT m FROM Movie m WHERE LOWER(m.name) LIKE LOWER(:query) AND m.rating IS NOT NULL ORDER BY m.rating DESC";
         List<Movie> movies = entityManager.createQuery(movieQuery, Movie.class)

@@ -25,19 +25,19 @@ public class ActorsController {
     public ActorsController(ActorsService actorsService) {
         this.actorsService = actorsService; this.moviesService = new MoviesService();}
 
-    @GetMapping("")
+    @GetMapping("") //controller per  index actors, restituzione 500 top actors
     public ResponseEntity<List<Actor>> getAllActors() {
         List<Actor> actors = actorsService.getAllActorsWithGenresAndCount();
         return ResponseEntity.ok(actors);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/{name}") //pagina actor singolo restituzione solo un actor, opzionale per restituire 404 e gestire errore
     public ResponseEntity<Actor> searchActor(@PathVariable String name) {
         Optional<Actor> actor = actorsService.findActor(name);
         return actor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/actor/{id}")
+    @GetMapping("/actor/{id}") //ricerca actor per id usato per la chat su un attore, la ricerca normalmente avviene su nome-> lavora su actor_summaries
     public ResponseEntity<Actor> searchActor(@PathVariable Integer id) {
         Optional<Actor> actor = actorsService.findActor(id);
         return actor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -49,7 +49,7 @@ public class ActorsController {
         return actors.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{name}/movies")
+    @GetMapping("/{name}/movies") //pagina actor, popolazione filmography
     public ResponseEntity<List<ActorMovie>> getMoviesByActor(
             @PathVariable String name,
             @RequestParam(defaultValue = "0") int page,
@@ -59,13 +59,13 @@ public class ActorsController {
         return moviesWithRole.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{name}/oscars")
+    @GetMapping("/{name}/oscars") //oppolazione oscars della pagina actor singolo
     public ResponseEntity<List<OscarAwards>> getOscarsByActor(@PathVariable String name) {
         List<OscarAwards> oscars = actorsService.getOscarsByActor(name);
         return ResponseEntity.ok(oscars);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search") //per searchbar
     public ResponseEntity<List<Actor>> searchActors(@RequestParam String query) {
         List<Actor> actors = actorsService.searchActors(query);
         return ResponseEntity.ok(actors);
