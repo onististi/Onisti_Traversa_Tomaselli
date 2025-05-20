@@ -1,5 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
     initializeReviewSystem();
+    calculateAndDisplayAverageRating();
+
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', function() {
+            setTimeout(() => {
+                calculateAndDisplayAverageRating();
+            }, 100);
+        });
+    }
 });
 
 // Inizializzazione del sistema di recensioni
@@ -143,7 +153,15 @@ async function submitEditReview() {
             updatedReview.date
         );
         closeEditPopup();
+        calculateAndDisplayAverageRating();
         showNotification('Recensione aggiornata con successo', 'success');
+
+        const ratingElement = document.getElementById('movieReviewRating');
+        if (ratingElement) {
+            ratingElement.classList.add('rating-updated');
+            setTimeout(() => ratingElement.classList.remove('rating-updated'), 2000);
+        }
+
     } catch (error) {
         console.error('Error:', error);
         showNotification('Errore nell\'aggiornamento: ' + error.message, 'error');
@@ -173,7 +191,15 @@ async function deleteReview(reviewId) {
         const response = await fetch(`/movies/reviews/${reviewId}`, { method: 'DELETE' });
         if (!response.ok) throw new Error('Delete failed');
 
-        animateDeletion(reviewItem);
+        animateDeletion(reviewItem, () => {
+            calculateAndDisplayAverageRating();
+            const ratingElement = document.getElementById('movieReviewRating');
+            if (ratingElement) {
+                ratingElement.classList.add('rating-updated');
+                setTimeout(() => ratingElement.classList.remove('rating-updated'), 2000);
+            }
+        });
+
         showNotification('Recensione eliminata con successo', 'success');
         checkEmptyReviews();
     } catch (error) {
@@ -197,13 +223,16 @@ function formatDate(date) {
     });
 }
 
-function animateDeletion(reviewItem) {
+function animateDeletion(reviewItem, callback) {
     if (!reviewItem) return window.location.reload();
 
     reviewItem.style.height = `${reviewItem.offsetHeight}px`;
     setTimeout(() => {
         reviewItem.style.cssText = 'height:0; opacity:0; margin:0; padding:0;';
-        setTimeout(() => reviewItem.remove(), 500);
+        setTimeout(() => {
+            reviewItem.remove();
+            if (callback) callback();
+        }, 500);
     }, 10);
 }
 
@@ -231,4 +260,90 @@ function showNotification(message, type) {
             setTimeout(() => notification.remove(), 300);
         }, 3000);
     }, 10);
+}
+
+function calculateAndDisplayAverageRating() {
+    const reviewItems = document.querySelectorAll('.review-item');
+
+    if (reviewItems.length === 0) {
+        const ratingElement = document.getElementById('movieReviewRating');
+        if (ratingElement) {
+            ratingElement.innerHTML = `
+            <div class="average-rating-container">
+                <p class="no-rating-reviews">Nessuna recensione</p>
+            </div>
+        `;
+        }
+        return;
+    }
+
+    let totalRating = 0;
+    let userRatingsCount = 0;
+    let journalistRatingsCount = 0;
+    let userRatingsTotal = 0;
+    let journalistRatingsTotal = 0;
+
+    reviewItems.forEach(review => {
+        const rating = parseInt(review.dataset.rating, 10);
+        const role = review.dataset.role;
+
+        totalRating += rating;
+
+        if (role === 'journalist') {
+            journalistRatingsTotal += rating;
+            journalistRatingsCount++;
+        } else {
+            userRatingsTotal += rating;
+            userRatingsCount++;
+        }
+    });
+
+    const averageRating = totalRating / reviewItems.length;
+    const userAverageRating = userRatingsCount > 0 ? userRatingsTotal / userRatingsCount : 0;
+    const journalistAverageRating = journalistRatingsCount > 0 ? journalistRatingsTotal / journalistRatingsCount : 0;
+
+    updateRatingDisplay(averageRating, userAverageRating, journalistAverageRating);
+}
+
+function updateRatingDisplay(averageRating, userAverageRating, journalistAverageRating) {
+    const ratingElement = document.getElementById('movieReviewRating');
+    if (!ratingElement) return;
+
+    const formatRating = (rating) => rating.toFixed(1);
+
+    const stars = generateStarRating(Math.round(averageRating));
+
+    let ratingHTML = `
+        <div class="average-rating-container">
+            <div class="average-rating">
+                <span class="rating-value">${formatRating(averageRating)}</span> /5
+                <div class="stars-container">${stars}</div>
+            </div>
+            <div class="rating-details">
+    `;
+
+    if (userAverageRating > 0) {
+        ratingHTML += `
+            <div class="user-rating">
+                <span class="role-label user">Utenti:</span> 
+                <span class="rating-value">${formatRating(userAverageRating)}</span> /5
+            </div>
+        `;
+    }
+
+    if (journalistAverageRating > 0) {
+        ratingHTML += `
+            <div class="journalist-rating">
+                <span class="role-label journalist">Giornalisti:</span> 
+                <span class="rating-value">${formatRating(journalistAverageRating)}</span> /5
+            </div>
+        `;
+    }
+
+    ratingHTML += `
+            </div>
+        </div>
+    `;
+
+    ratingElement.innerHTML = ratingHTML;
 }

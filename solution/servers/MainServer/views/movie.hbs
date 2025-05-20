@@ -79,6 +79,10 @@
                         <td id="movieRating">{{#if movie.rating}} {{movie.rating}} {{else}}0{{/if}}/5</td>
                     </tr>
                     <tr>
+                        <td>Reviews Rating</td>
+                        <td id="movieReviewRating">{{#if movie.rating}} {{movie.rating}} {{else}}0{{/if}}/5</td>
+                    </tr>
+                    <tr>
                         <td>Oscar</td>
                         <td id="movieOscar">{{movie.movieOscars}}</td>
                     </tr>
@@ -96,7 +100,7 @@
                     </tr>
                     <tr>
                         <td>Dubbed in</td>
-                        <td id="movieDubbed">{{movie.dubbing}}</td><<!--niente if returna None il server -->
+                        <td id="movieDubbed">{{movie.dubbing}}</td><!--niente if returna None il server -->
                     </tr>
                     <tr>
                         <td>Released in</td>

@@ -280,6 +280,45 @@ h2 {
     background: center / contain no-repeat;
 }
 
+.average-rating-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stars-container {
+    display: inline-flex;
+    margin-left: 4px;
+}
+
+.rating-details {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9em;
+    margin-top: 2px;
+}
+
+.user-rating, .journalist-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.role-label {
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    color: white;
+}
+
+.role-label.user {
+    background-color: #3498db;
+}
+
+.role-label.journalist {
+    background-color: #e74c3c;
+}
+
 @media screen and (max-width: 768px) {
     .overlay {
         width: 100%;
