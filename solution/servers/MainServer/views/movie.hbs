@@ -113,39 +113,84 @@
             <h2>REVIEWS</h2>
             <div class="reviews-container" id="reviewsContainer">
                 {{#if reviews.length}}
-                    {{#each reviews}}
-                        <div class="review-item {{#if (eq this.role 'journalist')}}journalist-review{{else}}user-review{{/if}}"
-                             data-review-id="{{this._id}}"
-                             data-is-author="{{#if (eq this.author ../user.username)}}true{{else}}false{{/if}}"
-                             data-rating="{{this.rating}}"
-                             data-role="{{this.role}}">
-                            <div class="review-header">
-                                <span class="review-author">{{this.author}}</span>
-                                <span class="review-role {{this.role}}">{{this.role}}</span>
-                                <div class="review-rating">
-                                    {{#times this.rating}}<span class="star">★</span>{{/times}}
-                                    {{#times (subtract 5 this.rating)}}<span class="star empty">☆</span>{{/times}}
-                                </div>
-                                <span class="review-date">{{formatDate this.date}}</span>
-                            </div>
-                            <div class="review-content">
-                                <p>{{this.content}}</p>
+                        <div class="reviews-columns">
+                            <div class="review-column journalist-column">
+                                <h3>Journalist Reviews</h3>
+                                {{#each reviews}}
+                                    {{#if (eq this.role 'journalist')}}
+                                        <div class="review-item"
+                                             data-review-id="{{this._id}}"
+                                             data-is-author="{{#if (eq this.author ../user.username)}}true{{else}}false{{/if}}"
+                                             data-rating="{{this.rating}}"
+                                             data-role="{{this.role}}">
+                                            <div class="review-header">
+                                                <span class="review-author">{{this.author}}</span>
+                                                <span class="review-role journalist">{{this.role}}</span>
+                                                <div class="review-rating">
+                                                    {{#times this.rating}}<span class="star">★</span>{{/times}}
+                                                    {{#times (subtract 5 this.rating)}}<span class="star empty">☆</span>{{/times}}
+                                                </div>
+                                                <span class="review-date">{{formatDate this.date}}</span>
+                                            </div>
+                                            <div class="review-content">
+                                                <p>{{this.content}}</p>
+                                            </div>
+
+                                            {{#if (eq this.author ../user.username)}}
+                                                <div class="review-actions">
+                                                    <button class="edit-review-btn"
+                                                            onclick="openEditReview('{{this._id}}', `{{this.content}}`, '{{this.rating}}')">
+                                                        Edit
+                                                    </button>
+                                                    <button class="delete-review-btn"
+                                                            onclick="deleteReview('{{this._id}}')">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            {{/if}}
+                                        </div>
+                                    {{/if}}
+                                {{/each}}
                             </div>
 
-                            {{#if (eq this.author ../user.username)}}
-                                <div class="review-actions">
-                                    <button class="edit-review-btn"
-                                            onclick="openEditReview('{{this._id}}', `{{this.content}}`, '{{this.rating}}')">
-                                        Edit
-                                    </button>
-                                    <button class="delete-review-btn"
-                                            onclick="deleteReview('{{this._id}}')">
-                                        Delete
-                                    </button>
-                                </div>
-                            {{/if}}
+                            <div class="review-column user-column">
+                                <h3>Users Reviews</h3>
+                                {{#each reviews}}
+                                    {{#if (eq this.role 'user')}}
+                                        <div class="review-item"
+                                             data-review-id="{{this._id}}"
+                                             data-is-author="{{#if (eq this.author ../user.username)}}true{{else}}false{{/if}}"
+                                             data-rating="{{this.rating}}"
+                                             data-role="{{this.role}}">
+                                            <div class="review-header">
+                                                <span class="review-author">{{this.author}}</span>
+                                                <span class="review-role user">{{this.role}}</span>
+                                                <div class="review-rating">
+                                                    {{#times this.rating}}<span class="star">★</span>{{/times}}
+                                                    {{#times (subtract 5 this.rating)}}<span class="star empty">☆</span>{{/times}}
+                                                </div>
+                                                <span class="review-date">{{formatDate this.date}}</span>
+                                            </div>
+                                            <div class="review-content">
+                                                <p>{{this.content}}</p>
+                                            </div>
+                                            {{#if (eq this.author ../user.username)}}
+                                                <div class="review-actions">
+                                                    <button class="edit-review-btn"
+                                                            onclick="openEditReview('{{this._id}}', `{{this.content}}`, '{{this.rating}}')">
+                                                        Edit
+                                                    </button>
+                                                    <button class="delete-review-btn"
+                                                            onclick="deleteReview('{{this._id}}')">
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            {{/if}}
+                                        </div>
+                                    {{/if}}
+                                {{/each}}
+                            </div>
                         </div>
-                    {{/each}}
                 {{else}}
                     <div class="no-reviews">
                         <p>No reviews yet. {{#if isLoggedIn}}Be the first to review this movie!{{else}}Login to add a review.{{/if}}</p>

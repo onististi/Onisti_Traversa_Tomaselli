@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 100);
         });
     }
+
+    checkEmptyColumns();
 });
 
 // Inizializzazione del sistema di recensioni
@@ -130,7 +132,6 @@ function closeEditPopup() {
     setTimeout(() => popup.style.display = 'none', 300);
 }
 
-// Funzioni per le operazioni CRUD
 async function submitEditReview() {
     const reviewId = document.getElementById('editReviewId').value;
     const rating = document.getElementById('editReviewRating').value;
@@ -192,20 +193,53 @@ async function deleteReview(reviewId) {
         if (!response.ok) throw new Error('Delete failed');
 
         animateDeletion(reviewItem, () => {
-            calculateAndDisplayAverageRating();
-            const ratingElement = document.getElementById('movieReviewRating');
-            if (ratingElement) {
-                ratingElement.classList.add('rating-updated');
-                setTimeout(() => ratingElement.classList.remove('rating-updated'), 2000);
+            const remainingReviews = document.querySelectorAll('.review-item');
+            if (remainingReviews.length === 0) {
+                window.location.reload();
+            } else {
+                calculateAndDisplayAverageRating();
+                const ratingElement = document.getElementById('movieReviewRating');
+                if (ratingElement) {
+                    ratingElement.classList.add('rating-updated');
+                    setTimeout(() => ratingElement.classList.remove('rating-updated'), 2000);
+                }
+                checkEmptyColumns();
             }
         });
 
         showNotification('Recensione eliminata con successo', 'success');
-        checkEmptyReviews();
     } catch (error) {
         reviewItem?.classList.remove('deleting');
         showNotification('Errore nell\'eliminazione: ' + error.message, 'error');
     }
+}
+
+function checkEmptyColumns() {
+    const columnTypes = [
+        { selector: '.journalist-column', message: 'No journalist reviews yet.' },
+        { selector: '.user-column', message: 'No user reviews yet.' }
+    ];
+
+    columnTypes.forEach(({selector, message}) => {
+        const column = document.querySelector(selector);
+        if (!column) return;
+
+        const hasReviews = column.querySelector('.review-item');
+        const existingNoReviews = column.querySelector('.no-reviews');
+
+        if (!hasReviews) {
+            if (existingNoReviews) {
+                existingNoReviews.remove();
+            }
+
+            const noReviewsDiv = document.createElement('div');
+            noReviewsDiv.className = 'no-reviews';
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            noReviewsDiv.appendChild(messageElement);
+            column.appendChild(noReviewsDiv);
+        }
+    });
 }
 
 // Funzioni di supporto
@@ -234,17 +268,6 @@ function animateDeletion(reviewItem, callback) {
             if (callback) callback();
         }, 500);
     }, 10);
-}
-
-function checkEmptyReviews() {
-    const container = document.getElementById('reviewsContainer');
-    if (!container.querySelector('.review-item')) {
-        container.innerHTML = `
-            <div class="no-reviews">
-                <p>Non ci sono ancora recensioni. Sii il primo a recensire questo film!</p>
-            </div>
-        `;
-    }
 }
 
 function showNotification(message, type) {
@@ -325,7 +348,7 @@ function updateRatingDisplay(averageRating, userAverageRating, journalistAverage
     if (userAverageRating > 0) {
         ratingHTML += `
             <div class="user-rating">
-                <span class="role-label user">Utenti:</span> 
+                <span class="role-label user">Users:</span> 
                 <span class="rating-value">${formatRating(userAverageRating)}</span> /5
             </div>
         `;
@@ -334,7 +357,7 @@ function updateRatingDisplay(averageRating, userAverageRating, journalistAverage
     if (journalistAverageRating > 0) {
         ratingHTML += `
             <div class="journalist-rating">
-                <span class="role-label journalist">Giornalisti:</span> 
+                <span class="role-label journalist">Journalists:</span> 
                 <span class="rating-value">${formatRating(journalistAverageRating)}</span> /5
             </div>
         `;

@@ -345,6 +345,38 @@ h2 {
     margin-bottom: 20px;
     padding-bottom: 10px;
 }
+.reviews-columns {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+}
+
+.review-column {
+    flex: 1;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.review-column h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.journalist-column h3 {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.user-column h3 {
+    color: #4CAF50;
+    border-bottom-color: #4CAF50;
+}
+
 
 .review-item {
     background-color: rgb(255, 255, 255);
