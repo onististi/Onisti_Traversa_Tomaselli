@@ -1,4 +1,5 @@
 const Review = require('../models/Review');
+const User = require('../models/users');
 const axios = require('axios'); // Importa Axios
 
 exports.getReviewsByMovie = async (req, res) => {
@@ -74,13 +75,19 @@ exports.addReview = async (req, res) => {
             return res.status(400).json({ message: "Review content is required" });
         }
 
+        // Verifica diretta nel database se l'utente esiste
+        const userExists = await User.findOne({ username: author });
+        if (!userExists) {
+            return res.status(404).json({ message: "Author not found in user database" });
+        }
+
         // Validazione ruolo
         const validRoles = ['user', 'journalist', 'master'];
         const userRole = validRoles.includes(role) ? role : 'user';
 
         // Crea una nuova recensione
         const newReview = new Review({
-            movieId: movieId.replace(":", ""), // Remove any colon prefix if present
+            movieId: movieId.replace(":", ""),
             author,
             role: userRole,
             rating: parseInt(rating, 10),
@@ -88,11 +95,12 @@ exports.addReview = async (req, res) => {
             isImported: false
         });
 
-        // Salva recensione nel db
+        // Salva recensione nel database
         const savedReview = await newReview.save();
 
         console.log('Review saved successfully:', savedReview._id);
 
+        // Invia evento via WebSocket
         const io = req.app.get('io');
         if (io) {
             io.emit('new-review', {
@@ -110,8 +118,6 @@ exports.addReview = async (req, res) => {
     }
 };
 
-
-// Aggiorna una recensione esistente
 exports.updateReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
@@ -123,7 +129,17 @@ exports.updateReview = async (req, res) => {
             return res.status(400).json({ message: "Review ID not specified" });
         }
 
-        // Find the review
+        if (!user) {
+            return res.status(401).json({ message: "User information missing" });
+        }
+
+        // Verifica se l'utente esiste nel database
+        const userExists = await User.findOne({ username: user.username });
+        if (!userExists) {
+            return res.status(404).json({ message: "Author not found in user database" });
+        }
+
+        // Trova la recensione
         const review = await Review.findById(reviewId);
 
         if (!review) {
@@ -131,10 +147,7 @@ exports.updateReview = async (req, res) => {
             return res.status(404).json({ message: "Review not found" });
         }
 
-        if (!user) {
-            return res.status(401).json({ message: "User information missing" });
-        }
-
+        // Controllo di autorizzazione
         if (review.author !== user.username && user.role !== 'admin') {
             console.log(`Access denied: ${user.username} is not authorized to modify ${review.author}'s review`);
             return res.status(403).json({ message: "You are not authorized to modify this review" });
@@ -163,6 +176,7 @@ exports.updateReview = async (req, res) => {
 
         console.log(`Review ${reviewId} updated successfully`);
 
+        // Invia evento via WebSocket
         const io = req.app.get('io');
         if (io) {
             io.emit('update-review', {
@@ -179,6 +193,7 @@ exports.updateReview = async (req, res) => {
         return res.status(500).json({ message: "Error updating review", error: error.message });
     }
 };
+
 
 //Elimina una recensione
 exports.deleteReview = async (req, res) => {
