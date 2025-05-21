@@ -1,0 +1,521 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cineverse API - DataServer",
+    "version": "1.0.0",
+    "description": " Documentazione delle API REST di Dataserver per l'accesso ai dati dinamici MongoDB:\n  - login e registrazione utenti\n  - invio e gestione recensioni\n  - gestione e autenticazione utenti\n  - richieste per diventare giornalisti\n  - gestione chat\n"
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Registra un nuovo utente",
+        "tags": [
+          "Autenticazione - AuthController"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegister"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utente registrato"
+          },
+          "500": {
+            "description": "Errore di registrazione"
+          },
+          "400": {
+            "description": "Campi mandatori"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login utente",
+        "tags": [
+          "Autenticazione - AuthController"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accesso riuscito"
+          },
+          "401": {
+            "description": "Credenziali non valide"
+          },
+          "500": {
+            "description": "Errore durante la registrazione"
+          }
+        }
+      }
+    },
+    "/api/reviews": {
+      "post": {
+        "summary": "Crea una nuova recensione",
+        "tags": [
+          "Recensioni - ReviewController"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Review"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Recensione creata"
+          },
+          "400": {
+            "description": "Errore durante la creazione, campo is required"
+          },
+            "500": {
+                "description": "Errore durante l'aggiunta"
+            }
+        }
+      }
+    },
+    "/api/reviews/movie/{movieId}": {
+      "get": {
+        "summary": "Recensioni per film specifico",
+        "tags": [
+          "Recensioni - ReviewController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "movieId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": 1000006
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista recensioni"
+          },
+          "500": {
+            "description": "Errore durante il recupero delle recensioni"
+          },
+          "404": {
+            "description": "Recensioni non trovate"
+          }
+        }
+      }
+    },
+    "/api/reviews/{reviewId}": {
+      "put": {
+        "summary": "Aggiorna una recensione",
+        "tags": [
+          "Recensioni - ReviewController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reviewId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Review"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recensione aggiornata"
+          },
+          "400":{
+            "description": "Campi malformati"
+          },
+          "500": {
+            "description": "Errore durante l'aggiornamento"
+          }
+        }
+      },
+      "/api/delete": {
+        "summary": "Elimina una recensione",
+        "tags": [
+          "Recensioni - ReviewController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reviewId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recensione eliminata"
+          },
+          "403": {
+            "description": "L'utente non ha i permessi per eliminare la recensione"
+          },
+          "404": {
+            "description": "Recensione non trovata"
+          },
+          "500": {
+            "description": "Errore durante l'eliminazione"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Ottiene un utente per ID",
+        "tags": [
+          "Utenti - UserController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "inserire id ottenuto dal login"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Utente trovato"
+          },
+          "404": {
+            "description": "Utente non trovato"
+          },
+          "500": {
+            "description": "Errore durante il recupero delll'utente"
+          }
+        }
+      }
+    },
+    "/api/requests/request": {
+      "post": {
+        "summary": "Invia richiesta per diventare giornalista",
+        "tags": [
+          "Giornalisti - JournalistController"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JournalistRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Richiesta ricevuta"
+          },
+          "404": {
+            "description": "utente non trovato"
+          },
+          "400": {
+            "description": "L'utente ha già il ruolo richiesto"
+          },
+          "500": {
+            "description": "Errore durante la richiesta"
+          }
+        }
+      }
+    },
+    "/api/requests/pending": {
+      "get": {
+        "summary": "Ottiene richieste giornalista in attesa",
+        "tags": [
+          "Giornalisti - JournalistController"
+        ],
+        "responses": {
+          "201": {
+            "description": "Richieste trovate"
+          },
+          "403": {
+            "description": "Accesso negato"
+          },
+          "500": {
+            "description": "Errore durante il recupero delle richieste"
+          }
+        }
+      }
+    },
+    "/api/requests/handle": {
+      "post": {
+        "summary": "Gestisce una richiesta giornalista",
+        "tags": [
+          "Giornalisti - JournalistController"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "approved",
+                      "rejected"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "userId",
+                  "decision"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Richiesta gestita"
+          },
+          "404": {
+            "description": "Utente non trovato"
+          },
+          "500": {
+            "description": "Errore interno del server durante la gestione"
+          }
+        }
+      }
+    },
+    "/api/chat/chats": {
+      "get": {
+        "summary": "Lista chat recenti con messaggi",
+        "tags": [
+          "Chat - ChatController"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista Json chat"
+          },
+          "500": {
+            "description": "Errore durante il recupero delle chat"
+          }
+        }
+      }
+    },
+    "/api/chat/messages/{code}": {
+      "get": {
+        "summary": "Ottiene i messaggi di una chat specifica (film o attore)",
+        "tags": [
+          "Chat - ChatController"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1000006"
+            },
+            "description": "Codice identificativo del movie o dell attore a cui la chat fa riferimento"
+          },
+          {
+            "in": "query",
+            "name": "Type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "movie",
+                "actor"
+              ],
+              "example": "movie"
+            },
+            "description": "Tipo di chat: se basata su un Movie o su un Actor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Messaggi della chat Json"
+          },
+          "400": {
+            "description": "Chat richiesta invalida"
+          },
+          "500":{
+            "description": "Errore durante il recupero dei mesasggi"
+          }
+        }
+      }
+    },
+    "/api/chat/messages": {
+      "post": {
+        "summary": "Invia un nuovo messaggio in una chat (esistente o nuova)",
+        "tags": [
+          "Chat - ChatController"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "chatCId",
+                  "userId",
+                  "content"
+                ],
+                "properties": {
+                  "chatId": {
+                    "type": "string",
+                    "example": 1000006
+                  },
+                  "userId": {
+                    "type": "string",
+                    "example": "inserire id restituito al login"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "Messaggio di esempio"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Messaggio inviato correttamente"
+          },
+          "400": {
+            "description": "Campo mancante o malformato"
+          },
+          "404": {
+            "description": "User non trovato"
+          },
+          "500": {
+            "description": "Errore durante l'invio"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserRegister": {
+        "type": "object",
+        "required": [
+          "username",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "nuovoUtenteSwagger"
+          },
+          "email": {
+            "type": "string",
+            "example": "swaggeremail@mail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "esempioSwagger"
+          }
+        }
+      },
+      "UserLogin": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "nuovoUtenteSwagger"
+          },
+          "password": {
+            "type": "string",
+            "example": "esempioSwagger"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "required": [
+          "movieId",
+          "content",
+          "score"
+        ],
+        "properties": {
+          "movieId": {
+            "type": "string",
+            "example": "1000006"
+          },
+          "content": {
+            "type": "string",
+            "example": "Recensione di esempio"
+          },
+          "author": {
+            "type": "string",
+            "example": "nuovoUtenteSwagger"
+          },
+          "role": {
+            "type": "string",
+            "example": "user"
+          },
+          "rating": {
+            "type": "number",
+            "example": 4.5
+          }
+        }
+      },
+      "JournalistRequest": {
+        "type": "object",
+        "required": [
+          "motivation"
+        ],
+        "properties": {
+          "motivation": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

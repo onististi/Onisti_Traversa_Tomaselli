@@ -8,6 +8,10 @@ const http = require('http');
 const socketIo = require('socket.io');
 const axios = require('axios');
 const cors = require('cors');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 
 require('dotenv').config();
 require('./config/db'); // Importa la connessione al database
@@ -51,6 +55,7 @@ app.use('/api/requests', requestsRouter);
 app.use('/api/users', userRoutes);
 app.use('/api/chat', chatRouter);
 app.use('/api/reviews', reviewsRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //middleware per bloccare richieste che non sono API
 app.use((req, res, next) => {

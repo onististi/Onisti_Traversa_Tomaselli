@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
         // Controlla se l'utente esiste già
         const existingUser = await User.findOne({ $or: [{ username }, { email }] });
         if (existingUser) {
-            return res.status(400).json({ success: false, message: 'Username or email already exist' });
+            return res.status(409).json({ success: false, message: 'Username or email already exist' });
         }
 
         // Crea nuovo utente

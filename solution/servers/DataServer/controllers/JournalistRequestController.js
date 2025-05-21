@@ -57,7 +57,7 @@ exports.getPendingRequests = async (req, res) => {
 
         console.log('Found pending requests:', pendingRequests.length);
 
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             requests: pendingRequests
         });

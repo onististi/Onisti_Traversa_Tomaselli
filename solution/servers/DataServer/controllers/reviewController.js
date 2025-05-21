@@ -25,8 +25,8 @@ exports.getReviewsByMovie = async (req, res) => {
                 { movie_title: movieTitle }
             ]
         })
-            .select('movieId movie_title author critic_name role publisher_name review_type rating review_score content review_content date review_date')
-            .sort({ date: -1, review_date: -1 })
+            .select('movieId movie_title author role rating content createdAt updatedAt')
+            .sort({ createdAt : -1 })
             .limit(50);
 
         if (!reviews || reviews.length === 0) {
@@ -39,13 +39,11 @@ exports.getReviewsByMovie = async (req, res) => {
             _id: review._id,
             movie_title: review.movie_title,
             movieId: review.movieId,
-            author: review.author || review.critic_name || "Anonymous",
-            role: review.role || (review.top_critic ? "critic" : "user"),
-            rating: review.rating || (review.review_score ? Math.ceil(review.review_score / 20) : 3),
-            content: review.content || review.review_content || "",
-            date: review.date || review.review_date || new Date(),
-            review_type: review.review_type || "User",
-            publisher: review.publisher_name || ""
+            author: review.author,
+            role: review.role ||  "user",
+            rating: review.rating,
+            content: review.content,
+            date: review.createdAt,
         }));
 
         console.log(`Found ${normalizedReviews.length} reviews for movie ${movieTitle} (${movieId})`);
@@ -59,7 +57,7 @@ exports.getReviewsByMovie = async (req, res) => {
 
 exports.addReview = async (req, res) => {
     try {
-        const { movieId, author, role, rating, content, date } = req.body;
+        const { movieId, author, role, rating, content } = req.body;
 
         console.log('New review data received:', req.body);
 
@@ -84,11 +82,9 @@ exports.addReview = async (req, res) => {
         const newReview = new Review({
             movieId: movieId.replace(":", ""), // Remove any colon prefix if present
             author,
-            role: userRole, // Use validated role
+            role: userRole,
             rating: parseInt(rating, 10),
             content,
-            review_type: userRole === 'critic' || userRole === 'journalist' ? 'Fresh' : 'User',
-            date: date || new Date(),
             isImported: false
         });
 

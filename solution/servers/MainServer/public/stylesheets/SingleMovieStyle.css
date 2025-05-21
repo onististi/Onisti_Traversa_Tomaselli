@@ -312,11 +312,11 @@ h2 {
 }
 
 .role-label.user {
-    background-color: #3498db;
+    background-color: #2e7d32;
 }
 
 .role-label.journalist {
-    background-color: #e74c3c;
+    background-color: #3498db;
 }
 
 @media screen and (max-width: 768px) {
@@ -460,7 +460,6 @@ h2 {
 .rating-input {
     display: flex;
     flex-direction: row-reverse;
-    justify-content: flex-end;
 }
 
 .rating-input input {
@@ -733,9 +732,8 @@ textarea {
 }
 
 .rating-input {
-    display: flex;
+    display: inline-flex;
     flex-direction: row-reverse;
-    justify-content: flex-start;
 }
 
 .rating-input input {
@@ -785,7 +783,8 @@ textarea:focus {
     font-weight: 600;
     font-size: 1em;
     transition: background-color 0.3s;
-    display: inline-block;
+    display: block;
+    justify-self: flex-end;
 }
 
 .submit-review-btn:hover {
