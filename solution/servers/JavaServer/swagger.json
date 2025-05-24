@@ -1,0 +1,536 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cineverse API - JavaServer",
+    "version": "1.0.0",
+    "description": "Documentazione completa delle API REST per l'accesso ai dati cinematografici"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Server di sviluppo locale"
+    }
+  ],
+  "paths": {
+    "/api/movies": {
+      "get": {
+        "summary": "Lista film principali",
+        "tags": ["Movies"],
+        "description": "Restituisce 300 film con rating ≥4 ordinati per nome",
+        "responses": {
+          "200": {
+            "description": "Lista film",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MovieBasic"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Errore interno"
+          }
+        }
+      }
+    },
+    "/api/movies/{id}": {
+      "get": {
+        "summary": "Dettaglio completo film",
+        "tags": ["Movies"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1000006
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dettaglio film",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MovieDetailed"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Film non trovato"
+          }
+        }
+      }
+    },
+    "/api/movies/latest": {
+      "get": {
+        "summary": "Ultimi film usciti",
+        "tags": ["Movies"],
+        "responses": {
+          "200": {
+            "description": "20 film più recenti",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MovieBasic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/movies/top-rated": {
+      "get": {
+        "summary": "Film meglio valutati",
+        "tags": ["Movies"],
+        "responses": {
+          "200": {
+            "description": "20 film top rated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MovieBasic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/movies/oscars-winners": {
+      "get": {
+        "summary": "Vincitori Oscar",
+        "tags": ["Movies"],
+        "responses": {
+          "200": {
+            "description": "20 vincitori recenti",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MovieBasic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/movies/search": {
+      "get": {
+        "summary": "Ricerca film",
+        "tags": ["Movies"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Inception"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Risultati ricerca",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MovieBasic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors": {
+      "get": {
+        "summary": "Lista attori principali",
+        "tags": ["Actors"],
+        "description": "Top 500 attori per numero di film",
+        "responses": {
+          "200": {
+            "description": "Lista attori",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActorBasic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors/{name}": {
+      "get": {
+        "summary": "Dettaglio attore",
+        "tags": ["Actors"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Leonardo DiCaprio"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dettaglio attore",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActorDetailed"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Attore non trovato"
+          }
+        }
+      }
+    },
+    "/api/actors/movie/{id}": {
+      "get": {
+        "summary": "Attori di un film",
+        "tags": ["Actors"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1000006
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista attori",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActorBasic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors/{name}/movies": {
+      "get": {
+        "summary": "Filmografia attore",
+        "tags": ["Actors"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Leonardo DiCaprio"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "type": "integer",
+              "default": 8
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista film con ruoli",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActorMovie"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/actors/search": {
+      "get": {
+        "summary": "Ricerca attori",
+        "tags": ["Actors"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Leonardo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Risultati ricerca",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActorBasic"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/crews/{id}": {
+      "get": {
+        "summary": "Crew di un film",
+        "tags": ["Crews"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1000006
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista membri crew",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Crew"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MovieBasic": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1000006
+          },
+          "name": {
+            "type": "string",
+            "example": "Inception"
+          },
+          "year": {
+            "type": "integer",
+            "example": 2010
+          },
+          "minute": {
+            "type": "integer",
+            "example": 148
+          },
+          "rating": {
+            "type": "number",
+            "example": 8.8
+          },
+          "posterLink": {
+            "type": "string",
+            "example": "http://example.com/poster.jpg"
+          },
+          "genres": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Action", "Sci-Fi"]
+          }
+        }
+      },
+      "MovieDetailed": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MovieBasic"
+          }
+        ],
+        "properties": {
+          "studios": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Warner Bros"]
+          },
+          "themes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Dreams"]
+          },
+          "movieOscars": {
+            "type": "string",
+            "example": "4 Oscar vinti (2011)"
+          }
+        }
+      },
+      "ActorBasic": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 12345
+          },
+          "name": {
+            "type": "string",
+            "example": "Leonardo DiCaprio"
+          },
+          "movies_count": {
+            "type": "integer",
+            "example": 25
+          },
+          "avg_rating": {
+            "type": "number",
+            "example": 7.8
+          },
+          "genres": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Drama"]
+          }
+        }
+      },
+      "ActorDetailed": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ActorBasic"
+          }
+        ],
+        "properties": {
+          "oscars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OscarAward"
+            }
+          }
+        }
+      },
+      "ActorMovie": {
+        "type": "object",
+        "properties": {
+          "movie": {
+            "$ref": "#/components/schemas/MovieBasic"
+          },
+          "roles": {
+            "type": "string",
+            "example": "Dom Cobb"
+          }
+        }
+      },
+      "OscarAward": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "example": 2016
+          },
+          "category": {
+            "type": "string",
+            "example": "Best Actor"
+          },
+          "film": {
+            "type": "string",
+            "example": "The Revenant"
+          }
+        }
+      },
+      "Crew": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Christopher Nolan"
+          },
+          "role": {
+            "type": "string",
+            "example": "Director"
+          },
+          "department": {
+            "type": "string",
+            "example": "Directing"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Movies",
+      "description": "Gestione film e contenuti correlati"
+    },
+    {
+      "name": "Actors",
+      "description": "Gestione attori e filmografie"
+    },
+    {
+      "name": "Crews",
+      "description": "Gestione crew tecnici"
+    }
+  ]
+}
