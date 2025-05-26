@@ -95,7 +95,6 @@ function handleMissingImages() {
 
             const fallback = document.createElement('div');
             fallback.className = 'image-fallback';
-            fallback.textContent = 'No Image';
             this.parentElement.appendChild(fallback);
         });
 
