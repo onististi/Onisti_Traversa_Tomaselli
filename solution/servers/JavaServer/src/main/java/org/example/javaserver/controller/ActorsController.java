@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RequestMapping("/api/actors")
 public class ActorsController {
 

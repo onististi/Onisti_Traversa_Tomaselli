@@ -3,7 +3,7 @@
   "info": {
     "title": "Cineverse API - JavaServer",
     "version": "1.0.0",
-    "description": "Documentazione completa delle API REST per l'accesso ai dati cinematografici"
+    "description": "Documentazione completa delle API REST per l'accesso ai dati cinematografici. L'API fornisce accesso a un database di film, attori e crew tecnici con funzionalità di ricerca avanzata e dettagli sui premi Oscar."
   },
   "servers": [
     {
@@ -16,10 +16,10 @@
       "get": {
         "summary": "Lista film principali",
         "tags": ["Movies"],
-        "description": "Restituisce 300 film con rating ≥4 ordinati per nome",
+        "description": "Restituisce 300 film con rating ≥4 ordinati alfabeticamente per nome. Include poster, generi e informazioni di base per ogni film.",
         "responses": {
           "200": {
-            "description": "Lista film",
+            "description": "Lista film con informazioni di base",
             "content": {
               "application/json": {
                 "schema": {
@@ -32,7 +32,7 @@
             }
           },
           "500": {
-            "description": "Errore interno"
+            "description": "Errore interno del server"
           }
         }
       }
@@ -41,11 +41,13 @@
       "get": {
         "summary": "Dettaglio completo film",
         "tags": ["Movies"],
+        "description": "Restituisce tutti i dettagli di un film specifico inclusi studi, temi, lingue, informazioni Oscar, doppiaggio e release internazionali.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
+            "description": "ID univoco del film",
             "schema": {
               "type": "integer",
               "example": 1000006
@@ -54,7 +56,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Dettaglio film",
+            "description": "Dettaglio completo del film",
             "content": {
               "application/json": {
                 "schema": {
@@ -65,6 +67,9 @@
           },
           "404": {
             "description": "Film non trovato"
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
@@ -73,19 +78,24 @@
       "get": {
         "summary": "Ultimi film usciti",
         "tags": ["Movies"],
+        "description": "Restituisce i 20 film più recenti ordinati per anno di uscita decrescente. Ogni film include tutti i dettagli disponibili.",
         "responses": {
           "200": {
-            "description": "20 film più recenti",
+            "description": "Lista dei 20 film più recenti con dettagli completi",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MovieBasic"
-                  }
+                    "$ref": "#/components/schemas/MovieDetailed"
+                  },
+                  "maxItems": 20
                 }
               }
             }
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
@@ -94,72 +104,92 @@
       "get": {
         "summary": "Film meglio valutati",
         "tags": ["Movies"],
+        "description": "Restituisce i 20 film con il rating più alto, ordinati per rating decrescente e, in caso di parità, per anno decrescente.",
         "responses": {
           "200": {
-            "description": "20 film top rated",
+            "description": "Lista dei 20 film top rated con dettagli completi",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MovieBasic"
-                  }
+                    "$ref": "#/components/schemas/MovieDetailed"
+                  },
+                  "maxItems": 20
                 }
               }
             }
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
     },
     "/api/movies/oscars-winners": {
       "get": {
-        "summary": "Vincitori Oscar",
+        "summary": "Vincitori Oscar recenti",
         "tags": ["Movies"],
+        "description": "Restituisce fino a 20 film vincitori di Oscar, partendo dalle cerimonie più recenti (2024) e procedendo a ritroso fino al 1929. Evita duplicati per titolo e ordina per anno di cerimonia decrescente.",
         "responses": {
           "200": {
-            "description": "20 vincitori recenti",
+            "description": "Lista film vincitori Oscar con dettagli completi",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MovieBasic"
-                  }
+                    "$ref": "#/components/schemas/MovieDetailed"
+                  },
+                  "maxItems": 20
                 }
               }
             }
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
     },
     "/api/movies/search": {
       "get": {
-        "summary": "Ricerca film",
+        "summary": "Ricerca film per titolo",
         "tags": ["Movies"],
+        "description": "Ricerca film per titolo utilizzando pattern matching case-insensitive. Restituisce fino a 100 risultati ordinati per rating decrescente. Solo film con rating disponibile.",
         "parameters": [
           {
             "in": "query",
             "name": "query",
             "required": true,
+            "description": "Termine di ricerca per il titolo del film (ricerca parziale)",
             "schema": {
               "type": "string",
+              "minLength": 1,
               "example": "Inception"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Risultati ricerca",
+            "description": "Risultati ricerca con dettagli completi (max 100)",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MovieBasic"
-                  }
+                    "$ref": "#/components/schemas/MovieDetailed"
+                  },
+                  "maxItems": 100
                 }
               }
             }
+          },
+          "400": {
+            "description": "Parametro query mancante o non valido"
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
@@ -168,33 +198,39 @@
       "get": {
         "summary": "Lista attori principali",
         "tags": ["Actors"],
-        "description": "Top 500 attori per numero di film",
+        "description": "Restituisce i top 500 attori con più di 2 film nel database, ordinati per numero di film decrescente e nome. Include generi predominanti e rating medio.",
         "responses": {
           "200": {
-            "description": "Lista attori",
+            "description": "Lista attori principali con statistiche",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ActorBasic"
-                  }
+                  },
+                  "maxItems": 500
                 }
               }
             }
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
     },
     "/api/actors/{name}": {
       "get": {
-        "summary": "Dettaglio attore",
+        "summary": "Dettaglio attore per nome",
         "tags": ["Actors"],
+        "description": "Restituisce le informazioni di base di un attore specifico ricercato per nome esatto. Utilizzato per pagine dedicate agli attori.",
         "parameters": [
           {
             "in": "path",
             "name": "name",
             "required": true,
+            "description": "Nome completo dell'attore (ricerca esatta)",
             "schema": {
               "type": "string",
               "example": "Leonardo DiCaprio"
@@ -203,7 +239,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Dettaglio attore",
+            "description": "Dettaglio attore con statistiche",
             "content": {
               "application/json": {
                 "schema": {
@@ -214,19 +250,61 @@
           },
           "404": {
             "description": "Attore non trovato"
+          },
+          "500": {
+            "description": "Errore interno del server"
+          }
+        }
+      }
+    },
+    "/api/actors/actor/{id}": {
+      "get": {
+        "summary": "Dettaglio attore per ID",
+        "tags": ["Actors"],
+        "description": "Restituisce le informazioni di base di un attore specifico ricercato per ID. Utilizzato principalmente per funzionalità di chat dedicate all'attore.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "ID univoco dell'attore",
+            "schema": {
+              "type": "integer",
+              "example": 12345
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dettaglio attore con statistiche",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActorBasic"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Attore non trovato"
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
     },
     "/api/actors/movie/{id}": {
       "get": {
-        "summary": "Attori di un film",
+        "summary": "Attori di un film specifico",
         "tags": ["Actors"],
+        "description": "Restituisce la lista di tutti gli attori che hanno partecipato al film specificato dall'ID.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
+            "description": "ID del film di cui ottenere il cast",
             "schema": {
               "type": "integer",
               "example": 1000006
@@ -235,7 +313,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Lista attori",
+            "description": "Lista attori del film",
             "content": {
               "application/json": {
                 "schema": {
@@ -246,19 +324,27 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Film non trovato o nessun attore associato"
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
     },
     "/api/actors/{name}/movies": {
       "get": {
-        "summary": "Filmografia attore",
+        "summary": "Filmografia attore con ruoli",
         "tags": ["Actors"],
+        "description": "Restituisce la filmografia paginata di un attore con i ruoli interpretati, ordinata per anno di uscita decrescente. I ruoli multipli nello stesso film vengono aggregati.",
         "parameters": [
           {
             "in": "path",
             "name": "name",
             "required": true,
+            "description": "Nome completo dell'attore",
             "schema": {
               "type": "string",
               "example": "Leonardo DiCaprio"
@@ -267,23 +353,28 @@
           {
             "in": "query",
             "name": "page",
+            "description": "Numero pagina (0-based)",
             "schema": {
               "type": "integer",
+              "minimum": 0,
               "default": 0
             }
           },
           {
             "in": "query",
             "name": "size",
+            "description": "Numero di film per pagina",
             "schema": {
               "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
               "default": 8
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Lista film con ruoli",
+            "description": "Lista film con ruoli dell'attore (paginata)",
             "content": {
               "application/json": {
                 "schema": {
@@ -294,51 +385,109 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Attore non trovato o nessun film associato"
+          },
+          "500": {
+            "description": "Errore interno del server"
+          }
+        }
+      }
+    },
+    "/api/actors/{name}/oscars": {
+      "get": {
+        "summary": "Oscar vinti dall'attore",
+        "tags": ["Actors"],
+        "description": "Restituisce tutti gli Oscar vinti dall'attore specificato, ordinati per anno di cerimonia decrescente.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "description": "Nome completo dell'attore",
+            "schema": {
+              "type": "string",
+              "example": "Leonardo DiCaprio"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista Oscar vinti dall'attore",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OscarAward"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Attore non trovato"
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
     },
     "/api/actors/search": {
       "get": {
-        "summary": "Ricerca attori",
+        "summary": "Ricerca attori per nome",
         "tags": ["Actors"],
+        "description": "Ricerca attori per nome utilizzando pattern matching case-insensitive. Restituisce fino a 100 risultati ordinati per nome decrescente.",
         "parameters": [
           {
             "in": "query",
             "name": "query",
             "required": true,
+            "description": "Termine di ricerca per il nome dell'attore (ricerca parziale)",
             "schema": {
               "type": "string",
+              "minLength": 1,
               "example": "Leonardo"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Risultati ricerca",
+            "description": "Risultati ricerca attori (max 100)",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ActorBasic"
-                  }
+                  },
+                  "maxItems": 100
                 }
               }
             }
+          },
+          "400": {
+            "description": "Parametro query mancante o non valido"
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
     },
     "/api/crews/{id}": {
       "get": {
-        "summary": "Crew di un film",
+        "summary": "Crew tecnico di un film",
         "tags": ["Crews"],
+        "description": "Restituisce la lista completa del crew tecnico (registi, produttori, sceneggiatori, etc.) per un film specifico, organizzato per dipartimento e ruolo.",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
+            "description": "ID del film di cui ottenere il crew",
             "schema": {
               "type": "integer",
               "example": 1000006
@@ -347,7 +496,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Lista membri crew",
+            "description": "Lista membri crew del film",
             "content": {
               "application/json": {
                 "schema": {
@@ -358,6 +507,12 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Film non trovato o nessun crew associato"
+          },
+          "500": {
+            "description": "Errore interno del server"
           }
         }
       }
@@ -367,37 +522,54 @@
     "schemas": {
       "MovieBasic": {
         "type": "object",
+        "description": "Informazioni di base di un film",
+        "required": ["id", "name"],
         "properties": {
           "id": {
             "type": "integer",
+            "description": "ID univoco del film",
             "example": 1000006
           },
           "name": {
             "type": "string",
+            "description": "Titolo del film",
             "example": "Inception"
           },
           "year": {
             "type": "integer",
+            "description": "Anno di uscita",
+            "minimum": 1888,
+            "maximum": 2030,
             "example": 2010
           },
           "minute": {
             "type": "integer",
+            "description": "Durata in minuti",
+            "minimum": 1,
             "example": 148
           },
           "rating": {
             "type": "number",
+            "format": "decimal",
+            "description": "Rating del film (scala 0-10)",
+            "minimum": 0,
+            "maximum": 10,
             "example": 8.8
           },
           "posterLink": {
             "type": "string",
+            "format": "uri",
+            "description": "URL del poster del film",
+            "nullable": true,
             "example": "http://example.com/poster.jpg"
           },
           "genres": {
             "type": "array",
+            "description": "Lista dei generi del film",
             "items": {
               "type": "string"
             },
-            "example": ["Action", "Sci-Fi"]
+            "example": ["Action", "Sci-Fi", "Thriller"]
           }
         }
       },
@@ -407,52 +579,89 @@
             "$ref": "#/components/schemas/MovieBasic"
           }
         ],
+        "type": "object",
+        "description": "Informazioni dettagliate di un film",
         "properties": {
           "studios": {
             "type": "array",
+            "description": "Studi di produzione",
             "items": {
               "type": "string"
             },
-            "example": ["Warner Bros"]
+            "example": ["Warner Bros", "Legendary Pictures"]
           },
           "themes": {
             "type": "array",
+            "description": "Temi principali del film",
             "items": {
               "type": "string"
             },
-            "example": ["Dreams"]
+            "example": ["Dreams", "Reality", "Heist"]
+          },
+          "language": {
+            "type": "string",
+            "description": "Lingue originali del film",
+            "example": "English, Japanese"
+          },
+          "dubbing": {
+            "type": "string",
+            "description": "Lingue di doppiaggio disponibili",
+            "example": "Italian, French, German"
+          },
+          "releaseInfo": {
+            "type": "string",
+            "description": "Informazioni dettagliate sulle release internazionali",
+            "example": "USA in 16-07-2010 (Theatrical)[PG-13], Italy in 30-09-2010 (Theatrical)[T]"
           },
           "movieOscars": {
             "type": "string",
-            "example": "4 Oscar vinti (2011)"
+            "description": "Informazioni sui premi Oscar vinti o nomination",
+            "example": "Yes - Won 4 Oscars (in 2011)"
+          },
+          "yearCeremony": {
+            "type": "integer",
+            "description": "Anno della cerimonia Oscar più recente (se applicabile)",
+            "nullable": true,
+            "example": 2011
           }
         }
       },
       "ActorBasic": {
         "type": "object",
+        "description": "Informazioni di base di un attore",
+        "required": ["name"],
         "properties": {
           "id": {
             "type": "integer",
+            "description": "ID univoco dell'attore",
             "example": 12345
           },
           "name": {
             "type": "string",
+            "description": "Nome completo dell'attore",
             "example": "Leonardo DiCaprio"
           },
           "movies_count": {
             "type": "integer",
+            "description": "Numero totale di film in cui ha recitato",
+            "minimum": 0,
             "example": 25
           },
           "avg_rating": {
             "type": "number",
+            "format": "decimal",
+            "description": "Rating medio dei film dell'attore",
+            "minimum": 0,
+            "maximum": 10,
             "example": 7.8
           },
           "genres": {
             "type": "array",
+            "description": "Generi predominanti nei film dell'attore",
             "items": {
               "type": "string"
             },
-            "example": ["Drama"]
+            "example": ["Drama", "Thriller", "Biography"]
           }
         }
       },
@@ -462,9 +671,12 @@
             "$ref": "#/components/schemas/ActorBasic"
           }
         ],
+        "type": "object",
+        "description": "Informazioni dettagliate di un attore",
         "properties": {
           "oscars": {
             "type": "array",
+            "description": "Lista degli Oscar vinti dall'attore",
             "items": {
               "$ref": "#/components/schemas/OscarAward"
             }
@@ -473,47 +685,83 @@
       },
       "ActorMovie": {
         "type": "object",
+        "description": "Film con ruolo interpretato dall'attore",
+        "required": ["movie", "roles"],
         "properties": {
           "movie": {
-            "$ref": "#/components/schemas/MovieBasic"
+            "$ref": "#/components/schemas/MovieBasic",
+            "description": "Dettagli del film"
           },
           "roles": {
             "type": "string",
+            "description": "Ruoli interpretati nel film (aggregati se multipli)",
             "example": "Dom Cobb"
           }
         }
       },
       "OscarAward": {
         "type": "object",
+        "description": "Premio Oscar vinto",
+        "required": ["year", "category"],
         "properties": {
           "year": {
             "type": "integer",
+            "description": "Anno della cerimonia Oscar",
+            "minimum": 1929,
             "example": 2016
           },
           "category": {
             "type": "string",
+            "description": "Categoria del premio Oscar",
             "example": "Best Actor"
           },
           "film": {
             "type": "string",
+            "description": "Film per cui è stato vinto l'Oscar",
             "example": "The Revenant"
           }
         }
       },
       "Crew": {
         "type": "object",
+        "description": "Membro del crew tecnico",
+        "required": ["name", "role"],
         "properties": {
           "name": {
             "type": "string",
+            "description": "Nome del membro del crew",
             "example": "Christopher Nolan"
           },
           "role": {
             "type": "string",
+            "description": "Ruolo specifico nel film",
             "example": "Director"
           },
           "department": {
             "type": "string",
+            "description": "Dipartimento di appartenenza",
             "example": "Directing"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Risposta di errore standard",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Codice di errore",
+            "example": "NOT_FOUND"
+          },
+          "message": {
+            "type": "string",
+            "description": "Messaggio di errore leggibile",
+            "example": "Film non trovato"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp dell'errore"
           }
         }
       }
@@ -522,15 +770,15 @@
   "tags": [
     {
       "name": "Movies",
-      "description": "Gestione film e contenuti correlati"
+      "description": "Gestione film e contenuti correlati - ricerca, dettagli, classifiche e filtri speciali"
     },
     {
       "name": "Actors",
-      "description": "Gestione attori e filmografie"
+      "description": "Gestione attori e filmografie - ricerca, dettagli, filmografia paginata e premi Oscar"
     },
     {
       "name": "Crews",
-      "description": "Gestione crew tecnici"
+      "description": "Gestione crew tecnici - registi, produttori, sceneggiatori e team di produzione"
     }
   ]
 }

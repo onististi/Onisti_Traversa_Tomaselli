@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"})
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RequestMapping("/api/movies")
 @Tag(name = "Movies", description = "Gestione film e contenuti correlati")
 public class MoviesController {
